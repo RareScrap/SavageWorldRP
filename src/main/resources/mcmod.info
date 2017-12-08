@@ -1,0 +1,16 @@
+[
+{
+  "modid": "rsstats",
+  "name": "RSStats",
+  "description": "Add fallout2-like stats.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/RareScrap/RSStats",
+  "updateUrl": "",
+  "authorList": ["RareScrap"],
+  "credits": "Thanks to Dmitry Shamanov for great idea to make this mod",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
