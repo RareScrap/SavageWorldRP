@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 
 /**
@@ -25,6 +26,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     
     /** Инвентарь для статов */
     public final StatsInventory statsInventory = new StatsInventory();
+    /** Инвентарь для скиллов */
+    public final SkillsInventory skillsInventory = new SkillsInventory();
     
     /*
     Тут в виде полей можно хранить дополнительную информацию о Entity: мана,
@@ -62,11 +65,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     @Override
     public void saveNBTData(NBTTagCompound properties) {
         this.statsInventory.writeToNBT(properties);
+        this.skillsInventory.writeToNBT(properties);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound properties) {
         this.statsInventory.readFromNBT(properties);
+        this.skillsInventory.readFromNBT(properties);
     }
 
     @Override

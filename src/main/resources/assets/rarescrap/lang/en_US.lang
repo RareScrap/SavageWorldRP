@@ -1,0 +1,15 @@
+item.StrenghtStatItem.name=NOT_TRANSLATED
+item.StrenghtStatItem.description=NOT_TRANSLATED
+item.AgilityStatItem.name=NOT_TRANSLATED
+item.AgilityStatItem.description=NOT_TRANSLATED
+item.IntelligenceStatItem.name=NOT_TRANSLATED
+item.IntelligenceStatItem.description=NOT_TRANSLATED
+item.EnduranceStatItem.name=NOT_TRANSLATED
+item.EnduranceStatItem.description=NOT_TRANSLATED
+item.CharacterStatItem.name=NOT_TRANSLATED
+item.CharacterStatItem.description=NOT_TRANSLATED
+item.StatItem.moreInfo=NOT_TRANSLATED
+item.StatItem.relevantSkillsTip=NOT_TRANSLATED
+item.StatItem.roll=Roll
+item.StatItem.rollChatMessage=%1$s is rolling skill %2$s(d%3$d): %4$s TOTAL: %5$d
+item.StatItem.level=%1$d level

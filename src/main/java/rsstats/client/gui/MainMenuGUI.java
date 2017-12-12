@@ -1,5 +1,6 @@
 package rsstats.client.gui;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -9,10 +10,15 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import rsstats.inventory.SkillsInventory;
+import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
+
+import java.util.List;
 
 /**
  * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
@@ -29,8 +35,16 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     /** Ширина GUI в пикселях. Defined as  float, passed as int. */
     private float ySizeFloat;
 
-    public MainMenuGUI(EntityPlayer player, InventoryPlayer inventoryPlayer) {
-        super(new MainContainer(player, inventoryPlayer));
+    private StatsInventory statsInventory;
+
+    /** Инвентарь для статов */
+    // Could use IInventory type to be more generic, but this way will save an import...
+    // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
+    //private final StatsInventory statsInventory;
+
+    public MainMenuGUI(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory) {
+        super(new MainContainer(player, inventoryPlayer, statsInventory, skillsInventory));
+        this.statsInventory = statsInventory;
         this.allowUserInput = true;
     }
 
@@ -100,14 +114,15 @@ public class MainMenuGUI extends InventoryEffectRenderer {
         // Орисовываем превью игрока
         drawPlayerModel(k+30, l+90, /*17*/ 40, (float)(k + 51) - this.xSizeFloat, (float)(l + 75 - 50) - this.ySizeFloat, this.mc.thePlayer);
 
-        for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
+        // Это было в туторах, но я хз на что это влияет. Слоты и рендер предметов работают и без этого
+        /*for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
         {
             Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i1);
-            /*if (slot.getHasStack() && slot.getSlotStackLimit()==1)
-            {*/
+            //if (slot.getHasStack() && slot.getSlotStackLimit()==1)
+            //{
             	this.drawTexturedModalRect(k+slot.xDisplayPosition, l+slot.yDisplayPosition, 200, 0, 16, 16);
             //}
-        }
+        }*/
     }
 
     /**
@@ -154,4 +169,39 @@ public class MainMenuGUI extends InventoryEffectRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        //System.out.println("mouseClicked: " + mouseX + " " + mouseY + " " + mouseButton);
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int p_146286_1_, int p_146286_2_, int p_146286_3_) {
+        //System.out.println("mouseMovedOrUp: " + p_146286_1_ + " " + p_146286_2_ + " " + p_146286_3_);
+        super.mouseMovedOrUp(p_146286_1_, p_146286_2_, p_146286_3_);
+    }
+
+    @Override
+    protected void handleMouseClick(Slot p_146984_1_, int p_146984_2_, int p_146984_3_, int p_146984_4_) {
+        //System.out.println("handleMouseClick: " + p_146984_1_ + " " + p_146984_2_ + " " + p_146984_3_ + " " + p_146984_4_);
+        super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
+    }
+
+
+    @Override
+    protected void renderToolTip(ItemStack p_146285_1_, int p_146285_2_, int p_146285_3_) {
+        //System.out.println("hoover");
+        super.renderToolTip(p_146285_1_, p_146285_2_, p_146285_3_);
+    }
+
+    @Override
+    protected void drawHoveringText(List p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font) {
+        //System.out.println("hoover");
+        super.drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, font);
+    }
+
+
+
+
 }

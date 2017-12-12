@@ -1,20 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rsstats.inventory;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import rsstats.common.RSStats;
+import rsstats.items.StatItem;
+import rsstats.utils.DiceRoll;
+
+import java.util.ArrayList;
 
 /**
- *
- * @author rares
+ * Инвентарь для статов игрока (сила, ловкость, выносливость и т.д.)
+ * @author RareScrap
  */
 public class StatsInventory implements IInventory {
     /** The name your custom inventory will display in the GUI, possibly just "Inventory" */
@@ -22,22 +23,23 @@ public class StatsInventory implements IInventory {
     private final String name = "Stats";
 
     /** The key used to store and retrieve the inventory from NBT */
-    private final String tagName = "stats";
+    private static final String NBT_TAG = "stats";
 
     /** Define the inventory size here for easy reference */
     /* This is also the place to define which slot is which if you have different types,
      * for example SLOT_SHIELD = 0, SLOT_AMULET = 1; */
-    public static final int INV_SIZE = 9;
+    private static final int INV_SIZE = 9;
     /** Масимальный размер стака для предметов в инвенторе {@link #inventory} */
     private static final int STACK_LIMIT = 1;
 
-    /** Inventory's size must be same as number of slots you add to the Container class */
+    /** Структура, хранящая предметы инвентаря в стаках.
+     * Inventory's size must be same as number of slots you add to the Container class. */
     private ItemStack[] inventory = new ItemStack[INV_SIZE];
 
-    /** Необходимый пустой публичный контсруктор */
-    public StatsInventory() {
-        System.out.print("StatsInventory()\n");
-    }
+    /**
+     * Необходимый пустой публичный контсруктор
+     */
+    public StatsInventory() {}
     
     /**
      * Геттер для {@link #inventory}
@@ -51,7 +53,7 @@ public class StatsInventory implements IInventory {
     /**
      * Геттер для получения элементов из инвентаря {@link #inventory}
      * @param slotIndex Индекс слота в инвенторе, из которого нужно получить предмет
-     * @return Предмет под индексом slotIndex в инвенторе
+     * @return Стак предметов под индексом slotIndex в инвенторе
      */
     @Override
     public ItemStack getStackInSlot(int slotIndex) {
@@ -80,6 +82,11 @@ public class StatsInventory implements IInventory {
         return stack;
     }
 
+    /**
+     * Clears a slot and returns it's previous content.
+     * @param slotIndex
+     * @return
+     */
     //TODO: Когда вызывается этот метод и зачем он нужен?
     @Override
     public ItemStack getStackInSlotOnClosing(int slotIndex) {
@@ -180,10 +187,7 @@ public class StatsInventory implements IInventory {
         // if (slot == SLOT_SHIELD && itemstack.getItem() instanceof ItemShield) return true;
 
         // TODO: Класс StatItem должен импортироваться из другого мода
-        // return itemStack.getItem() instanceof StatItem;
-        
-        // Пока в инвентаре может храниться любой предмет
-        return true;
+        return itemStack.getItem() instanceof StatItem;
     }
     
     /**
@@ -202,9 +206,9 @@ public class StatsInventory implements IInventory {
             }
         }
 
-        // We're storing our items in a custom tag list using our 'tagName' from above
+        // We're storing our items in a custom tag list using our 'NBT_TAG' from above
         // to prevent potential conflicts
-        compound.setTag(tagName, items);
+        compound.setTag(NBT_TAG, items);
     }
 
     /**
@@ -212,7 +216,23 @@ public class StatsInventory implements IInventory {
      * @param compound TODO
      */
     public void readFromNBT(NBTTagCompound compound) {
-        NBTTagList items = compound.getTagList(tagName, Constants.NBT.TAG_LIST);
+        NBTTagList items = compound.getTagList(NBT_TAG, Constants.NBT.TAG_COMPOUND);
+
+        if (items.tagCount() == 0) {
+            ArrayList<DiceRoll> dices = new ArrayList<DiceRoll>();
+            dices.add(new DiceRoll(null, null, 4));
+            dices.add(new DiceRoll(null, null, 6));
+            dices.add(new DiceRoll(null, null, 8));
+            dices.add(new DiceRoll(null, null, 10));
+            dices.add(new DiceRoll(null, null, 12));
+
+            inventory[0] = new ItemStack(GameRegistry.findItem(RSStats.MODID, "StrenghtStatItem"));
+            inventory[1] = new ItemStack(GameRegistry.findItem(RSStats.MODID, "AgilityStatItem"));
+            inventory[2] = new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntelligenceStatItem"));
+            inventory[3] = new ItemStack(GameRegistry.findItem(RSStats.MODID, "EnduranceStatItem"));
+            inventory[4] = new ItemStack(GameRegistry.findItem(RSStats.MODID, "CharacterStatItem"));
+            return;
+        }
 
         for (int i = 0; i < items.tagCount(); ++i) {
             NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(i);
@@ -222,5 +242,7 @@ public class StatsInventory implements IInventory {
                 inventory[slot] = ItemStack.loadItemStackFromNBT(item);
             }
         }
-    }  
+    }
+
+
 }
