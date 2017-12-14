@@ -6,18 +6,11 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
-import org.apache.commons.io.FileUtils;
-import rsstats.items.StatItem;
 import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
        
 /**
  * Этот пакет отсылается сервера
@@ -100,70 +93,26 @@ public class RollPacketToServer implements IMessage {
         @Override
         public IMessage onMessage(RollPacketToServer message, MessageContext ctx) {
             // This is the player the packet was sent to the server from
-            EntityPlayerMP serverPlayer = ctx.getServerHandler().playerEntity;
-            
-            /*message.diceRollMessage = new DiceRoll(12);
-            message.diceRollMessage.setStatName("PIDOR");*/
-            
-            System.out.print("onMessage");
+            //EntityPlayerMP serverPlayer = ctx.getServerHandler().playerEntity;
+
             if (message.diceRollMessage == null)
                 throw new NullPointerException("diceRollMessage is null");
-            
-            String result = message.diceRollMessage.roll();
-            try {
-                // ГОВНО
-                FileUtils.writeStringToFile(new File("D:\\Users\\rares\\Downloads\\checkstyle1.txt"), result);
-            } catch (IOException ex) {
-                Logger.getLogger(StatItem.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            // и вывести его в чат
-            serverPlayer.addChatComponentMessage(new ChatComponentText(result));
-            //serverPlayer.addChatComponentMessage(new ChatComponentText(message.diceRollMessage.dice + " " + message.diceRollMessage.statName));
-            
-            /*try {
-                //serverPlayer.addChatComponentMessage(new ChatComponentText(Minecraft.getMinecraft().gameSettings.language));
-            } catch (Throwable e) {
-                serverPlayer.addChatComponentMessage(new ChatComponentText("SERVER SIDE"));
-            }*/
 
-            // Для дебага: вывести
+            String result = message.diceRollMessage.roll();
+
+            // и вывести его в чат
+            //serverPlayer.addChatComponentMessage(new ChatComponentText(result));
+            FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText(result));
+
+            //serverPlayer.addChatComponentMessage(new ChatComponentText(message.diceRollMessage.dice + " " + message.diceRollMessage.statName));
+
+
+            // Для дебага: вывести сторону в пользовательский канал
             //serverPlayer.addChatComponentMessage(new ChatComponentText(FMLCommonHandler.instance().getEffectiveSide().name()));
 
-            FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText(FMLCommonHandler.instance().getEffectiveSide().name()));
-            
-            /*
-            String maxS = new String();
-            String stat = new String();
-            int i = 0;
-            for (; amount.charAt(i) != '_'; i++) {
-                maxS += amount.charAt(i);
-            }
-            i++;
-            for (; i < amount.length(); i++) {
-                stat += amount.charAt(i);
-            }
-            
-            int min = 1;
-            int max = Integer.parseInt(maxS);
-            
-            String result = StatCollector.translateToLocalFormatted("item.StatItem.rollChatMessage", stat) + ": ";
-            int resultInt = 0;
-            int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
-            resultInt += randomNum;
-            while(randomNum == max) {
-                result += String.valueOf(randomNum)+ "+";
-                resultInt += randomNum;
-                randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
-                
-            }
-            result += String.valueOf(randomNum)+ "= " + resultInt+randomNum;
-            resultInt += randomNum;
-            
-            
-            // Заменить на нормальное вычисление
-            serverPlayer.addChatComponentMessage(new ChatComponentText(result));
-            */
+            // вывести сторону в серверный канал
+            //FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText(FMLCommonHandler.instance().getEffectiveSide().name()));
+
             return null;
         }
     }

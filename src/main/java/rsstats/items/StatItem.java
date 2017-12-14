@@ -11,13 +11,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
 
 import java.util.ArrayList;
 import java.util.List;
-import rsstats.common.RSStats;
 
 
 // Эти классы передаются в методы
@@ -175,8 +175,10 @@ public class StatItem extends Item {
         //if (world.isRemote) { // TODO: На какой стороне вычисляется бросок?
             //String num = String.valueOf( basicRolls[ Integer.parseInt(itemstack.getIconIndex().toString()) ].dice );
 
-
-        roll(itemstack, entityplayer);
+        // TODO: Теперь ролл возможен только на сервере. Как быть, когда юзер играет в сингле?
+        if(!world.isRemote) {
+            roll(itemstack, entityplayer);
+        }
 
 
 
