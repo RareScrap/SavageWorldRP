@@ -1,8 +1,10 @@
 package rsstats.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.util.StatCollector;
+import rsstats.common.RSStats;
 
 /**
  * Объект броска дайсов
@@ -184,24 +186,26 @@ public class DiceRoll {
                 break;
             }
         } while (true);
-        
+
         rollResultString += " ";
 
+        // DEBUG
+        //modificators = new ArrayList<RollModifier>();
+        //modificators.add(new RollModifier(2, "Боевой дух"));
+        //modificators.add(new RollModifier(-1, "Ранение"));
+        //modificators.add(new RollModifier(-8, "Колдовской сглаз"));
+        //modificators.add(new RollModifier(3, "Молитва стойкости"));
+
         // Обработка модификаторов
+        StringBuilder stringBuilder = new StringBuilder(rollResultString);
         if (modificators != null) {
             for (int i = 0; i < modificators.size(); ++i) {
-                RollModifier rollModificator = modificators.get(i);
-
-                /*rollResultInt += rollModificator.value;
-                
-                if (rollModificator.value >= 0)
-                    rollResultString += "+";
-                
-                rollResultString += rollModificator.value + "("
-                        + rollModificator.description + ") ";*/
-
-                rollResultString += rollModificator.toString();
+                RollModifier rollModifier = modificators.get(i);
+                rollResultInt += rollModifier.getValue();
+                stringBuilder.append(rollModifier.toString()).append(" ");
             }
+            stringBuilder.deleteCharAt(stringBuilder.length()-1);
+            rollResultString = stringBuilder.toString();
         }
 
         // Сформировать итоговое сообщение
@@ -211,18 +215,8 @@ public class DiceRoll {
                 rollName,
                 dice,
                 rollResultString,
-                rollResultInt
+                rollResultInt,
+                RSStats.config.textColorNormal
         );
-                
-                /*
-                StatCollector.translateToLocalFormatted(
-                "item.StatItem.rollChatMessage",
-                playerName,
-                rollName,
-                dice,
-                rollResultString,
-                rollResultInt
-        );
-                */
     }
 }

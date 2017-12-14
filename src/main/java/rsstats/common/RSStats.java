@@ -1,5 +1,6 @@
 package rsstats.common;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -12,6 +13,7 @@ import rsstats.client.gui.SSPPage;
 import rsstats.common.event.TestEventHandler;
 import rsstats.utils.DiceRoll;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -54,6 +56,8 @@ public class RSStats {
     /** Дайсы, которые будут использоваться в моде */
     ArrayList<DiceRoll> dices;
 
+    public static Config config;
+
     /**
      * Конструктор, инициализирующий список допустимых дайсов
      */
@@ -75,6 +79,9 @@ public class RSStats {
     public void preInit(FMLPreInitializationEvent event) {
         testEventHandler = new TestEventHandler();
         MinecraftForge.EVENT_BUS.register(testEventHandler);
+
+        // Обрабатываем конфиг
+        config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));
 
         proxy.preInit(event, dices); // Преинициализация в общем прокси
     }

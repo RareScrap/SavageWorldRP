@@ -1,5 +1,7 @@
 package rsstats.utils;
 
+import rsstats.common.RSStats;
+
 /**
  * Модификатора броска
  * @author RareScrap
@@ -26,7 +28,30 @@ public class RollModifier {
      */
     @Override
     public String toString() {
-        return "(" + value +": " + description + ")";
+        String formatCode;
+        if (value > 0) {
+            formatCode = "§" + RSStats.config.modifierColorPositive;
+        } else {
+            formatCode = "§" + RSStats.config.modifierColorNegative;
+        }
+
+        String[] words = description.split(" "); // Получаем слова из описания
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String word : words) {
+            // Присоединяем форматирование к каждому слову
+            stringBuilder.append(formatCode).append(word).append(" ");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1); // Удаляем лишний пробел в последнем слове
+        description = stringBuilder.toString(); // Сохраняем форматированное описание
+
+        // Форматируем выходную строку
+        return formatCode + "(" +
+                formatCode + (value > 0 ? "+"+value : value) +
+                formatCode + ": " +
+                description +
+                formatCode + ")" +
+                "§" + RSStats.config.textColorNormal;
     }
 
     /**
