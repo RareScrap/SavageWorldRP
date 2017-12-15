@@ -5,7 +5,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.slots.StatSlot;
 
@@ -43,7 +42,7 @@ public class StatsContainer extends Container {
         // just copy and paste the vanilla code into a new class and change what you need
         /*for (i = 0; i < 10; ++i) {
             this.addSlotToContainer(
-                new SlotArmor(player,
+                new SlotArmor(entityPlayer,
                         inventoryPlayer,
                         inventoryPlayer.getSizeInventory() - 1 - i,
                         8,
@@ -149,7 +148,7 @@ public class StatsContainer extends Container {
                return null;
            }
 
-           slot.onPickupFromSlot(player, itemstack1);
+           slot.onPickupFromSlot(entityPlayer, itemstack1);
         }*/
 
         return itemstack;
