@@ -8,6 +8,10 @@ import io.netty.buffer.ByteBuf;
 import rsstats.common.RSStats;
 import rsstats.inventory.container.MainContainer;
 
+/**
+ * Сигнал, сообщаяющий контейнеру, что пользователь выбрал стату и желает чтобы в
+ * инвентаре скиллов отобазились дочерние к этой стате скиллы
+ */
 public class PacketShowSkillsByStat implements IMessage {
     private String parentStatName;
 
