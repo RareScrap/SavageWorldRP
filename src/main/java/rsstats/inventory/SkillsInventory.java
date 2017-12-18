@@ -7,9 +7,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import rsstats.common.RSStats;
 import rsstats.items.SkillItem;
-import rsstats.utils.DiceRoll;
-
-import java.util.ArrayList;
 
 public class SkillsInventory extends StatsInventory {
     /** The name your custom inventory will display in the GUI, possibly just "Inventory" */
@@ -164,6 +161,50 @@ public class SkillsInventory extends StatsInventory {
             if (slot >= 0 && slot < getSizeInventory()) {
                 inventory[slot] = ItemStack.loadItemStackFromNBT(item);
             }
+        }
+    }
+
+    /**
+     * Очищает {@link #inventory}, выставляя все его элементы null
+     */
+    public void clearInventory() {
+        for (int i = 0; i < getSizeInventory(); i++) {
+            inventory[i] = null;
+        }
+
+    }
+
+    public void setSkillsFor(String parentStatName) {
+        clearInventory();
+
+        if ("item.StrengthStatItem".equals(parentStatName)) {
+            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ClimbingSkillItem"), 1, 2));
+        } else if ("item.AgilityStatItem".equals(parentStatName)) {
+            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "EquitationSkillItem"), 1, 2));
+            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "LockpickingSkillItem"), 1, 2));
+            setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DrivingSkillItem"), 1, 2));
+            setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "FightingSkillItem"), 1, 2));
+            setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DisguiseSkillItem"), 1, 2));
+            setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ThrowingSkillItem"), 1, 2));
+            setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PilotingSkillItem"), 1, 2));
+            setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SwimmingSkillItem"), 1, 2));
+            setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShootingSkillItem"), 1, 2));
+            setInventorySlotContents(9, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShippingSkillItem"), 1, 2));
+        } else if ("item.IntelligenceStatItem".equals(parentStatName)) {
+            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "GamblingSkillItem"), 1, 2));
+            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PerceptionSkillItem"), 1, 2));
+            setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SurvivalSkillItem"), 1, 2));
+            setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "TrackingSkillItem"), 1, 2));
+            setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "MedicineSkillItem"), 1, 2));
+            setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ProvocationSkillItem"), 1, 2));
+            setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "InvestigationSkillItem"), 1, 2));
+            setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "RepearSkillItem"), 1, 2));
+            setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "StreetFlairSkillItem"), 1, 2));
+        } else if ("item.EnduranceStatItem".equals(parentStatName)) {
+
+        } else if ("item.CharacterStatItem".equals(parentStatName)) {
+            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntimidationSkillItem"), 1, 2));
+            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DiplomacySkillItem"), 1, 2));
         }
     }
 }

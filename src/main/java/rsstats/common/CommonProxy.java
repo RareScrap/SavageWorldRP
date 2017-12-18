@@ -15,11 +15,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import static rsstats.common.RSStats.instance;
-import static rsstats.common.RSStats.proxy;
 import rsstats.common.event.KeyHandler;
 import rsstats.common.network.PacketOpenRSStatsInventory;
 import rsstats.common.network.PacketOpenSSPPage;
+import rsstats.common.network.PacketShowSkillsByStat;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
@@ -31,6 +30,9 @@ import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static rsstats.common.RSStats.instance;
+import static rsstats.common.RSStats.proxy;
 
 /**
  * Проки, содержащий код как для клиента, так и сервера
@@ -48,6 +50,7 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(RollPacketToServer.MessageHandler.class, RollPacketToServer.class, 0, Side.SERVER); // Регистрация сообщения о пробросе статы
         INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, 1, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, 2, Side.SERVER);
+        INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, 3, Side.SERVER);
 
         // Инициализация предметов статов
         StatItem strenghtStatItem = new StatItem(dices, "StrengthStatItem", "rsstats:strenght", "item.StrengthStatItem"); // 3 - rarescrap:StrenghtIcon_
@@ -68,8 +71,6 @@ public class CommonProxy implements IGuiHandler {
         // TODO: Локализировать эту строку
         modificators.add(new RollModifier(-2, "Отсуствующий навык"));
         dices.add(0, new DiceRoll(dices.get(0), dices.get(0).getPlayerName(), dices.get(0).getRollName(), modificators));
-
-        System.out.print("PIZDA " + dices.size());
 
         // Инициализация предметов склиллов
         SkillItem equitationSkillItem = new SkillItem(dices, "EquitationSkillItem", "rsstats:skills/Equitation", "item.EquitationSkillItem", agilityStatItem);
@@ -129,7 +130,6 @@ public class CommonProxy implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        System.out.print("PIZDA1"+ID+"\n");
         switch (ID) {
             case RSStats.GUI:
                 return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory);

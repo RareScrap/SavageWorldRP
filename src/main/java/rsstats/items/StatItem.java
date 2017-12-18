@@ -11,14 +11,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import rsstats.common.RSStats;
+import rsstats.common.CommonProxy;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 // Эти классы передаются в методы
 
@@ -238,7 +237,7 @@ public class StatItem extends Item {
         //entityplayer.addChatComponentMessage(new ChatComponentText(basicRolls.get(lvl).dice + " " + statName));
 
         RollPacketToServer packet = new RollPacketToServer(roll);
-        RSStats.INSTANCE.sendToServer(packet); // "123" // itemstack.getIconIndex(
+        CommonProxy.INSTANCE.sendToServer(packet); // "123" // itemstack.getIconIndex(
 
         //}
         //entityplayer.addChatComponentMessage(new ChatComponentText(this.roll()));

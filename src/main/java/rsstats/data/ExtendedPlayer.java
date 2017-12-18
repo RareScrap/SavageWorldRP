@@ -22,7 +22,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
     private static final String INV_NAME = "StatsInventory";
     
-    private final EntityPlayer player;
+    private final EntityPlayer entityPlayer;
     
     /** Инвентарь для статов */
     public final StatsInventory statsInventory = new StatsInventory();
@@ -36,11 +36,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     */
 
     public ExtendedPlayer(EntityPlayer player) {
-        this.player = player;
+        this.entityPlayer = player;
     }
     
     /**
-     * Used to register these extended properties for the player during EntityConstructing event
+     * Used to register these extended properties for the entityPlayer during EntityConstructing event
      * This method is for convenience only; it will make your code look nicer
      * @param player
      */
@@ -49,7 +49,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     }
     
     /**
-     * Returns ExtendedPlayer properties for player
+     * Returns ExtendedPlayer properties for entityPlayer
      * This method is for convenience only; it will make your code look nicer
      */
     public static final ExtendedPlayer get(EntityPlayer player) {
@@ -57,7 +57,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     }
 
     public boolean isServerSide() {
-        return this.player instanceof EntityPlayerMP;
+        return this.entityPlayer instanceof EntityPlayerMP;
     }
 
     // LOAD, SAVE =============================================================
@@ -77,5 +77,4 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     @Override
     public void init(Entity entity, World world) {
     }
-    
 }

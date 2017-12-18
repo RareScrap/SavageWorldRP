@@ -11,6 +11,7 @@ import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.event.KeyHandler;
 import rsstats.data.ExtendedPlayer;
+import rsstats.inventory.container.MainContainer;
 
 /**
  * Прокси, исполняемый на стороне клиента
@@ -34,7 +35,7 @@ public class ClientProxy extends CommonProxy {
         if (world instanceof WorldClient) {
             // Ищем GUI, соответствующий данному ID
             switch (ID) {
-                case RSStats.GUI: return new MainMenuGUI(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory);
+                case RSStats.GUI: return new MainMenuGUI(ExtendedPlayer.get(player), new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory));
                 /*
                 ВНИМАНИЕ! По туториалу, мне не нужно делать проверку в строке 25.
                 Более того, мне нужно свитч затолкать в CommonProxy. Но так как
@@ -51,6 +52,6 @@ public class ClientProxy extends CommonProxy {
     public void registerKeyBindings() {
         keyHandler = new KeyHandler();
         FMLCommonHandler.instance().bus().register(keyHandler);
-        MinecraftForge.EVENT_BUS.register(new MainMenuGUI());
+        MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer()));
     }
 }

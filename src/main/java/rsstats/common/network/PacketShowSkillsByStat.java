@@ -5,7 +5,6 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import rsstats.common.RSStats;
 import rsstats.inventory.container.MainContainer;
 
 /**
@@ -57,8 +56,10 @@ public class PacketShowSkillsByStat implements IMessage {
             if (message.parentStatName == null)
                 throw new NullPointerException("parentStatName is null");
 
-            MainContainer serverMainContainer = RSStats.proxy.serverMainContainer;
-            serverMainContainer.setSkillsFor(message.parentStatName);
+            ((MainContainer) ctx.getServerHandler().playerEntity.openContainer).getSkillsInventory().setSkillsFor(message.parentStatName);
+
+            //MainContainer serverMainContainer = RSStats.proxy.serverMainContainer;
+            //serverMainContainer.setSkillsFor(message.parentStatName);
 
             return null;
         }

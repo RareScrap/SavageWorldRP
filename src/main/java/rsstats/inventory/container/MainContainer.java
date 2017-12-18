@@ -20,6 +20,7 @@ public class MainContainer extends Container {
     private final EntityPlayer player;
     private final InventoryPlayer inventoryPlayer;
     private final StatsInventory statsInventory;
+
     private final SkillsInventory skillsInventory;
    
     public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory) {
@@ -77,7 +78,7 @@ public class MainContainer extends Container {
     }
     
     /**
-    * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
+    * Called when a entityPlayer shift-clicks on a slot. You must override this or you will crash when someone does that.
     * Basically the same as every other container I make, since I define the same constant indices for all of them 
      * @param player TODO
      * @param par2 TODO
@@ -109,12 +110,51 @@ public class MainContainer extends Container {
 
         if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
             ItemStack itemStack = getSlot(slotId).getStack();
-            ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn);
+
+            // Защита от дублирующихся сообщений в чате
+            if (!playerIn.worldObj.isRemote) {
+                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn);
+            }
             return null;
         }
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
+    public SkillsInventory getSkillsInventory() {
+        return skillsInventory;
+    }
 
+    /*public void setSkillsFor(String parentStatName) {
+        skillsInventory.clearInventory();
 
+        if ("item.StrengthStatItem".equals(parentStatName)) {
+            skillsInventory.setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ClimbingSkillItem"), 1, 2));
+        } else if ("item.AgilityStatItem".equals(parentStatName)) {
+            skillsInventory.setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "EquitationSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "LockpickingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DrivingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "FightingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DisguiseSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ThrowingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PilotingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SwimmingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShootingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(9, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShippingSkillItem"), 1, 2));
+        } else if ("item.IntelligenceStatItem".equals(parentStatName)) {
+            skillsInventory.setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "GamblingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PerceptionSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SurvivalSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "TrackingSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "MedicineSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ProvocationSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "InvestigationSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "RepearSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "StreetFlairSkillItem"), 1, 2));
+        } else if ("item.EnduranceStatItem".equals(parentStatName)) {
+
+        } else if ("item.CharacterStatItem".equals(parentStatName)) {
+            skillsInventory.setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntimidationSkillItem"), 1, 2));
+            skillsInventory.setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DiplomacySkillItem"), 1, 2));
+        }
+    }*/
 }
