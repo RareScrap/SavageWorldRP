@@ -8,6 +8,8 @@ import net.minecraftforge.common.util.Constants;
 import rsstats.common.RSStats;
 import rsstats.items.SkillItem;
 
+import java.util.ArrayList;
+
 public class SkillsInventory extends StatsInventory {
     /** The name your custom inventory will display in the GUI, possibly just "Inventory" */
     // TODO: Локализировать эту строку
@@ -23,9 +25,12 @@ public class SkillsInventory extends StatsInventory {
     /** Масимальный размер стака для предметов в инвенторе {@link #inventory} */
     private static final int STACK_LIMIT = 1;
 
-    /** Структура, хранящая предметы инвентаря в стаках.
+    /** Структура, хранящая предметы, которые будут отображены в инвентаре пользователя.
      * Inventory's size must be same as number of slots you add to the Container class. */
     private ItemStack[] inventory = new ItemStack[INV_SIZE];
+
+    /** Структура, хранящая предметы инвентаря в стаках */
+    private ArrayList<ItemStack> skills = new ArrayList<ItemStack>();
 
     /**
      * Необходимый пустой публичный контсруктор
@@ -81,7 +86,22 @@ public class SkillsInventory extends StatsInventory {
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
         //super.setInventorySlotContents(slotIndex, itemStack);
 
-        this.inventory[slotIndex] = itemStack;
+        if (itemStack == null) { // Очистить слот
+            if (inventory[slotIndex] != null) { // Был ли слот очищенным до этого?
+                // Если нет - удаляем то, что есть сейчас в слоте из хранилища скиллов
+                removeSkill(inventory[slotIndex].getUnlocalizedName());
+            }
+
+            // Обновляем сам слот
+            this.inventory[slotIndex] = itemStack;
+        } else { // Добавить новый стак в слот
+            if (inventory[slotIndex] /*!*/== null && containSkill(itemStack.getUnlocalizedName())) {
+                removeSkill(itemStack.getUnlocalizedName());
+            }
+            this.inventory[slotIndex] = itemStack;
+            skills.add(itemStack);
+        }
+
         if (itemStack != null && itemStack.stackSize > this.getInventoryStackLimit()) {
             itemStack.stackSize = this.getInventoryStackLimit();
         }
@@ -125,11 +145,11 @@ public class SkillsInventory extends StatsInventory {
     public void writeToNBT(NBTTagCompound compound) {
         NBTTagList items = new NBTTagList();
 
-        for (int i = 0; i < getSizeInventory(); ++i) {
-            if (getStackInSlot(i) != null) {
+        for (int i = 0; i < skills.size(); ++i) {
+            if (skills.get(i) != null) {
                 NBTTagCompound item = new NBTTagCompound();
-                item.setByte("Slot", (byte) i);
-                getStackInSlot(i).writeToNBT(item);
+                //item.setByte("Slot", (byte) i);
+                skills.get(i).writeToNBT(item);
                 items.appendTag(item);
             }
         }
@@ -151,15 +171,56 @@ public class SkillsInventory extends StatsInventory {
         NBTTagList items = compound.getTagList(NBT_TAG, Constants.NBT.TAG_COMPOUND);
 
         if (items.tagCount() == 0) {
-            // TODO: Инициализировать базовый навыки
+            // TODO: Исправить отвратительную инициализацию
+            // TODO: При самом первом запуске начальные предметы не создаются
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ClimbingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "EquitationSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "LockpickingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DrivingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "FightingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DisguiseSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ThrowingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "PilotingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "SwimmingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShootingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShippingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "GamblingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "PerceptionSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "SurvivalSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "TrackingSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "MedicineSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ProvocationSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "InvestigationSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "RepearSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "StreetFlairSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntimidationSkillItem"), 1, 2));
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DiplomacySkillItem"), 1, 2));
+
+            for (ItemStack skill : skills) {
+                if (skill != null) {
+                    NBTTagCompound item = new NBTTagCompound();
+                    skill.writeToNBT(item);
+                    items.appendTag(item);
+                }
+            }
+            compound.setTag(NBT_TAG, items);
         }
 
-        for (int i = 0; i < items.tagCount(); ++i) {
-            NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(i);
-            byte slot = item.getByte("Slot");
 
-            if (slot >= 0 && slot < getSizeInventory()) {
-                inventory[slot] = ItemStack.loadItemStackFromNBT(item);
+        byte slot = 0;
+        String asd = ((SkillItem) ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(0)).getItem()).parentStat.getUnlocalizedName();
+        for (int i = 0; i < items.tagCount(); ++i) {
+            NBTTagCompound NBTItem = (NBTTagCompound) items.getCompoundTagAt(i);
+            //byte slot = NBTItem.getByte("Slot");
+
+            SkillItem item = (SkillItem) ItemStack.loadItemStackFromNBT(NBTItem).getItem();
+
+            if (!containSkill(item.getUnlocalizedName()))
+                skills.add(ItemStack.loadItemStackFromNBT(NBTItem));
+
+            if (slot >= 0 && slot < getSizeInventory() && item.parentStat.getUnlocalizedName().equals(asd)) {
+                ItemStack itemstack = skills.get(skills.size()-1);
+                inventory[slot++] = itemstack;
             }
         }
     }
@@ -167,44 +228,54 @@ public class SkillsInventory extends StatsInventory {
     /**
      * Очищает {@link #inventory}, выставляя все его элементы null
      */
-    public void clearInventory() {
+    private void clearInventory() {
         for (int i = 0; i < getSizeInventory(); i++) {
             inventory[i] = null;
         }
 
     }
 
+    /**
+     * Проверяет, содержится ли в {@link #skills} стак с предметом по имение skillName
+     * @param skillName UnlocalizedName поискового скилла
+     * @return True, если элемент есть в {@link #skills}, иначе - false.
+     */
+    private boolean containSkill(String skillName) {
+        for (ItemStack skill : skills) {
+            if (skill.getUnlocalizedName().equals(skillName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Находит и удаляет стак из {@link #skills}
+     * @param unlocalizedSkillName UnlocalizedName, по которому будет произведен поиск.
+     *                             Если элемент найтен - он удалится из {@link #skills}
+     */
+    private void removeSkill(String unlocalizedSkillName) {
+        for (ItemStack skill : skills) {
+            if (skill.getUnlocalizedName().equals(unlocalizedSkillName)) {
+                skills.remove(skill);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Заполняет {@link #inventory} подходящими элементами из {@link #skills}
+     * @param parentStatName {@link #inventory} будет заполнен только теми элентами, которые
+     *                        имеют данный parentStat.UnlocalizedName
+     */
     public void setSkillsFor(String parentStatName) {
         clearInventory();
-
-        if ("item.StrengthStatItem".equals(parentStatName)) {
-            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ClimbingSkillItem"), 1, 2));
-        } else if ("item.AgilityStatItem".equals(parentStatName)) {
-            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "EquitationSkillItem"), 1, 2));
-            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "LockpickingSkillItem"), 1, 2));
-            setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DrivingSkillItem"), 1, 2));
-            setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "FightingSkillItem"), 1, 2));
-            setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DisguiseSkillItem"), 1, 2));
-            setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ThrowingSkillItem"), 1, 2));
-            setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PilotingSkillItem"), 1, 2));
-            setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SwimmingSkillItem"), 1, 2));
-            setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShootingSkillItem"), 1, 2));
-            setInventorySlotContents(9, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShippingSkillItem"), 1, 2));
-        } else if ("item.IntelligenceStatItem".equals(parentStatName)) {
-            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "GamblingSkillItem"), 1, 2));
-            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "PerceptionSkillItem"), 1, 2));
-            setInventorySlotContents(2, new ItemStack(GameRegistry.findItem(RSStats.MODID, "SurvivalSkillItem"), 1, 2));
-            setInventorySlotContents(3, new ItemStack(GameRegistry.findItem(RSStats.MODID, "TrackingSkillItem"), 1, 2));
-            setInventorySlotContents(4, new ItemStack(GameRegistry.findItem(RSStats.MODID, "MedicineSkillItem"), 1, 2));
-            setInventorySlotContents(5, new ItemStack(GameRegistry.findItem(RSStats.MODID, "ProvocationSkillItem"), 1, 2));
-            setInventorySlotContents(6, new ItemStack(GameRegistry.findItem(RSStats.MODID, "InvestigationSkillItem"), 1, 2));
-            setInventorySlotContents(7, new ItemStack(GameRegistry.findItem(RSStats.MODID, "RepearSkillItem"), 1, 2));
-            setInventorySlotContents(8, new ItemStack(GameRegistry.findItem(RSStats.MODID, "StreetFlairSkillItem"), 1, 2));
-        } else if ("item.EnduranceStatItem".equals(parentStatName)) {
-
-        } else if ("item.CharacterStatItem".equals(parentStatName)) {
-            setInventorySlotContents(0, new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntimidationSkillItem"), 1, 2));
-            setInventorySlotContents(1, new ItemStack(GameRegistry.findItem(RSStats.MODID, "DiplomacySkillItem"), 1, 2));
+        int slot = 0;
+        for (ItemStack skill : skills) {
+            SkillItem item = (SkillItem) skill.getItem();
+            if (parentStatName.equals(item.parentStat.getUnlocalizedName()))
+                this.inventory[slot++] = skill;
+                //setInventorySlotContents(slot++, skill);
         }
     }
 }
