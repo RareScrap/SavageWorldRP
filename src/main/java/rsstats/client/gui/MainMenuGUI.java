@@ -38,6 +38,7 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     /** Ширина GUI в пикселях. Defined as  float, passed as int. */
     private float ySizeFloat;
 
+    // TODO
     private StatsInventory statsInventory;
     public SkillsInventory skillsInventory;
 
@@ -119,6 +120,12 @@ public class MainMenuGUI extends InventoryEffectRenderer {
 
         // Орисовываем превью игрока
         drawPlayerModel(k+30, l+90, /*17*/ 40, (float)(k + 51) - this.xSizeFloat, (float)(l + 75 - 50) - this.ySizeFloat, this.mc.thePlayer);
+
+        int textY = l+113;
+        mc.fontRenderer.drawString("Шаг: " + player.getStep(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Защита: " + player.getProtection(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Стойкость: " + player.getPersistence(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Харизма: " + player.getCharisma(), k+8, textY+=10, 0x444444, false);
 
         // Это было в туторах, но я хз на что это влияет. Слоты и рендер предметов работают и без этого
         /*for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)

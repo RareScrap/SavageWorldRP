@@ -244,5 +244,19 @@ public class StatsInventory implements IInventory {
         }
     }
 
+    /**
+     * Получаем стак из {@link #inventory} по указанному UnlocalizedName
+     * @param unlocalizedSkillName UnlocalizedName нужного стака скилла
+     * @return Стак {@link StatItem}
+     */
+    public ItemStack getStat(String unlocalizedSkillName) {
+        for (ItemStack stat : inventory) {
+            if (stat.getUnlocalizedName().equals(unlocalizedSkillName)) {
+                return stat;
+            }
+        }
+        return null;
+    }
+
 
 }

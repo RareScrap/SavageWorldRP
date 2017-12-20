@@ -264,6 +264,20 @@ public class SkillsInventory extends StatsInventory {
     }
 
     /**
+     * Получаем стак из {@link #skills} по указанному UnlocalizedName
+     * @param unlocalizedSkillName UnlocalizedName нужного стака скилла
+     * @return Стак {@link SkillItem}
+     */
+    public ItemStack getSkill(String unlocalizedSkillName) {
+        for (ItemStack skill : skills) {
+            if (skill.getUnlocalizedName().equals(unlocalizedSkillName)) {
+                return skill;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Заполняет {@link #inventory} подходящими элементами из {@link #skills}
      * @param parentStatName {@link #inventory} будет заполнен только теми элентами, которые
      *                        имеют данный parentStat.UnlocalizedName
