@@ -1,18 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rsstats.data;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
+import rsstats.items.SkillItem;
+import rsstats.items.StatItem;
 
 /**
  *
@@ -22,7 +20,16 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
     private static final String INV_NAME = "StatsInventory";
     
-    private final EntityPlayer player;
+    private final EntityPlayer entityPlayer;
+
+    /** Основной параметр игрока - Шаг */
+    private int step = 6;
+    /** Основной параметр игрока - Защита */
+    private int protection;
+    /** Основной параметр игрока - Стойкость */
+    private int persistence;
+    /** Основной параметр игрока - Харизма */
+    private int charisma = 0;
     
     /** Инвентарь для статов */
     public final StatsInventory statsInventory = new StatsInventory();
@@ -36,11 +43,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     */
 
     public ExtendedPlayer(EntityPlayer player) {
-        this.player = player;
+        this.entityPlayer = player;
     }
     
     /**
-     * Used to register these extended properties for the player during EntityConstructing event
+     * Used to register these extended properties for the entityPlayer during EntityConstructing event
      * This method is for convenience only; it will make your code look nicer
      * @param player
      */
@@ -49,7 +56,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     }
     
     /**
-     * Returns ExtendedPlayer properties for player
+     * Returns ExtendedPlayer properties for entityPlayer
      * This method is for convenience only; it will make your code look nicer
      */
     public static final ExtendedPlayer get(EntityPlayer player) {
@@ -57,7 +64,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     }
 
     public boolean isServerSide() {
-        return this.player instanceof EntityPlayerMP;
+        return this.entityPlayer instanceof EntityPlayerMP;
     }
 
     // LOAD, SAVE =============================================================
@@ -76,6 +83,31 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     @Override
     public void init(Entity entity, World world) {
+        // Инициализируем основные параметры
+        loadNBTData(entity.getEntityData());
+        ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
+        if (itemStack.getItem().getDamage(itemStack) == 0) {
+            this.protection = 2;
+        } else {
+            this.protection = 2 + ((SkillItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
+        }
+        itemStack = statsInventory.getStat("item.EnduranceStatItem");
+        this.persistence = 2 + ((StatItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
     }
-    
+
+    public int getProtection() {
+        return protection;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public int getPersistence() {
+        return persistence;
+    }
+
+    public int getCharisma() {
+        return charisma;
+    }
 }

@@ -7,16 +7,19 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import rsstats.common.CommonProxy;
+import rsstats.common.network.PacketShowSkillsByStat;
+import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
+import rsstats.items.SkillItem;
 
 import java.util.List;
 
@@ -27,7 +30,7 @@ import java.util.List;
  */
 public class MainMenuGUI extends InventoryEffectRenderer {
     /** Расположение фона GUI */
-    public static final ResourceLocation background =
+    private static final ResourceLocation background =
             new ResourceLocation("rsstats","textures/gui/StatsAndInvTab.png");
 
     /** Длина GUI в пикселях. Defined as  float, passed as int. */
@@ -35,22 +38,26 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     /** Ширина GUI в пикселях. Defined as  float, passed as int. */
     private float ySizeFloat;
 
+    // TODO
     private StatsInventory statsInventory;
+    public SkillsInventory skillsInventory;
+
+    private MainContainer mainContainer; // TODO: Рефакторить
+    public ExtendedPlayer player;
+    /** UnlocalozedName текущей выбранно статы */
+    private String current="";
 
     /** Инвентарь для статов */
     // Could use IInventory type to be more generic, but this way will save an import...
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
 
-    public MainMenuGUI(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory) {
-        super(new MainContainer(player, inventoryPlayer, statsInventory, skillsInventory));
-        this.statsInventory = statsInventory;
-        this.allowUserInput = true;
-    }
 
-    public MainMenuGUI() {
-        super(new MainContainer());
+    public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
+        super(mainContainer);
+        this.mainContainer = mainContainer;
         this.allowUserInput = true;
+        this.player = player;
     }
 
     /**
@@ -113,6 +120,12 @@ public class MainMenuGUI extends InventoryEffectRenderer {
 
         // Орисовываем превью игрока
         drawPlayerModel(k+30, l+90, /*17*/ 40, (float)(k + 51) - this.xSizeFloat, (float)(l + 75 - 50) - this.ySizeFloat, this.mc.thePlayer);
+
+        int textY = l+113;
+        mc.fontRenderer.drawString("Шаг: " + player.getStep(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Защита: " + player.getProtection(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Стойкость: " + player.getPersistence(), k+8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString("Харизма: " + player.getCharisma(), k+8, textY+=10, 0x444444, false);
 
         // Это было в туторах, но я хз на что это влияет. Слоты и рендер предметов работают и без этого
         /*for (int i1 = 0; i1 < this.inventorySlots.inventorySlots.size(); ++i1)
@@ -188,20 +201,32 @@ public class MainMenuGUI extends InventoryEffectRenderer {
         super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
     }
 
-
     @Override
-    protected void renderToolTip(ItemStack p_146285_1_, int p_146285_2_, int p_146285_3_) {
-        //System.out.println("hoover");
-        super.renderToolTip(p_146285_1_, p_146285_2_, p_146285_3_);
+    protected void renderToolTip(ItemStack itemStack, int p_146285_2_, int p_146285_3_) {
+        Item item = itemStack.getItem();
+        if (!item.getUnlocalizedName().equals(current) && !(item instanceof SkillItem)) {
+            PacketShowSkillsByStat packet = new PacketShowSkillsByStat(itemStack.getItem().getUnlocalizedName());
+            CommonProxy.INSTANCE.sendToServer(packet);
+            current = itemStack.getItem().getUnlocalizedName();
+        }
+
+        super.renderToolTip(itemStack, p_146285_2_, p_146285_3_);
     }
 
     @Override
     protected void drawHoveringText(List p_146283_1_, int p_146283_2_, int p_146283_3_, FontRenderer font) {
-        //System.out.println("hoover");
         super.drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, font);
     }
 
-
-
-
+    /**
+     * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     *
+     * @param p_73869_1_
+     * @param p_73869_2_
+     */
+    @Override
+    protected void keyTyped(char p_73869_1_, int p_73869_2_) {
+        // TODO: Добавь отображение скиллов по нажатой цифре
+        super.keyTyped(p_73869_1_, p_73869_2_);
+    }
 }
