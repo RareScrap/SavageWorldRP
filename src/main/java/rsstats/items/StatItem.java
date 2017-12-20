@@ -254,4 +254,10 @@ public class StatItem extends Item {
         
         return (float) 1.0;
     }*/
+
+
+    public int getRollLevel(ItemStack itemStack) {
+        return basicRolls.get(getDamage(itemStack)).getDice();
+    }
+
 }
