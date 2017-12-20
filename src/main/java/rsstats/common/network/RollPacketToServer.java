@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author RareScrap
  */
 public class RollPacketToServer implements IMessage {
-    public static int BUFFER_INT_SIZE = 1;
+    private static int BUFFER_INT_SIZE = 1;
     private DiceRoll diceRollMessage;
     
     /**
@@ -41,19 +41,26 @@ public class RollPacketToServer implements IMessage {
         ArrayList<RollModifier> modificators = new ArrayList<RollModifier>();
         int size = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         if (size > 0) {
-            int value = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
+            int value;
+            // Получаем значение, определяющее знак модификатора
+            if (ByteBufUtils.readVarShort(buf) == 1) { // 1 - это "+"
+                value = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
+            } else { // 0 - это "-"
+                value = -ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
+            }
             String description = ByteBufUtils.readUTF8String(buf);
             modificators.add(new RollModifier(value, description));
         }
         
         String template = ByteBufUtils.readUTF8String(buf);
-        
+
+        //TODO
         /*if (size > 0)
             this.diceRollMessage = new DiceRoll(playerName, rollName, dice, template);
         else
             this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
         */
-        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, template);
+        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
     }
 
     /**
@@ -72,8 +79,11 @@ public class RollPacketToServer implements IMessage {
             ByteBufUtils.writeVarInt(buf, diceRollMessage.getModificators().size(), BUFFER_INT_SIZE);
             for (int i = 0; i < diceRollMessage.getModificators().size(); i++) {
                 RollModifier modificator = diceRollMessage.getModificators().get(i);
-                ByteBufUtils.writeVarInt(buf, modificator.getValue(), BUFFER_INT_SIZE);
-                ByteBufUtils.writeUTF8String(buf, modificator.getDescription());
+                /* Определяет знак модификатора. Используетяся т.к. writeVarShort не умеет записывать
+                 * отрицательные числа. 1 - это "+", 0 - это "-". */
+                ByteBufUtils.writeVarShort(buf, diceRollMessage.getDice() < 0 ? 1 : 0);
+                ByteBufUtils.writeVarInt(buf, Math.abs(modificator.getValue()), BUFFER_INT_SIZE); // Записываем значение
+                ByteBufUtils.writeUTF8String(buf, modificator.getDescription()); // Записываем описание
             }
         } else {
             // Записываем размер пустого списка модификаторов

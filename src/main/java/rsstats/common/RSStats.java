@@ -10,10 +10,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.event.TestEventHandler;
-import rsstats.utils.DiceRoll;
 
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Главный класс мода. Представляет собой основу для всех остальных РП модов.
@@ -52,23 +50,13 @@ public class RSStats {
 
     /** Объект, регистриующий сообщения, которыми обмениваются клиент и сервер */
     //public static SimpleNetworkWrapper INSTANCE = new SimpleNetworkWrapper(MODID);
-    /** Дайсы, которые будут использоваться в моде */
-    ArrayList<DiceRoll> dices;
 
     public static Config config;
 
     /**
      * Конструктор, инициализирующий список допустимых дайсов
      */
-    public RSStats() {
-        // Определяем дайсы
-        this.dices = new ArrayList<DiceRoll>();
-        dices.add(new DiceRoll(null, null, 4));
-        dices.add(new DiceRoll(null, null, 6));
-        dices.add(new DiceRoll(null, null, 8));
-        dices.add(new DiceRoll(null, null, 10));
-        dices.add(new DiceRoll(null, null, 12));
-    }
+    public RSStats() {}
 
     /**
      * Фаза преинициализации мода. Тут регистрируются предметы, блоки и сообщения
@@ -82,7 +70,7 @@ public class RSStats {
         // Обрабатываем конфиг
         config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));
 
-        proxy.preInit(event, dices); // Преинициализация в общем прокси
+        proxy.preInit(event); // Преинициализация в общем прокси
     }
     
     @EventHandler

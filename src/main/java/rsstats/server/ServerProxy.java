@@ -9,9 +9,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import rsstats.common.CommonProxy;
-import rsstats.utils.DiceRoll;
-
-import java.util.ArrayList;
 
 /**
  *
@@ -19,8 +16,8 @@ import java.util.ArrayList;
  */
 public class ServerProxy extends CommonProxy {
     @Override
-    public void preInit(FMLPreInitializationEvent e, ArrayList<DiceRoll> dices) {
-        super.preInit(e, dices);
+    public void preInit(FMLPreInitializationEvent e) {
+        super.preInit(e);
     }
 
     @Override
