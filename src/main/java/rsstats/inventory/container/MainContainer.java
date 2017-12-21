@@ -49,19 +49,19 @@ public class MainContainer extends Container {
 
         // Расставляем слоты на панели руки
         for (int i = 0; i < 9; i++) {
-            this.addSlotToContainer(new Slot(inventoryPlayer, i, (i*18 -87) +8, 136));
+            this.addSlotToContainer(new Slot(inventoryPlayer, i, (i*18 -84) +8, 166));
         }
 
         // Расставляем слоты на панели статов
         for (int i = 0, slotIndex = 0; i < statsInventory.getSizeInventory(); ++i, slotIndex++) {
-            this.addSlotToContainer(new StatSlot(statsInventory, i, (i*18 +83) +8, -44));
+            this.addSlotToContainer(new StatSlot(statsInventory, i, (i*18 +86) +8, /*-24*/-14));
             //this.addSlotToContainer(new StatSlot(statsInventory, slotIndex, i*9, 0));
         }
 
         // Расставляем слоты на панели скиллов
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlotToContainer(new Slot(skillsInventory, x + y * 9 /*+ 9*/, (x*18 +83) +8, (y * 18) - 26));
+                this.addSlotToContainer(new Slot(skillsInventory, x + y * 9 /*+ 9*/, (x*18 +86) +8, (y * 18) + 4));
             }
         }
     }

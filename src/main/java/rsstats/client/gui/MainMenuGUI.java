@@ -113,8 +113,8 @@ public class MainMenuGUI extends InventoryEffectRenderer {
         this.xSize = 339;///2;
         this.ySize = 211;///2;
         //339 211
-        int k = this.guiLeft/1 - xSize/4;
-        int l = this.guiTop/1 - ySize/4;
+        int k = this.width/2 - xSize/2;
+        int l = this.height/2 - ySize/2;
 
         drawTexturedRect(k, l, 0, 0, xSize, ySize, 512, 512);
 
