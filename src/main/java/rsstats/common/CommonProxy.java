@@ -18,6 +18,7 @@ import rsstats.common.network.RollPacketToServer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
+import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.DiceRoll;
@@ -124,6 +125,10 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerItem(intimidationSkillItem, "IntimidationSkillItem");
         GameRegistry.registerItem(diplomacySkillItem, "DiplomacySkillItem");
         GameRegistry.registerItem(climbingSkillItem, "ClimbingSkillItem");
+
+        // Регистрация прочих предметов
+        RerollCoin rerollCoinItem = new RerollCoin();
+        GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
     }
 
     public void init(FMLInitializationEvent event) {
