@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import rsstats.common.CommonProxy;
+import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
@@ -40,6 +41,9 @@ public class StatItem extends Item {
     protected final String localePrefix; // "item.StrenghtStatItem" например
     /** Префикс, одинаковый для всех статов */
     protected final String generalPrefix = "item.StatItem";
+
+    /** Минимальный уровень, с которого начинается предмет с самой меньшей метадатой */
+    protected int damageMinLimit = 1;
     
     /**
      * Конструктор, инициализирующий свои поля
@@ -59,7 +63,7 @@ public class StatItem extends Item {
         // Базовая настройка
         this.setUnlocalizedName(unlocalizedName);
         this.setMaxStackSize(1);
-        this.setCreativeTab(CreativeTabs.tabMaterials);
+        this.setCreativeTab(RSStats.CREATIVE_TAB);
         this.setHasSubtypes(true);
     }
 
@@ -85,7 +89,7 @@ public class StatItem extends Item {
         int statLevel = itemstack.getItemDamage(); // Нумерация с нуля
         
         // Строка "Уровень X"
-        list.add(StatCollector.translateToLocalFormatted( generalPrefix + ".level", statLevel+1) );
+        list.add(StatCollector.translateToLocalFormatted( generalPrefix + ".level", statLevel+damageMinLimit) );
         
         // Строка броска (пример: "Бросок: d6+1")
         list.add(StatCollector.translateToLocal(generalPrefix + ".roll") + ": d" + basicRolls.get(statLevel).getDice());

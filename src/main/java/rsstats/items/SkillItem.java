@@ -32,6 +32,7 @@ public class SkillItem extends StatItem {
     public SkillItem(ArrayList<DiceRoll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix, StatItem parentStat) {
         super(basicRolls, unlocalizedName, registerIconPrefix, localePrefix);
         this.parentStat = parentStat;
+        this.damageMinLimit = 0;
     }
     
     /**
