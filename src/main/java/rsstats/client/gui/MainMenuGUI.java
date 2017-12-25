@@ -16,8 +16,6 @@ import org.lwjgl.opengl.GL12;
 import rsstats.common.CommonProxy;
 import rsstats.common.network.PacketShowSkillsByStat;
 import rsstats.data.ExtendedPlayer;
-import rsstats.inventory.SkillsInventory;
-import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
 import rsstats.items.SkillItem;
 
@@ -31,18 +29,13 @@ import java.util.List;
 public class MainMenuGUI extends InventoryEffectRenderer {
     /** Расположение фона GUI */
     private static final ResourceLocation background =
-            new ResourceLocation("rsstats","textures/gui/StatsAndInvTab.png");
+            new ResourceLocation("rsstats","textures/gui/StatsAndInvTab_FIT.png");
 
     /** Длина GUI в пикселях. Defined as  float, passed as int. */
     private float xSizeFloat;
     /** Ширина GUI в пикселях. Defined as  float, passed as int. */
     private float ySizeFloat;
 
-    // TODO
-    private StatsInventory statsInventory;
-    public SkillsInventory skillsInventory;
-
-    private MainContainer mainContainer; // TODO: Рефакторить
     public ExtendedPlayer player;
     /** UnlocalozedName текущей выбранно статы */
     private String current="";
@@ -55,9 +48,12 @@ public class MainMenuGUI extends InventoryEffectRenderer {
 
     public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
         super(mainContainer);
-        this.mainContainer = mainContainer;
         this.allowUserInput = true;
         this.player = player;
+
+        // Высталяем размеры контейнера. Соответствует размерам GUI на текстуре.
+        this.xSize = 340;
+        this.ySize = 211;
     }
 
     /**
@@ -110,13 +106,10 @@ public class MainMenuGUI extends InventoryEffectRenderer {
         //GL11.glScalef(2.0F, 2.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(background);
 
-        this.xSize = 339;///2;
-        this.ySize = 211;///2;
-        //339 211
         int k = this.width/2 - xSize/2;
         int l = this.height/2 - ySize/2;
 
-        drawTexturedRect(k, l, 0, 0, xSize, ySize, 512, 512);
+        drawTexturedRect(k, l, 0, 0, xSize, ySize, xSize, ySize);
 
         // Орисовываем превью игрока
         drawPlayerModel(k+30, l+90, /*17*/ 40, (float)(k + 51) - this.xSizeFloat, (float)(l + 75 - 50) - this.ySizeFloat, this.mc.thePlayer);
