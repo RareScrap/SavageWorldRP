@@ -10,6 +10,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 import rsstats.common.RSStats;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
+import rsstats.inventory.WearableInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 
@@ -38,9 +39,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     private int tirednessLimit = 25;
     
     /** Инвентарь для статов */
-    public final StatsInventory statsInventory = new StatsInventory();
+    public final StatsInventory statsInventory;
     /** Инвентарь для скиллов */
-    public final SkillsInventory skillsInventory = new SkillsInventory();
+    public final SkillsInventory skillsInventory;
+    /** Инвентарь для носимых предметов */
+    public final WearableInventory wearableInventory;
     
     /*
     Тут в виде полей можно хранить дополнительную информацию о Entity: мана,
@@ -48,8 +51,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     что нельзя хранить в виде блоков
     */
 
-    public ExtendedPlayer(EntityPlayer player) {
+    private ExtendedPlayer(EntityPlayer player) {
         this.entityPlayer = player;
+        statsInventory = new StatsInventory(player);
+        skillsInventory = new SkillsInventory(player);
+        wearableInventory = new WearableInventory();
     }
     
     /**
@@ -82,10 +88,15 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         this.statsInventory.writeToNBT(properties);
         this.skillsInventory.writeToNBT(properties);
+        this.wearableInventory.writeToNBT(properties);
     }
 
+    // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
     @Override
     public void loadNBTData(NBTTagCompound properties) {
+        this.statsInventory.totalClear();
+        this.skillsInventory.totalClear();
+
         exp = properties.getInteger("exp");
         lvl = properties.getInteger("lvl");
         tiredness = properties.getInteger("tiredness");
@@ -93,13 +104,33 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
+        this.wearableInventory.readFromNBT(properties);
     }
 
+    /**
+     * Used to initialize the extended properties with the entity that this is attached to, as well
+     * as the world object.
+     * Called automatically if you register with the EntityConstructing event.
+     * May be called multiple times if the extended properties is moved over to a new entity.
+     *  Such as when a player switches dimension {Minecraft re-creates the player entity}
+     * @param entity  The entity that this extended properties is attached to
+     * @param world  The world in which the entity exists
+     */
     @Override
     public void init(Entity entity, World world) {
+        /* Крайне интересный хак. Дело в том, что init() используется для инициализации самого ExtendedPlayer'а,
+         * а не Compound'а, который передается в loadNBTData(). TODO: Я все еще не разобрался как связана сущность, создаваемая тут и compound в loadNBTData
+         * Я проивожу "инициализацию нового игрока" тут, т.к. если игрок зашел в игру первый раз - loadNBTData никогда не
+         * вызовется при логине. Подозреваю это из-за того, что на сервере нет NBT записи об этом игроке.
+         * Зато когда она заходит во второй раз - loadNBTData() точно вызовется, но т.к. перед ним вызовется и init(), то
+         * в loadNBTData() нужно предварительно очистить инициализацию нового игрока, которая выполнилась тут.
+         */
+        ExtendedPlayer.get((EntityPlayer) entity).statsInventory.initItems();
+        ExtendedPlayer.get((EntityPlayer) entity).skillsInventory.initItems();
+
         // Инициализируем основные параметры
-        loadNBTData(entity.getEntityData());
-        try {
+        //loadNBTData(entity.getEntityData());
+        try { // КОСТЫЛЬ
             ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
             if (itemStack.getItem().getDamage(itemStack) == 0) {
                 this.protection = 2;
