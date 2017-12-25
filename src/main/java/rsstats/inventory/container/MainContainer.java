@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
+import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
@@ -65,7 +66,7 @@ public class MainContainer extends Container {
         // Расставляем слоты на панели скиллов
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlotToContainer(new Slot(skillsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 26));
+                this.addSlotToContainer(new SkillSlot(skillsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 26));
             }
         }
     }
