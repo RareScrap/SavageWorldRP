@@ -11,10 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import rsstats.common.event.KeyHandler;
-import rsstats.common.network.PacketOpenRSStatsInventory;
-import rsstats.common.network.PacketOpenSSPPage;
-import rsstats.common.network.PacketShowSkillsByStat;
-import rsstats.common.network.RollPacketToServer;
+import rsstats.common.network.*;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
@@ -35,6 +32,39 @@ import static rsstats.common.RSStats.proxy;
  * @author RareScrap
  */
 public class CommonProxy implements IGuiHandler {
+    public enum Skills {
+        ClimbingSkillItem,
+        EquitationSkillItem,
+        LockpickingSkillItem,
+        DrivingSkillItem,
+        FightingSkillItem,
+        DisguiseSkillItem,
+        ThrowingSkillItem,
+        PilotingSkillItem,
+        SwimmingSkillItem,
+        ShootingSkillItem,
+        ShippingSkillItem,
+        GamblingSkillItem,
+        PerceptionSkillItem,
+        SurvivalSkillItem,
+        TrackingSkillItem,
+        MedicineSkillItem,
+        ProvocationSkillItem,
+        InvestigationSkillItem,
+        RepearSkillItem,
+        StreetFlairSkillItem,
+        IntimidationSkillItem,
+        DiplomacySkillItem,
+    }
+
+    public enum Stats {
+        StrengthStatItem,
+        AgilityStatItem,
+        IntelligenceStatItem,
+        EnduranceStatItem,
+        CharacterStatItem
+    }
+
     /** Обработчик нажатия кнопок, используемых для вызова GUI */
     protected KeyHandler keyHandler;
     /** Обертка для работы с сетью */
@@ -47,6 +77,7 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, 1, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, 2, Side.SERVER);
         INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, 3, Side.SERVER);
+        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, 4, Side.CLIENT);
 
         // Дайсы для статов
         ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
@@ -62,7 +93,7 @@ public class CommonProxy implements IGuiHandler {
         StatItem enduranceStatItem = new StatItem(statDices, "EnduranceStatItem", "rsstats:endurance", "item.EnduranceStatItem");
         StatItem characterStatItem = new StatItem(statDices, "CharacterStatItem", "rsstats:character", "item.CharacterStatItem");
         // Регистрация предметов статов
-        GameRegistry.registerItem(strenghtStatItem, "StrenghtStatItem");
+        GameRegistry.registerItem(strenghtStatItem, "StrengthStatItem");
         GameRegistry.registerItem(agilityStatItem, "AgilityStatItem");
         GameRegistry.registerItem(intelligenceStatItem, "IntelligenceStatItem");
         GameRegistry.registerItem(enduranceStatItem, "EnduranceStatItem");
@@ -142,7 +173,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case RSStats.GUI:
-                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory);
+                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory);
             case RSStats.SSP_UI_CODE:
                 return new StatsContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
 
@@ -157,7 +188,4 @@ public class CommonProxy implements IGuiHandler {
     
     // Переопределяется в ClientProxy
     public void registerKeyBindings() {}
-
-    
-    
 }

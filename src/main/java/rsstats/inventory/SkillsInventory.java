@@ -1,6 +1,7 @@
 package rsstats.inventory;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -68,7 +69,7 @@ public class SkillsInventory extends StatsInventory {
             // Обновляем сам слот
             this.inventory[slotIndex] = itemStack;
         } else { // Добавить новый стак в слот
-            if (inventory[slotIndex] /*!*/== null && containSkill(itemStack.getUnlocalizedName())) {
+            if (/*inventory[slotIndex]  *!* == null &&*/ containSkill(itemStack.getUnlocalizedName())) {
                 removeSkill(itemStack.getUnlocalizedName());
             } // TODO: !!!!!!!!!!!!!!!!!!!!!!!!
             this.inventory[slotIndex] = itemStack;
@@ -264,5 +265,20 @@ public class SkillsInventory extends StatsInventory {
         // TODO: Почему нельзя вызвать супер?
         skills.clear();
         clearInventory();
+    }
+
+    /**
+     * Устанавливает новое содержимое для хранилища скиллов ({@link #skills})
+     * @param list Обновленное хранилие скиллов
+     */
+    public void setNewSkills(ArrayList<ItemStack> list) {
+        this.skills = list;
+        if (Minecraft.getMinecraft().currentScreen != null) {
+            Minecraft.getMinecraft().currentScreen.updateScreen();
+        }
+    }
+
+    public ArrayList<ItemStack> getSkills() {
+        return skills;
     }
 }

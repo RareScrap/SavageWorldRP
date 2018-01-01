@@ -7,7 +7,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
+import rsstats.common.network.PacketSyncPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
@@ -105,6 +107,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
         this.wearableInventory.readFromNBT(properties);
+
+        updateParams();
     }
 
     /**
@@ -176,5 +180,34 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     public void setLvl(int lvl) {
         this.lvl = lvl;
+    }
+
+    /**
+     * Перерасчитывает параметры игрока (такие, как например, {@link #protection})
+     */
+    public void updateParams() {
+        ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
+        if (itemStack != null) {
+            if (itemStack.getItem().getDamage(itemStack) == 0) {
+                this.protection = 2;
+            } else {
+                this.protection = 2 + ((SkillItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
+            }
+        }
+
+        itemStack = statsInventory.getStat("item.EnduranceStatItem");
+        if (itemStack != null) {
+            this.persistence = 2 + ((StatItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
+        }
+    }
+
+
+    /**
+     * Синхронихронизиует серверного и клиентского ExtendedPlayer'а.
+     */
+    public void sync() {
+        if(!entityPlayer.worldObj.isRemote) {
+            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(skillsInventory.getSkills()), (EntityPlayerMP)entityPlayer);
+        }
     }
 }

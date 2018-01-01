@@ -18,6 +18,9 @@ import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.items.SkillItem;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
  * стойкость), панель предметов и панели статов, навыков и перков.
@@ -28,6 +31,9 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     private static final ResourceLocation background =
             new ResourceLocation(RSStats.MODID,"textures/gui/StatsAndInvTab_FIT.png");
 
+    /** Период обновления экрана в мс */
+    private static final int UPDATE_PERIOD = 100;
+    /** Игрок, открывший GUI */
     public ExtendedPlayer player;
     /** UnlocalozedName текущей выбранно статы */
     private String currentStat = "";
@@ -36,6 +42,11 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     // Could use IInventory type to be more generic, but this way will save an import...
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
+
+    /** Таймер, выполняющий перерасчет параметров {@link ExtendedPlayer}'ра на стороне клиента.
+     * Для этих целей можно использовать и пакет, который будет слаться при клике/заполнеии слота, но
+     * зачем, когда можно обойтись и без пакета?*/
+    private Timer timer;
 
 
     public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
@@ -191,5 +202,31 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     protected void keyTyped(char p_73869_1_, int p_73869_2_) {
         // TODO: Добавь отображение скиллов по нажатой цифре
         super.keyTyped(p_73869_1_, p_73869_2_);
+    }
+
+    /**
+     * Called when the screen is unloaded. Used to disable keyboard repeat events.
+     */
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        timer.cancel();
+        timer.purge();
+    }
+
+    /**
+     * Adds the buttons (and other controls) to the screen in question.
+     */
+    @Override
+    public void initGui() {
+        super.initGui();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                player.updateParams();
+                updateScreen();
+            }
+        }, 0, UPDATE_PERIOD);
     }
 }
