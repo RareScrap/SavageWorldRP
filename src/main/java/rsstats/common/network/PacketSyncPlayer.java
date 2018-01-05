@@ -16,15 +16,19 @@ import java.util.ArrayList;
  * Пакет, синхронизирующий некоторый поля {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
  */
 public class PacketSyncPlayer implements IMessage {
+    private static int BUFFER_INT_SIZE = 1;
+
     private ArrayList<ItemStack> skills;
+    private int lvl;
 
     /**
      * Необходимый пустой публичный конструктор
      */
     public PacketSyncPlayer() {}
 
-    public PacketSyncPlayer(ArrayList<ItemStack> skills) {
+    public PacketSyncPlayer(ArrayList<ItemStack> skills, int lvl) {
         this.skills = skills;
+        this.lvl = lvl;
     }
 
     /**
@@ -44,6 +48,7 @@ public class PacketSyncPlayer implements IMessage {
             skills.add(itemStack);
         }
 
+        lvl = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
     }
 
     /**
@@ -59,6 +64,8 @@ public class PacketSyncPlayer implements IMessage {
             skill.writeToNBT(NBTSkillItem);
             ByteBufUtils.writeTag(buf, NBTSkillItem);
         }
+
+        ByteBufUtils.writeVarInt(buf, lvl, BUFFER_INT_SIZE);
     }
 
     /**
@@ -69,6 +76,7 @@ public class PacketSyncPlayer implements IMessage {
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
             extendedPlayer.skillsInventory.setNewSkills(message.skills);
+            extendedPlayer.setLvl(message.lvl);
             extendedPlayer.updateParams();
             return null;
         }
