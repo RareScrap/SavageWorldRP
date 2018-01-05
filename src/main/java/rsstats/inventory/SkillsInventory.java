@@ -1,20 +1,20 @@
 package rsstats.inventory;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
+import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.items.SkillItem;
 
 import java.util.ArrayList;
 
 public class SkillsInventory extends StatsInventory {
-    /** The name your custom inventory will display in the GUI, possibly just "Inventory" */
-    // TODO: Локализировать эту строку
-    private final String name = "Skills";
-
     /** The key used to store and retrieve the inventory from NBT */
     private static final String NBT_TAG = "skills";
 
@@ -22,23 +22,23 @@ public class SkillsInventory extends StatsInventory {
     /* This is also the place to define which slot is which if you have different types,
      * for example SLOT_SHIELD = 0, SLOT_AMULET = 1; */
     private static final int INV_SIZE = 27;
-    /** Масимальный размер стака для предметов в инвенторе {@link #inventory} */
-    private static final int STACK_LIMIT = 1;
 
-    /** Структура, хранящая предметы, которые будут отображены в инвентаре пользователя.
+    /** Структура, хранящая только те предметы, которые будут отображены в инвентаре пользователя.
      * Inventory's size must be same as number of slots you add to the Container class. */
     private ItemStack[] inventory = new ItemStack[INV_SIZE];
 
-    /** Структура, хранящая предметы инвентаря в стаках */
+    /** Структура, хранящая все предметы инвентаря в стаках */
     private ArrayList<ItemStack> skills = new ArrayList<ItemStack>();
 
     /**
-     * Необходимый пустой публичный контсруктор
+     * Необходимый публичный контсруктор
      */
-    public SkillsInventory() {}
+    public SkillsInventory(EntityPlayer entityPlayer) {
+        super(entityPlayer);
+    }
 
     /**
-     * Геттер для {@link #inventory}
+     * Геттер для размера {@link #inventory}
      * @return Размер массива {@link #inventory}
      */
     @Override
@@ -56,32 +56,6 @@ public class SkillsInventory extends StatsInventory {
         return inventory[slotIndex];
     }
 
-    /**
-     * Уменьшает размер стака предмета
-     *
-     * @param slotIndex Слот в инвенторе, где лежит предмет, стак которого нужно уменьшить
-     * @param amount    На сколько нужно уменьший стак
-     * @return Предмет с уменьшенным стаком
-     */
-    @Override
-    public ItemStack decrStackSize(int slotIndex, int amount) {
-        // Можно ли вызывать супер? Пока я просто скопирую супер сюда
-        // getStackInSlot в супере вызовется для инвенторя в супере или для инвенторя тут?
-        // return super.decrStackSize(slotIndex, amount);
-
-        ItemStack stack = getStackInSlot(slotIndex);
-        if (stack != null) {
-            if (stack.stackSize > amount) {
-                stack = stack.splitStack(amount);
-                // ВАЖНО this.onInventoryChanged();
-            }
-            else {
-                setInventorySlotContents(slotIndex, null);
-            }
-        }
-        return stack;
-    }
-
     @Override
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
         //super.setInventorySlotContents(slotIndex, itemStack);
@@ -95,9 +69,9 @@ public class SkillsInventory extends StatsInventory {
             // Обновляем сам слот
             this.inventory[slotIndex] = itemStack;
         } else { // Добавить новый стак в слот
-            if (inventory[slotIndex] /*!*/== null && containSkill(itemStack.getUnlocalizedName())) {
+            if (/*inventory[slotIndex]  *!* == null &&*/ containSkill(itemStack.getUnlocalizedName())) {
                 removeSkill(itemStack.getUnlocalizedName());
-            }
+            } // TODO: !!!!!!!!!!!!!!!!!!!!!!!!
             this.inventory[slotIndex] = itemStack;
             skills.add(itemStack);
         }
@@ -122,34 +96,31 @@ public class SkillsInventory extends StatsInventory {
      */
     @Override
     public boolean isItemValidForSlot(int slotIndex, ItemStack itemStack) {
-        boolean a = itemStack.getItem() instanceof SkillItem;
         return itemStack.getItem() instanceof SkillItem;
     }
 
     /**
-     * Возвращает масимальный размер стака для предметов в этом инвенторе
-     *
-     * @return {@link #STACK_LIMIT}
+     * Возвращает локализованное имя инвентаря
+     * @return Имя инвентаря
      */
     @Override
-    public int getInventoryStackLimit() {
-        return STACK_LIMIT;
+    public String getInventoryName() {
+        return StatCollector.translateToLocal("inventory." + NBT_TAG);
     }
 
     /**
      * Записывает состояние инвентаря в NBT
-     *
      * @param compound TODO
      */
     @Override
     public void writeToNBT(NBTTagCompound compound) {
         NBTTagList items = new NBTTagList();
 
-        for (int i = 0; i < skills.size(); ++i) {
-            if (skills.get(i) != null) {
+        for (ItemStack skill : skills) {
+            if (skill != null) {
                 NBTTagCompound item = new NBTTagCompound();
                 //item.setByte("Slot", (byte) i);
-                skills.get(i).writeToNBT(item);
+                skill.writeToNBT(item);
                 items.appendTag(item);
             }
         }
@@ -166,51 +137,23 @@ public class SkillsInventory extends StatsInventory {
      */
     @Override
     public void readFromNBT(NBTTagCompound compound) {
-        //super.readFromNBT(compound);
-
         NBTTagList items = compound.getTagList(NBT_TAG, Constants.NBT.TAG_COMPOUND);
 
-        if (items.tagCount() == 0) {
-            // TODO: Исправить отвратительную инициализацию
-            // TODO: При самом первом запуске начальные предметы не создаются
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ClimbingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "EquitationSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "LockpickingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DrivingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "FightingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DisguiseSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ThrowingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "PilotingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "SwimmingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShootingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ShippingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "GamblingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "PerceptionSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "SurvivalSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "TrackingSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "MedicineSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "ProvocationSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "InvestigationSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "RepearSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "StreetFlairSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "IntimidationSkillItem"), 1, 2));
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, "DiplomacySkillItem"), 1, 2));
+        /* Сравнивать compound'ы через строки понадобвится того, когда потребуется чтобы статы не
+         * добавлялись когда их нет, но в compound есть тег инвентаря статов */
+        //String a = compound.toString();
+        //String b = a.replaceFirst(NBT_TAG, "");
 
-            for (ItemStack skill : skills) {
-                if (skill != null) {
-                    NBTTagCompound item = new NBTTagCompound();
-                    skill.writeToNBT(item);
-                    items.appendTag(item);
-                }
-            }
-            compound.setTag(NBT_TAG, items);
+        if (items.tagCount() == 0) {
+            initItems();
+            return;
         }
 
-
+        // Штатное чтение из NBT
         byte slot = 0;
         String asd = ((SkillItem) ItemStack.loadItemStackFromNBT(items.getCompoundTagAt(0)).getItem()).parentStat.getUnlocalizedName();
         for (int i = 0; i < items.tagCount(); ++i) {
-            NBTTagCompound NBTItem = (NBTTagCompound) items.getCompoundTagAt(i);
+            NBTTagCompound NBTItem = items.getCompoundTagAt(i);
             //byte slot = NBTItem.getByte("Slot");
 
             SkillItem item = (SkillItem) ItemStack.loadItemStackFromNBT(NBTItem).getItem();
@@ -223,6 +166,27 @@ public class SkillsInventory extends StatsInventory {
                 inventory[slot++] = itemstack;
             }
         }
+    }
+
+    /**
+     * Инициализирует начальные скиллы
+     */
+    @Override
+    public void initItems() {
+        // Заполняем общее хранилище
+        for (CommonProxy.Skills skill : CommonProxy.Skills.values()) {
+            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, skill.toString())));
+        }
+
+        // Заполняем хранилище отображения
+        for (int i = 0, slot = 0; i < skills.size() && slot < inventory.length; i++) {
+            SkillItem item = (SkillItem) skills.get(i).getItem();
+            if (item.parentStat.getUnlocalizedName().equals("item.StrengthStatItem")) {
+                inventory[slot++] = skills.get(i);
+            }
+        }
+
+        markDirty();
     }
 
     /**
@@ -291,5 +255,30 @@ public class SkillsInventory extends StatsInventory {
                 this.inventory[slot++] = skill;
                 //setInventorySlotContents(slot++, skill);
         }
+    }
+
+    /**
+     * Очищает все имеющиеся хранилища {@link ItemStack}'ов
+     */
+    @Override
+    public void totalClear() {
+        // TODO: Почему нельзя вызвать супер?
+        skills.clear();
+        clearInventory();
+    }
+
+    /**
+     * Устанавливает новое содержимое для хранилища скиллов ({@link #skills})
+     * @param list Обновленное хранилие скиллов
+     */
+    public void setNewSkills(ArrayList<ItemStack> list) {
+        this.skills = list;
+        if (Minecraft.getMinecraft().currentScreen != null) {
+            Minecraft.getMinecraft().currentScreen.updateScreen();
+        }
+    }
+
+    public ArrayList<ItemStack> getSkills() {
+        return skills;
     }
 }

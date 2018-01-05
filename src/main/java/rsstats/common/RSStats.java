@@ -7,6 +7,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.event.TestEventHandler;
@@ -36,6 +39,14 @@ public class RSStats {
     /** Объект-экземпляр мода */
     @Mod.Instance(MODID)
     public static RSStats instance = new RSStats();
+
+    /** Вкладка в креативе */
+    public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MODNAME) {
+        @Override
+        public Item getTabIconItem() {
+            return GameRegistry.findItem(RSStats.MODID, "RerollCoinItem");
+        }
+    };
     
     /**
      * Хандлер для событий (хз каких)

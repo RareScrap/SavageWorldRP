@@ -35,7 +35,16 @@ public class ClientProxy extends CommonProxy {
         if (world instanceof WorldClient) {
             // Ищем GUI, соответствующий данному ID
             switch (ID) {
-                case RSStats.GUI: return new MainMenuGUI(ExtendedPlayer.get(player), new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory));
+                case RSStats.GUI: {
+                    return new MainMenuGUI(
+                            ExtendedPlayer.get(player),
+                            new MainContainer(player,
+                                    player.inventory,
+                                    ExtendedPlayer.get(player).statsInventory,
+                                    ExtendedPlayer.get(player).skillsInventory,
+                                    ExtendedPlayer.get(player).wearableInventory)
+                    );
+                }
                 /*
                 ВНИМАНИЕ! По туториалу, мне не нужно делать проверку в строке 25.
                 Более того, мне нужно свитч затолкать в CommonProxy. Но так как

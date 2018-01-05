@@ -8,6 +8,7 @@ package rsstats.common.event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import rsstats.data.ExtendedPlayer;
 
 /**
@@ -33,5 +34,18 @@ public class TestEventHandler {
     // much uglier:
     //if (event.entity instanceof EntityPlayer && event.entity.getExtendedProperties(ExtendedPlayer.EXT_PROP_NAME) == null)
     //event.entity.registerExtendedProperties(ExtendedPlayer.EXT_PROP_NAME, new ExtendedPlayer((EntityPlayer) event.entity));
+    }
+
+    /**
+     * Синхронизирует данные на клиенте с сервером в момент входа пользователя в игру
+     * @param e
+     */
+    @SubscribeEvent
+    public void entityJoinWorld(EntityJoinWorldEvent e) {
+        if (e.entity instanceof EntityPlayer) {
+            ExtendedPlayer data = ExtendedPlayer.get((EntityPlayer) e.entity);
+            if (data != null)
+                data.sync();
+        }
     }
 }
