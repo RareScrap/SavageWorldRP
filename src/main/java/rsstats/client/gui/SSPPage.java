@@ -1,19 +1,15 @@
 package rsstats.client.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.StatsContainer;
-import rsstats.inventory.slots.StatSlot;
 
 /**
  * UI инвентаря статов, скиллов и перков
@@ -41,7 +37,7 @@ public class SSPPage extends GuiContainer {
         super(new StatsContainer(player, inventoryPlayer, statsInventory));
         System.out.print("SSPPage(...)\n");
         this.statsInventory = statsInventory;
-        // if you need the player for something later on, store it in a local variable here as well
+        // if you need the entityPlayer for something later on, store it in a local variable here as well
     }
 
     /**
@@ -73,7 +69,7 @@ public class SSPPage extends GuiContainer {
         // Текст я пока не рендерю
         // with the name "Custom Inventory", the 'Cu' will be drawn in the first slot
         //this.fontRenderer.drawString(s, this.xSize - this.fontRenderer.getStringWidth(s), 12, 4210752);
-        // this just adds "Inventory" above the player's inventory below
+        // this just adds "Inventory" above the entityPlayer's inventory below
         //this.fontRenderer.drawString(I18n.getString("container.inventory"), 80, this.ySize - 96, 4210752);
     }
 
@@ -123,7 +119,7 @@ public class SSPPage extends GuiContainer {
     }
     
     /**
-     * Copied straight out of vanilla - renders the player model on screen
+     * Copied straight out of vanilla - renders the entityPlayer model on screen
      */
     public static void drawPlayerModel(int x, int y, int scale, float yaw, float pitch, EntityLivingBase entity) {
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
