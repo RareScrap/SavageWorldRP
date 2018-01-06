@@ -40,10 +40,10 @@ public class RollPacketToServer implements IMessage {
         
         ArrayList<RollModifier> modificators = new ArrayList<RollModifier>();
         int size = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
-        if (size > 0) {
+        for (int i = 0; i < size; i++) {
             int value;
             // Получаем значение, определяющее знак модификатора
-            if (ByteBufUtils.readVarShort(buf) == 1) { // 1 - это "+"
+            if (ByteBufUtils.readVarShort(buf) == 0) { // 1 - это "+"
                 value = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
             } else { // 0 - это "-"
                 value = -ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
@@ -81,7 +81,7 @@ public class RollPacketToServer implements IMessage {
                 RollModifier modificator = diceRollMessage.getModificators().get(i);
                 /* Определяет знак модификатора. Используетяся т.к. writeVarShort не умеет записывать
                  * отрицательные числа. 1 - это "+", 0 - это "-". */
-                ByteBufUtils.writeVarShort(buf, diceRollMessage.getDice() < 0 ? 1 : 0);
+                ByteBufUtils.writeVarShort(buf, modificator.getValue() < 0 ? 1 : 0);
                 ByteBufUtils.writeVarInt(buf, Math.abs(modificator.getValue()), BUFFER_INT_SIZE); // Записываем значение
                 ByteBufUtils.writeUTF8String(buf, modificator.getDescription()); // Записываем описание
             }
