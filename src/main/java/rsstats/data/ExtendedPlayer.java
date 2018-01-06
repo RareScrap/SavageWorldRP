@@ -15,6 +15,11 @@ import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.utils.RollModifier;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -23,7 +28,7 @@ import rsstats.items.StatItem;
 public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
     private static final String EXTENDED_ENTITY_TAG = RSStats.MODID;
-    
+
     private final EntityPlayer entityPlayer;
 
     /** Основной параметр игрока - Шаг */
@@ -46,6 +51,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public final SkillsInventory skillsInventory;
     /** Инвентарь для носимых предметов */
     public final WearableInventory wearableInventory;
+    /** Хранилище модификаторов, преминимых с броскам данного игрока */
+    private Map<String, ArrayList<RollModifier>> modifierMap = new HashMap<String, ArrayList<RollModifier>>();
     
     /*
     Тут в виде полей можно хранить дополнительную информацию о Entity: мана,
@@ -57,7 +64,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.entityPlayer = player;
         statsInventory = new StatsInventory(player);
         skillsInventory = new SkillsInventory(player);
-        wearableInventory = new WearableInventory();
+        wearableInventory = new WearableInventory(this);
     }
     
     /**
@@ -176,6 +183,36 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     public int getTirednessLimit() {
         return tirednessLimit;
+    }
+
+    public EntityPlayer getEntityPlayer() {
+        return entityPlayer;
+    }
+
+    public Map<String, ArrayList<RollModifier>> getModifierMap() {
+        return modifierMap;
+    }
+
+    public void addModifier(String key, RollModifier modifier) {
+        if (modifierMap.get(key) == null) {
+            modifierMap.put(key, new ArrayList<RollModifier>());
+        }
+
+        modifierMap.get(key).add(modifier);
+    }
+
+    public void removeModifier(String key, int modifierValue, String modifierDescr) {
+        if (modifierMap.get(key) == null) {
+            return;
+        }
+
+        for (int i = 0; i < modifierMap.get(key).size(); i++) {
+            RollModifier modifier = modifierMap.get(key).get(i);
+            if (modifier.getValue() == modifierValue && modifierDescr.equals(modifier.getDescription())) {
+                modifierMap.get(key).remove(modifier);
+                return;
+            }
+        }
     }
 
     public void setLvl(int lvl) {
