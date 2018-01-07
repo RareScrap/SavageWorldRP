@@ -40,7 +40,9 @@ public class RollModifier {
         StringBuilder stringBuilder = new StringBuilder();
         for (String word : words) {
             // Присоединяем форматирование к каждому слову
-            stringBuilder.append(formatCode).append(word).append(" ");
+            // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку
+            if (word.charAt(0) != '§')
+                stringBuilder.append(formatCode).append(word).append(" ");
         }
         stringBuilder.deleteCharAt(stringBuilder.length()-1); // Удаляем лишний пробел в последнем слове
         description = stringBuilder.toString(); // Сохраняем форматированное описание

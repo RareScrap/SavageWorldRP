@@ -5,8 +5,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.common.util.Constants;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncPlayer;
@@ -114,6 +116,18 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
         this.wearableInventory.readFromNBT(properties);
+
+        /* Т.к. ванильный инвентарь переписывать нежелательно, начальная инициализация модификатором от брони
+         * реализована здесь */
+        NBTTagList playerInventory = properties.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < playerInventory.tagCount(); i++) {
+            NBTTagCompound itemNBT = playerInventory.getCompoundTagAt(i);
+            int slotID = itemNBT.getInteger("Slot");
+            if (slotID >= 100 && slotID <= 103) {
+                extractModifiersFromItemStack(ItemStack.loadItemStackFromNBT(itemNBT));
+            }
+
+        }
 
         updateParams();
     }
@@ -245,6 +259,42 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+        }
+    }
+
+    /**
+     * Вытаскивает модификаторы из стака и добавляет их пользователю
+     * @param itemStack предмет с модификаторами
+     */
+    public void extractModifiersFromItemStack(ItemStack itemStack) {
+        if (itemStack != null && itemStack.getTagCompound() != null) { // извлекаем и сохраняем модификаторы
+            NBTTagList modifiersList = itemStack.getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < modifiersList.tagCount(); i++) {
+                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
+                int value = modifierTag.getInteger("value");
+                String description = modifierTag.getString("description");
+                String to = modifierTag.getString("to");
+                RollModifier modifier = new RollModifier(value, description);
+                this.addModifier(to, modifier);
+            }
+        }
+    }
+
+    /**
+     * Вытаскивает модификаторы из стака и ищет их среди подификаторов пользователя.
+     * Если модификатор найден - он удаляется из модификаторов игрока
+     * @param itemStack предмет с модификаторами
+     */
+    public void removeModifiersFromItemStack(ItemStack itemStack) {
+        if (itemStack != null && itemStack.getTagCompound() != null) {
+            NBTTagList modifiersList = itemStack.getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < modifiersList.tagCount(); i++) {
+                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
+                int value = modifierTag.getInteger("value");
+                String description = modifierTag.getString("description");
+                String to = modifierTag.getString("to");
+                this.removeModifier(to, value, description);
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import rsstats.data.ExtendedPlayer;
-import rsstats.utils.RollModifier;
 
 public class WearableInventory implements IInventory {
     private final String name = "Wearable";
@@ -93,27 +92,12 @@ public class WearableInventory implements IInventory {
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
         // Работаем с модификаторами предмета
         if (itemStack != null) { // извлекаем и сохраняем модификаторы
-            NBTTagList modifiersList = itemStack.getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < modifiersList.tagCount(); i++) {
-                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
-                int value = modifierTag.getInteger("value");
-                String description = modifierTag.getString("description");
-                String to = modifierTag.getString("to");
-                RollModifier modifier = new RollModifier(value, description);
-                extendedPlayer.addModifier(to, modifier);
-            }
+            extendedPlayer.extractModifiersFromItemStack(itemStack);
         }
 
         // Если до этого в слоте находился другой предмет - удаляем его модификаторы
         if (getStackInSlot(slotIndex) != null) {
-            NBTTagList modifiersList = getStackInSlot(slotIndex).getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < modifiersList.tagCount(); i++) {
-                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
-                int value = modifierTag.getInteger("value");
-                String description = modifierTag.getString("description");
-                String to = modifierTag.getString("to");
-                extendedPlayer.removeModifier(to, value, description);
-            }
+            extendedPlayer.removeModifiersFromItemStack(getStackInSlot(slotIndex));
         }
 
         // Непосредственно помещаем сам стак в слот

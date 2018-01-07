@@ -14,6 +14,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import rsstats.common.RSStats;
+import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
@@ -101,13 +102,47 @@ public class MainContainer extends Container {
                     return ItemArmor.func_94602_b(k);
                 }
 
+
+
+                @Override
+                public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack itemStack) {
+                    super.onPickupFromSlot(p_82870_1_, itemStack);
+                    ExtendedPlayer.get(player).removeModifiersFromItemStack(itemStack); // Удаляем модификаторы от прошлой брони
+                }
+
+                /**
+                 * Helper method to put a stack in the slot.
+                 *
+                 * @param itemStack
+                 */
+                @Override
+                public void putStack(ItemStack itemStack) {
+                    if (!player.worldObj.isRemote) {
+                        // Если в слоте уже был предмет - удаляем его модификаторы
+                        if (this.getStack() != null) {
+                            ExtendedPlayer.get(player).removeModifiersFromItemStack(this.getStack());
+                        }
+                        // Извлекаем и сохраняем модификаторы из стака, который кладется в слот
+                        ExtendedPlayer.get(player).extractModifiersFromItemStack(itemStack);
+                    }
+                    super.putStack(itemStack);
+                }
             });
         }
 
         // Расставляем слоты на панели носимых вещей
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 4; ++x) {
-                this.addSlotToContainer(new Slot(wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26)); //8
+                this.addSlotToContainer(new Slot(wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26) {
+                    // Сюда нельзя помещать броню
+                    @Override
+                    public boolean isItemValid(ItemStack p_75214_1_) {
+                        if (p_75214_1_.getItem() instanceof ItemArmor)
+                            return false;
+                        else
+                            return super.isItemValid(p_75214_1_);
+                    }
+                });
             }
         }
     }
