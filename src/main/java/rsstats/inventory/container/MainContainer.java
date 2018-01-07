@@ -182,9 +182,13 @@ public class MainContainer extends Container {
 
         // Находим стак с очками прокачки
         ItemStack expStack = null;
-        for (ItemStack itemStack : inventoryPlayer.mainInventory) {
+        int expStackPos = -1; // Если -1 - значит стак с очками прокачки нельзя создать + его и не было
+        for (int i = 0; i < inventoryPlayer.mainInventory.length; i++) {
+            ItemStack itemStack = inventoryPlayer.mainInventory[i];
             if (itemStack != null && "item.ExpItem".equals(itemStack.getUnlocalizedName())) {
                 expStack = itemStack;
+                expStackPos = i;
+                break;
             }
         }
         if (expStack == null) {
@@ -207,7 +211,11 @@ public class MainContainer extends Container {
 
             // Отнимает очко прокачки ...
             if (expStack.stackSize >= price) {
-                expStack.stackSize -= price;
+                if (expStack.stackSize == price) {
+                    inventoryPlayer.mainInventory[expStackPos] = null; // Убираем стак
+                } else {
+                    expStack.stackSize -= price; // Уменьшаем стак
+                }
             } else {
                 return;
             }
@@ -224,6 +232,8 @@ public class MainContainer extends Container {
 
     private void statDown(Slot slot) {
         StatItem statItem = (StatItem) slot.getStack().getItem();
+        int statItemDamage = statItem.getDamage(slot.getStack());
+        boolean isExpStackCreated = false;
 
         // Находим стак с очками прокачки
         ItemStack expStack = null;
@@ -235,8 +245,9 @@ public class MainContainer extends Container {
         // Если очков прокачки нет или их стак забит - ищем свободное место в инветаре, куда их можно положить
         if (expStack == null || expStack.stackSize >= expStack.getMaxStackSize()) {
             int freeSpaceIndex = findFreeSpaceInInventory(inventoryPlayer);
-            if (freeSpaceIndex != -1) {
+            if (freeSpaceIndex != -1 && statItemDamage != 0) {
                 expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"));
+                isExpStackCreated = true;
                 inventoryPlayer.setInventorySlotContents(freeSpaceIndex, expStack);
             } else { // Если свободное место не было найдено - выходим
                 return;
@@ -247,9 +258,8 @@ public class MainContainer extends Container {
         List subitems = new ArrayList();
         statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
 
-        int statItemDamage = statItem.getDamage(slot.getStack());
         if (statItemDamage > 0) {
-            int reward = 0; // Сколько очков прокачки вернется за отмену прокачки
+            int reward; // Сколько очков прокачки вернется за отмену прокачки
             if (statItem instanceof SkillItem) {
                 ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
                 int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
@@ -263,7 +273,11 @@ public class MainContainer extends Container {
 
             // возвращаем игроку очки прокачки ...
             if (expStack.stackSize + reward <= expStack.getMaxStackSize()) {
-                expStack.stackSize += reward;
+                if (isExpStackCreated) {
+                    expStack.stackSize = reward;
+                } else {
+                    expStack.stackSize += reward;
+                }
             } else {
                 reward = (expStack.stackSize + reward) % expStack.getMaxStackSize();
                 expStack.stackSize = expStack.getMaxStackSize();
@@ -321,11 +335,13 @@ public class MainContainer extends Container {
         }
 
         if (clickedButton == 1) { // ПКМ
-            statUp(slot);
+            if (slot.inventory == statsInventory || slot.inventory == skillsInventory)
+                statUp(slot);
             return null;
         }
         if (clickedButton == 2) { // СКМ
-            statDown(slot);
+            if (slot.inventory == statsInventory || slot.inventory == skillsInventory)
+                statDown(slot);
             return null;
         }
 
