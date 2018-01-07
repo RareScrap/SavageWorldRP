@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import rsstats.data.ExtendedPlayer;
 
 public class WearableInventory implements IInventory {
     private final String name = "Wearable";
@@ -15,11 +16,16 @@ public class WearableInventory implements IInventory {
     private static final int INV_SIZE = 16;
     private ItemStack[] inventory = new ItemStack[INV_SIZE];
     private static final int STACK_LIMIT = 1;
+    private ExtendedPlayer extendedPlayer;
 
     /**
      * Необходимый пустой публичный контсруктор
      */
     public WearableInventory() {}
+
+    public WearableInventory(ExtendedPlayer extendedPlayer) {
+        this.extendedPlayer = extendedPlayer;
+    }
 
     /**
      * Returns the number of slots in the inventory.
@@ -84,10 +90,22 @@ public class WearableInventory implements IInventory {
      */
     @Override
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
+        // Работаем с модификаторами предмета
+        if (itemStack != null) { // извлекаем и сохраняем модификаторы
+            extendedPlayer.extractModifiersFromItemStack(itemStack);
+        }
+
+        // Если до этого в слоте находился другой предмет - удаляем его модификаторы
+        if (getStackInSlot(slotIndex) != null) {
+            extendedPlayer.removeModifiersFromItemStack(getStackInSlot(slotIndex));
+        }
+
+        // Непосредственно помещаем сам стак в слот
         this.inventory[slotIndex] = itemStack;
         if (itemStack != null && itemStack.stackSize > this.getInventoryStackLimit()) {
             itemStack.stackSize = this.getInventoryStackLimit();
         }
+
         // TODO: ВАЖНО this.onInventoryChanged();
     }
 
@@ -188,7 +206,7 @@ public class WearableInventory implements IInventory {
             byte slot = item.getByte("Slot");
 
             if (slot >= 0 && slot < getSizeInventory()) {
-                inventory[slot] = ItemStack.loadItemStackFromNBT(item);
+                setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(item));
             }
         }
     }
