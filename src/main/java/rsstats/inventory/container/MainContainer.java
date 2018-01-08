@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
@@ -156,11 +157,13 @@ public class MainContainer extends Container {
         if (clickedButton == 1) { // ПКМ
             int damage = itemInSlot.getDamage(slot.getStack());
             itemInSlot.setDamage(slot.getStack(), damage < subitems.size()-1 ? damage+1 : subitems.size()-1);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
         if (clickedButton == 2) { // СКМ
             int damage = itemInSlot.getDamage(slot.getStack());
             itemInSlot.setDamage(slot.getStack(), damage > 0 ? damage-1 : 0);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
 

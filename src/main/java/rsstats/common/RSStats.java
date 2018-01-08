@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.command.AddLevel;
+import rsstats.common.command.ParamsPlayer;
 import rsstats.common.event.TestEventHandler;
 
 import java.io.File;
@@ -100,5 +101,7 @@ public class RSStats {
     public void serverLoad(FMLServerStartingEvent event) {
         // register server commands
         event.registerServerCommand(new AddLevel());
+        //event.registerServerCommand(new OpenInventory());
+        event.registerServerCommand(new ParamsPlayer());
     }
 }
