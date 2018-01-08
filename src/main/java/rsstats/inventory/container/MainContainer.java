@@ -322,10 +322,12 @@ public class MainContainer extends Container {
 
         if (clickedButton == 1) { // ПКМ
             statUp(slot);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
         if (clickedButton == 2) { // СКМ
             statDown(slot);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
 
