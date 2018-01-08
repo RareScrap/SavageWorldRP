@@ -335,13 +335,13 @@ public class MainContainer extends Container {
         }
 
         if (clickedButton == 1) { // ПКМ
-            if (slot.inventory == statsInventory || slot.inventory == skillsInventory)
-                statUp(slot);
+            statUp(slot);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
         if (clickedButton == 2) { // СКМ
-            if (slot.inventory == statsInventory || slot.inventory == skillsInventory)
-                statDown(slot);
+            statDown(slot);
+            ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
 
