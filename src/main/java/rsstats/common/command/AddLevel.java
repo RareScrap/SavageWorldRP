@@ -64,7 +64,7 @@ public class AddLevel implements ICommand {
             ExtendedPlayer player =  ExtendedPlayer.get(entityPlayer);
 
             // TODO: Реролл заменить на опыт
-            ItemStack exps = new ItemStack(GameRegistry.findItem(RSStats.MODID, "RerollCoinItem"), 2);
+            ItemStack exps = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"), 2);
             boolean status = entityPlayer.inventory.addItemStackToInventory(exps);
             /*if (status && entityPlayer.capabilities.isCreativeMode) {
                 status = false;
