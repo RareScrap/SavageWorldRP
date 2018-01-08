@@ -1,15 +1,21 @@
 package rsstats.common.command;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 
 import java.util.List;
 
 public class AddLevel implements ICommand {
+    private static final String ADDLEVEL_MESSAGE_SUCCESS_LOCALE_KEY = "command.addLevel.success";
+    private static final String ADDLEVEL_MESSAGE_ERROR_LOCALE_KEY = "command.addLevel.error";
     private String commandName = "addlevel";
 
     @Override
@@ -19,7 +25,7 @@ public class AddLevel implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender p_71518_1_) {
-        return commandName + " <player nickname>";
+        return commandName + " <player nickname>"; // liza
     }
 
     @Override
@@ -54,12 +60,26 @@ public class AddLevel implements ICommand {
 
             }
 
-            ExtendedPlayer player =  ExtendedPlayer.get((EntityPlayer) sender.getEntityWorld().playerEntities.get(0));
-            player.setLvl(player.getLvl()+1);
+            EntityPlayer entityPlayer = (EntityPlayer) sender.getEntityWorld().playerEntities.get(0);
+            ExtendedPlayer player =  ExtendedPlayer.get(entityPlayer);
 
-            player.sync();
-
-            sender.addChatMessage(new ChatComponentText("Now level: " + player.getLvl()));
+            // TODO: Реролл заменить на опыт
+            ItemStack exps = new ItemStack(GameRegistry.findItem(RSStats.MODID, "RerollCoinItem"), 2);
+            boolean status = entityPlayer.inventory.addItemStackToInventory(exps);
+            /*if (status && entityPlayer.capabilities.isCreativeMode) {
+                status = false;
+            }*/
+            if (status) {
+                player.setLvl(player.getLvl() + 1);
+                player.sync();
+                String result = StatCollector.translateToLocal(ADDLEVEL_MESSAGE_SUCCESS_LOCALE_KEY);
+                sender.addChatMessage(new ChatComponentText(
+                        String.format(result, entityPlayer.getDisplayName(), player.getLvl())
+                ));
+            } else {
+                String result = StatCollector.translateToLocal(ADDLEVEL_MESSAGE_ERROR_LOCALE_KEY);
+                sender.addChatMessage(new ChatComponentText(result));
+            }
 
             /*sender.addChatMessage(new ChatComponentText("Conjuring: [" + argString[0]
 
