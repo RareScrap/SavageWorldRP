@@ -5,8 +5,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.common.util.Constants;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncPlayer;
@@ -15,6 +17,11 @@ import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.utils.RollModifier;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -23,7 +30,7 @@ import rsstats.items.StatItem;
 public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
     private static final String EXTENDED_ENTITY_TAG = RSStats.MODID;
-    
+
     private final EntityPlayer entityPlayer;
 
     /** Основной параметр игрока - Шаг */
@@ -46,6 +53,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public final SkillsInventory skillsInventory;
     /** Инвентарь для носимых предметов */
     public final WearableInventory wearableInventory;
+    /** Хранилище модификаторов, преминимых с броскам данного игрока */
+    private Map<String, ArrayList<RollModifier>> modifierMap = new HashMap<String, ArrayList<RollModifier>>();
     
     /*
     Тут в виде полей можно хранить дополнительную информацию о Entity: мана,
@@ -57,7 +66,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.entityPlayer = player;
         statsInventory = new StatsInventory(player);
         skillsInventory = new SkillsInventory(player);
-        wearableInventory = new WearableInventory();
+        wearableInventory = new WearableInventory(this);
     }
     
     /**
@@ -107,6 +116,18 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
         this.wearableInventory.readFromNBT(properties);
+
+        /* Т.к. ванильный инвентарь переписывать нежелательно, начальная инициализация модификатором от брони
+         * реализована здесь */
+        NBTTagList playerInventory = properties.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < playerInventory.tagCount(); i++) {
+            NBTTagCompound itemNBT = playerInventory.getCompoundTagAt(i);
+            int slotID = itemNBT.getInteger("Slot");
+            if (slotID >= 100 && slotID <= 103) {
+                extractModifiersFromItemStack(ItemStack.loadItemStackFromNBT(itemNBT));
+            }
+
+        }
 
         updateParams();
     }
@@ -178,6 +199,36 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         return tirednessLimit;
     }
 
+    public EntityPlayer getEntityPlayer() {
+        return entityPlayer;
+    }
+
+    public Map<String, ArrayList<RollModifier>> getModifierMap() {
+        return modifierMap;
+    }
+
+    public void addModifier(String key, RollModifier modifier) {
+        if (modifierMap.get(key) == null) {
+            modifierMap.put(key, new ArrayList<RollModifier>());
+        }
+
+        modifierMap.get(key).add(modifier);
+    }
+
+    public void removeModifier(String key, int modifierValue, String modifierDescr) {
+        if (modifierMap.get(key) == null) {
+            return;
+        }
+
+        for (int i = 0; i < modifierMap.get(key).size(); i++) {
+            RollModifier modifier = modifierMap.get(key).get(i);
+            if (modifier.getValue() == modifierValue && modifierDescr.equals(modifier.getDescription())) {
+                modifierMap.get(key).remove(modifier);
+                return;
+            }
+        }
+    }
+
     public void setLvl(int lvl) {
         this.lvl = lvl;
     }
@@ -208,6 +259,42 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+        }
+    }
+
+    /**
+     * Вытаскивает модификаторы из стака и добавляет их пользователю
+     * @param itemStack предмет с модификаторами
+     */
+    public void extractModifiersFromItemStack(ItemStack itemStack) {
+        if (itemStack != null && itemStack.getTagCompound() != null) { // извлекаем и сохраняем модификаторы
+            NBTTagList modifiersList = itemStack.getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < modifiersList.tagCount(); i++) {
+                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
+                int value = modifierTag.getInteger("value");
+                String description = modifierTag.getString("description");
+                String to = modifierTag.getString("to");
+                RollModifier modifier = new RollModifier(value, description);
+                this.addModifier(to, modifier);
+            }
+        }
+    }
+
+    /**
+     * Вытаскивает модификаторы из стака и ищет их среди подификаторов пользователя.
+     * Если модификатор найден - он удаляется из модификаторов игрока
+     * @param itemStack предмет с модификаторами
+     */
+    public void removeModifiersFromItemStack(ItemStack itemStack) {
+        if (itemStack != null && itemStack.getTagCompound() != null) {
+            NBTTagList modifiersList = itemStack.getTagCompound().getTagList("modifiers", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < modifiersList.tagCount(); i++) {
+                NBTTagCompound modifierTag = modifiersList.getCompoundTagAt(i);
+                int value = modifierTag.getInteger("value");
+                String description = modifierTag.getString("description");
+                String to = modifierTag.getString("to");
+                this.removeModifier(to, value, description);
+            }
         }
     }
 }

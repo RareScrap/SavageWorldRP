@@ -1,16 +1,19 @@
 package rsstats.inventory.container;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
@@ -99,13 +102,47 @@ public class MainContainer extends Container {
                     return ItemArmor.func_94602_b(k);
                 }
 
+
+
+                @Override
+                public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack itemStack) {
+                    super.onPickupFromSlot(p_82870_1_, itemStack);
+                    ExtendedPlayer.get(player).removeModifiersFromItemStack(itemStack); // Удаляем модификаторы от прошлой брони
+                }
+
+                /**
+                 * Helper method to put a stack in the slot.
+                 *
+                 * @param itemStack
+                 */
+                @Override
+                public void putStack(ItemStack itemStack) {
+                    if (!player.worldObj.isRemote) {
+                        // Если в слоте уже был предмет - удаляем его модификаторы
+                        if (this.getStack() != null) {
+                            ExtendedPlayer.get(player).removeModifiersFromItemStack(this.getStack());
+                        }
+                        // Извлекаем и сохраняем модификаторы из стака, который кладется в слот
+                        ExtendedPlayer.get(player).extractModifiersFromItemStack(itemStack);
+                    }
+                    super.putStack(itemStack);
+                }
             });
         }
 
         // Расставляем слоты на панели носимых вещей
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 4; ++x) {
-                this.addSlotToContainer(new Slot(wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26)); //8
+                this.addSlotToContainer(new Slot(wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26) {
+                    // Сюда нельзя помещать броню
+                    @Override
+                    public boolean isItemValid(ItemStack p_75214_1_) {
+                        if (p_75214_1_.getItem() instanceof ItemArmor)
+                            return false;
+                        else
+                            return super.isItemValid(p_75214_1_);
+                    }
+                });
             }
         }
     }
@@ -134,6 +171,138 @@ public class MainContainer extends Container {
         return itemstack;
     }
 
+    // TODO: баг при стаках очков прокачки 64 и 1
+    /**
+     * Увеличивает переданную стату на 1, если в {@link #inventoryPlayer} есть хотя бы один {@link rsstats.items.ExpItem}.
+     * Так же уменьшает ExpItem на 1.
+     * @param slot Слот0 в котором находится стата, которую необходимо прокачать
+     */
+    private void statUp(Slot slot) {
+        StatItem statItem = (StatItem) slot.getStack().getItem();
+
+        // Находим стак с очками прокачки
+        ItemStack expStack = null;
+        for (ItemStack itemStack : inventoryPlayer.mainInventory) {
+            if (itemStack != null && "item.ExpItem".equals(itemStack.getUnlocalizedName())) {
+                expStack = itemStack;
+            }
+        }
+        if (expStack == null) {
+            return; // Если очков прокачки нет - выходим
+        }
+
+        // Выявляет количество подтипов (уровней) статы
+        List subitems = new ArrayList();
+        statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
+
+        int statItemDamage = statItem.getDamage(slot.getStack());
+        if (statItemDamage != subitems.size() - 1) {
+            int price = 1; // Цена прокачки
+            if (statItem instanceof SkillItem) {
+                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
+                int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
+                if (statItemDamage > parentStatDamage)
+                    price = 2;
+            }
+
+            // Отнимает очко прокачки ...
+            if (expStack.stackSize >= price) {
+                expStack.stackSize -= price;
+            } else {
+                return;
+            }
+
+            // и увеличиваем стату ...
+            statItem.setDamage(
+                    slot.getStack(),
+                    statItemDamage < subitems.size() - 1 ? statItemDamage + 1 : subitems.size() - 1
+            );
+        } else { // Стата уже прокачана до предела - выходим
+            return;
+        }
+    }
+
+    private void statDown(Slot slot) {
+        StatItem statItem = (StatItem) slot.getStack().getItem();
+
+        // Находим стак с очками прокачки
+        ItemStack expStack = null;
+        for (ItemStack itemStack : inventoryPlayer.mainInventory) {
+            if (itemStack != null && "item.ExpItem".equals(itemStack.getUnlocalizedName())) {
+                expStack = itemStack;
+            }
+        }
+        // Если очков прокачки нет или их стак забит - ищем свободное место в инветаре, куда их можно положить
+        if (expStack == null || expStack.stackSize >= expStack.getMaxStackSize()) {
+            int freeSpaceIndex = findFreeSpaceInInventory(inventoryPlayer);
+            if (freeSpaceIndex != -1) {
+                expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"));
+                inventoryPlayer.setInventorySlotContents(freeSpaceIndex, expStack);
+            } else { // Если свободное место не было найдено - выходим
+                return;
+            }
+        }
+
+        // Выявляет количество подтипов (уровней) статы
+        List subitems = new ArrayList();
+        statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
+
+        int statItemDamage = statItem.getDamage(slot.getStack());
+        if (statItemDamage > 0) {
+            int reward = 0; // Сколько очков прокачки вернется за отмену прокачки
+            if (statItem instanceof SkillItem) {
+                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
+                int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
+                if (statItemDamage > parentStatDamage+1)
+                    reward = 2;
+                else
+                    reward = 1;
+            } else { // instanceof StatItem
+                reward = 1;
+            }
+
+            // возвращаем игроку очки прокачки ...
+            if (expStack.stackSize + reward <= expStack.getMaxStackSize()) {
+                expStack.stackSize += reward;
+            } else {
+                reward = (expStack.stackSize + reward) % expStack.getMaxStackSize();
+                expStack.stackSize = expStack.getMaxStackSize();
+
+                int freeSpaceIndex = findFreeSpaceInInventory(inventoryPlayer);
+                if (freeSpaceIndex != -1) {
+                    expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"));
+                    expStack.stackSize = reward;
+                    inventoryPlayer.setInventorySlotContents(freeSpaceIndex, expStack);
+                } else {
+                    return;
+                }
+            }
+
+            // и уменьшаем стату ...
+            statItem.setDamage(
+                    slot.getStack(),
+                    statItemDamage > 0 ? statItemDamage-1 : 0
+            );
+        } else { // Стата уже прокачана до предела - выходим
+            return;
+        }
+    }
+
+    /**
+     * Находит и возвращает тот порядковы номер слота, который не содержит в себе {@link ItemStack}'а
+     * @param inventory Ивентарь, в котором производится поиск
+     * @return Индекс свободной ячейки инвентаря. Если свободных ичеет нет, метод вернет -1.
+     */
+    private int findFreeSpaceInInventory(IInventory inventory) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if (itemStack == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
         Slot slot;
@@ -151,18 +320,13 @@ public class MainContainer extends Container {
             //return null;
         }
 
-        // Прокачка навыков
-        List subitems = new ArrayList();
-        itemInSlot.getSubItems(itemInSlot, CreativeTabs.tabMaterials, subitems);
         if (clickedButton == 1) { // ПКМ
-            int damage = itemInSlot.getDamage(slot.getStack());
-            itemInSlot.setDamage(slot.getStack(), damage < subitems.size()-1 ? damage+1 : subitems.size()-1);
+            statUp(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
         if (clickedButton == 2) { // СКМ
-            int damage = itemInSlot.getDamage(slot.getStack());
-            itemInSlot.setDamage(slot.getStack(), damage > 0 ? damage-1 : 0);
+            statDown(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }

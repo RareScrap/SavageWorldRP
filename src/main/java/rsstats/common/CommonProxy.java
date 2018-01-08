@@ -15,6 +15,7 @@ import rsstats.common.network.*;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
+import rsstats.items.ExpItem;
 import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
@@ -160,6 +161,8 @@ public class CommonProxy implements IGuiHandler {
         // Регистрация прочих предметов
         RerollCoin rerollCoinItem = new RerollCoin();
         GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
+        ExpItem expItem = new ExpItem("ExpItem");
+        GameRegistry.registerItem(expItem, "ExpItem");
     }
 
     public void init(FMLInitializationEvent event) {

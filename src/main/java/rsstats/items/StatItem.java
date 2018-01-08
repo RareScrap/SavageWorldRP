@@ -14,8 +14,10 @@ import net.minecraft.world.World;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
+import rsstats.data.ExtendedPlayer;
 import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
+import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,11 +233,18 @@ public class StatItem extends Item {
         //String str = itemstack.getIconIndex().getIconName();
         //str = str.replaceAll("[^\\d.]", "");
 
+        // Получаем модификаторы
+        ArrayList<RollModifier> modifiers = new ArrayList<RollModifier>();
+        if (ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName()) != null)
+            modifiers.addAll(ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName())); // Модификаторы игрока
+        if (basicRolls.get(lvl).getModificators() != null)
+            modifiers.addAll(basicRolls.get(lvl).getModificators()); // Модификаторы, зашитые в броски (например, отсуствующий навык)
+
         DiceRoll roll = new DiceRoll(
                 basicRolls.get(lvl),
                 entityplayer.getDisplayName(),
                 statName,
-                basicRolls.get(lvl).getModificators() // TODO: Получить дополнительные модификаторы извне. Пока сюда передаются только те модификаторы, что были включены при инициализации базовых бросков
+                modifiers
         );
 
         //entityplayer.addChatComponentMessage(new ChatComponentText(basicRolls.get(lvl).dice + " " + statName));
