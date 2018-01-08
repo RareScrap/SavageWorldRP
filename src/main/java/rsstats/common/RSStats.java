@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.command.AddLevel;
@@ -103,5 +104,8 @@ public class RSStats {
         event.registerServerCommand(new AddLevel());
         //event.registerServerCommand(new OpenInventory());
         event.registerServerCommand(new ParamsPlayer());
+
+        // Создаем gamerule, который будет сохранять предметы в инвентарях мода после смерти
+        MinecraftServer.getServer().worldServerForDimension(0).getGameRules().addGameRule("keepStats", "true");
     }
 }

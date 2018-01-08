@@ -7,8 +7,11 @@ package rsstats.common.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import rsstats.data.ExtendedPlayer;
 
 /**
@@ -46,6 +49,17 @@ public class TestEventHandler {
             ExtendedPlayer data = ExtendedPlayer.get((EntityPlayer) e.entity);
             if (data != null)
                 data.sync();
+        }
+    }
+
+    @SubscribeEvent
+    public void onClonePlayer(PlayerEvent.Clone e) {
+        // Если игрок умер и включен gamerule, сохраняющий предметы статов после смерти ...
+        if(e.wasDeath && MinecraftServer.getServer().worldServerForDimension(0).getGameRules().getGameRuleBooleanValue("keepStats")) {
+            // то сохраним их
+            NBTTagCompound compound = new NBTTagCompound();
+            ExtendedPlayer.get(e.original).saveNBTData(compound);
+            ExtendedPlayer.get(e.entityPlayer).loadNBTData(compound);
         }
     }
 }
