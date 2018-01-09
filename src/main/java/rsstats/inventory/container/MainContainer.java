@@ -3,6 +3,7 @@ package rsstats.inventory.container;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -334,12 +335,12 @@ public class MainContainer extends Container {
             //return null;
         }
 
-        if (clickedButton == 1) { // ПКМ
+        if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
             statUp(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
-        if (clickedButton == 2) { // СКМ
+        if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
             statDown(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
@@ -350,7 +351,7 @@ public class MainContainer extends Container {
 
             // Защита от дублирующихся сообщений в чате
             if (!playerIn.worldObj.isRemote) {
-                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn);
+                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn, !GuiScreen.isCtrlKeyDown());
             }
             return null;
         }

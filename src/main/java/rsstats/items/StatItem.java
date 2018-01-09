@@ -20,6 +20,7 @@ import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Эти классы передаются в методы
@@ -104,9 +105,15 @@ public class StatItem extends Item {
             String[] str = DescriptionCutter.cut(4, StatCollector.translateToLocal(localePrefix + ".description"));
             for (int i = 0; i < str.length; i++)
                 list.add( str[i] );
+
+            list.add("");
         } else {
             list.add( StatCollector.translateToLocal(generalPrefix + ".moreInfo") );
         }
+
+
+        String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(generalPrefix + ".cleanRoll"));
+        list.addAll(Arrays.asList(strs));
     }
 
     /**
@@ -182,7 +189,7 @@ public class StatItem extends Item {
 
         // TODO: Теперь ролл возможен только на сервере. Как быть, когда юзер играет в сингле?
         if(!world.isRemote) {
-            roll(itemstack, entityplayer);
+            roll(itemstack, entityplayer, !GuiScreen.isCtrlKeyDown());
         }
 
 
@@ -222,7 +229,7 @@ public class StatItem extends Item {
         //return super.onItemRightClick(itemstack, world, entityplayer); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void roll(ItemStack itemStack, EntityPlayer entityplayer) {
+    public void roll(ItemStack itemStack, EntityPlayer entityplayer, boolean withWildDice) {
         // If нужен, чтобы броить бросок только один раз
         //if (world.isRemote) { // TODO: На какой стороне вычисляется бросок?
         //String num = String.valueOf( basicRolls[ Integer.parseInt(itemstack.getIconIndex().toString()) ].dice );
@@ -249,7 +256,7 @@ public class StatItem extends Item {
 
         //entityplayer.addChatComponentMessage(new ChatComponentText(basicRolls.get(lvl).dice + " " + statName));
 
-        RollPacketToServer packet = new RollPacketToServer(roll);
+        RollPacketToServer packet = new RollPacketToServer(roll, withWildDice);
         CommonProxy.INSTANCE.sendToServer(packet); // "123" // itemstack.getIconIndex(
 
         //}

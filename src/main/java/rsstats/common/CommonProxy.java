@@ -159,7 +159,7 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerItem(climbingSkillItem, "ClimbingSkillItem");
 
         // Регистрация прочих предметов
-        RerollCoin rerollCoinItem = new RerollCoin();
+        RerollCoin rerollCoinItem = new RerollCoin("RerollCoinItem");
         GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
         ExpItem expItem = new ExpItem("ExpItem");
         GameRegistry.registerItem(expItem, "ExpItem");

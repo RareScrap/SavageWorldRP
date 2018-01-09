@@ -1,10 +1,10 @@
 package rsstats.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Объект броска дайсов
@@ -158,7 +158,7 @@ public class DiceRoll {
      * Вычисляет бросок
      * @return Сообщения броска
      */
-    public String roll() {
+    public String roll(boolean withWildDice) {
         if (playerName == null)
             throw new NullPointerException("playerName is null");
         if (rollName == null)
@@ -171,9 +171,9 @@ public class DiceRoll {
         int rollResultInt = 0; // Сумма всех бросков при взрыве
         String rollResultString = ""; // Строка вида "4+4+4+2"
 
-        int random; // Случайное число, заполняемое при каждой итерации цикла
+        //int random; // Случайное число, заполняемое при каждой итерации цикла
         do {
-            random = randomObject.nextInt(dice)+1;
+            int random = randomObject.nextInt(dice)+1;
             
             rollResultInt += random;
             rollResultString += random;
@@ -188,6 +188,38 @@ public class DiceRoll {
         } while (true);
 
         rollResultString += " ";
+
+        // Вычисляем бросок дикого кубика
+        if (withWildDice) {
+            int wildDiceResultInt = 0;
+            String wildDiceResultString = "ДК: ";
+            do {
+                int random = randomObject.nextInt(6) + 1;
+
+                wildDiceResultInt += random;
+                wildDiceResultString += random;
+
+                // Обработка взрывных бросков
+                if (random == 6) {
+                    wildDiceResultString += "+";
+                } else {
+                    wildDiceResultString += "=" + wildDiceResultInt;
+                    break;
+                }
+            } while (true);
+
+
+            // Добавляем результат дикого кубика к выводу
+            rollResultString += " " + wildDiceResultString;
+            rollResultInt = 1;
+            wildDiceResultInt = 1;
+            if (rollResultInt == 1 & wildDiceResultInt == 1) {
+                rollResultString += " " + "§r§n§l§4КРИТИЧЕСКИЙ§r§n§l §r§n§l§4ПРОВАЛ!§r§f ";
+            } else {
+                // Если дикий кубик больле, чем другая кость - значит теперь это итоговый (наибольий) бросок
+                rollResultInt = (wildDiceResultInt > rollResultInt) ? wildDiceResultInt : rollResultInt;
+            }
+        }
 
         // DEBUG
         //modificators = new ArrayList<RollModifier>();
