@@ -15,6 +15,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.command.AddLevel;
+import rsstats.common.command.Card;
 import rsstats.common.command.ParamsPlayer;
 import rsstats.common.event.TestEventHandler;
 
@@ -104,6 +105,7 @@ public class RSStats {
         event.registerServerCommand(new AddLevel());
         //event.registerServerCommand(new OpenInventory());
         event.registerServerCommand(new ParamsPlayer());
+        event.registerServerCommand(new Card());
 
         // Создаем gamerule, который будет сохранять предметы в инвентарях мода после смерти
         MinecraftServer.getServer().worldServerForDimension(0).getGameRules().addGameRule("keepStats", "true");
