@@ -1,6 +1,8 @@
 package rsstats.client;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -10,6 +12,7 @@ import rsstats.client.gui.SSPPage;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.event.KeyHandler;
+import rsstats.common.network.PacketSyncPlayer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 
@@ -62,5 +65,11 @@ public class ClientProxy extends CommonProxy {
         keyHandler = new KeyHandler();
         FMLCommonHandler.instance().bus().register(keyHandler);
         MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer()));
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
+        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, 4, Side.CLIENT);
     }
 }
