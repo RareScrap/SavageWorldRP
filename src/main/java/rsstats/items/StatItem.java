@@ -187,8 +187,8 @@ public class StatItem extends Item {
         //if (world.isRemote) { // TODO: На какой стороне вычисляется бросок?
             //String num = String.valueOf( basicRolls[ Integer.parseInt(itemstack.getIconIndex().toString()) ].dice );
 
-        // TODO: Теперь ролл возможен только на сервере. Как быть, когда юзер играет в сингле?
-        if(!world.isRemote) {
+        // Сообщение о ролле посылается с клиента, где определен класс GuiScreen
+        if(world.isRemote) {
             roll(itemstack, entityplayer, !GuiScreen.isCtrlKeyDown());
         }
 
