@@ -274,8 +274,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
                 int value = modifierTag.getInteger("value");
                 String description = modifierTag.getString("description");
                 String to = modifierTag.getString("to");
-                RollModifier modifier = new RollModifier(value, description);
-                this.addModifier(to, modifier);
+                RollModifier modifier = new RollModifier(value, description); // TODO: Замечен странный баг. При создании modifier с руским Description он создается нормально ...
+                this.addModifier(to, modifier); // ... Но при входе в этот метод все русские буквы из поля modifier.description удаляются! Как? Без понятия.
             }
         }
     }

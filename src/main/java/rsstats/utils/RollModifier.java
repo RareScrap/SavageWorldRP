@@ -1,5 +1,6 @@
 package rsstats.utils;
 
+import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
 
 /**
@@ -30,30 +31,36 @@ public class RollModifier {
     public String toString() {
         String formatCode;
         if (value > 0) {
-            formatCode = "§" + RSStats.config.modifierColorPositive;
+            formatCode = RSStats.config.modifierColorPositive;
         } else {
-            formatCode = "§" + RSStats.config.modifierColorNegative;
+            formatCode = RSStats.config.modifierColorNegative;
         }
 
         String[] words = description.split(" "); // Получаем слова из описания
 
+        // Присоединяем форматирование к каждому слову, если оно отсуствует
         StringBuilder stringBuilder = new StringBuilder();
-        for (String word : words) {
-            // Присоединяем форматирование к каждому слову
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (word.isEmpty()) break; // TODO: эта костылина не совсем костылина. Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово
+            
             // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку
             if (word.charAt(0) != '§')
-                stringBuilder.append(formatCode).append(word).append(" ");
+                stringBuilder.append("\u00A7" + formatCode) // Символ §
+                        .append(word);
+
+            // Предотвращаем наличие пробела в конце последнего слова
+            if (i != words.length-1) {
+                stringBuilder.append(" ");
+            }
+
         }
-        stringBuilder.deleteCharAt(stringBuilder.length()-1); // Удаляем лишний пробел в последнем слове
-        description = stringBuilder.toString(); // Сохраняем форматированное описание
+
+        // Сохраняем форматированное описание
+        description = stringBuilder.toString();
 
         // Форматируем выходную строку
-        return formatCode + "(" +
-                formatCode + (value > 0 ? "+"+value : value) +
-                formatCode + ": " +
-                description +
-                formatCode + ")" +
-                "§" + RSStats.config.textColorNormal;
+        return StatCollector.translateToLocalFormatted("modifier.string", value > 0 ? "+"+value : String.valueOf(value), description, formatCode);
     }
 
     /**
