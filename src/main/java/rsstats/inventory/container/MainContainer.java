@@ -38,6 +38,7 @@ public class MainContainer extends Container {
     private final WearableInventory wearableInventory;
 
     private final SkillsInventory skillsInventory;
+    private boolean withWildDice;
 
     public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory) {
         this.player = player;
@@ -118,7 +119,9 @@ public class MainContainer extends Container {
                  */
                 @Override
                 public void putStack(ItemStack itemStack) {
-                    if (!player.worldObj.isRemote) {
+                    // TODO: Баг с рассинхронизацией модификаторов на клиенте и серве был впервые замечен тут
+                    // if (!player.worldObj.isRemote) - не работает на клиенте
+                    if (/*!*/player.worldObj.isRemote) {
                         // Если в слоте уже был предмет - удаляем его модификаторы
                         if (this.getStack() != null) {
                             ExtendedPlayer.get(player).removeModifiersFromItemStack(this.getStack());
@@ -127,6 +130,19 @@ public class MainContainer extends Container {
                         ExtendedPlayer.get(player).extractModifiersFromItemStack(itemStack);
                     }
                     super.putStack(itemStack);
+
+                    // Дебажная инфа
+                    /*if (player.worldObj.isRemote) {
+                        System.out.println("Клиентские модификаторы:");
+                    } else {
+                        System.out.println("Серверные модификаторы:");
+                    }
+                    for (ArrayList<RollModifier> modifiers : ExtendedPlayer.get(player).getModifierMap().values()) {
+                        for (RollModifier modifier : modifiers) {
+                            System.out.println(modifier);
+                        }
+
+                    }*/
                 }
             });
         }
@@ -349,8 +365,8 @@ public class MainContainer extends Container {
         if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
             ItemStack itemStack = getSlot(slotId).getStack();
 
-            // Защита от дублирующихся сообщений в чате
-            if (!playerIn.worldObj.isRemote) {
+            // Защита от дублирующихся сообщений в чате + ролл посылается в клиента, где определен класс GuiScreen
+            if (playerIn.worldObj.isRemote) {
                 ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn, !GuiScreen.isCtrlKeyDown());
             }
             return null;
