@@ -9,6 +9,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import rsstats.common.event.KeyHandler;
 import rsstats.common.network.PacketOpenRSStatsInventory;
@@ -105,7 +106,7 @@ public class CommonProxy implements IGuiHandler {
         // Дайся для скиллов
         // TODO: Проверять на то, поставляется ли dices уже с модификаторами
         List<RollModifier> modificators = new ArrayList<RollModifier>();
-        modificators.add(new RollModifier(-2, "Отсуствующий навык"));// TODO: Локализировать эту строку
+        modificators.add(new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill"))); // TODO: Разобраться почему это работает на сервере
         ArrayList<DiceRoll> skillDices = new ArrayList<DiceRoll>();
         skillDices.add(new DiceRoll(null, null, 4, modificators)); // Создание дополнительного броска для нулевого уровня скиллов
         skillDices.add(new DiceRoll(null, null, 4));
