@@ -65,3 +65,9 @@ processResources  {
 // Баг проявляется только есть запустить игру через Minecraft Client - встроенную опцию
 // Не требуется в NetBeans
 idea { module { inheritOutputDirs = true } }
+
+// Устраняет ошибки компиляции из-за русских комментов
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
