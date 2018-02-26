@@ -55,6 +55,7 @@ public class RollPacketToServer implements IMessage {
         }
         
         String template = ByteBufUtils.readUTF8String(buf);
+        String critFail = ByteBufUtils.readUTF8String(buf);
 
         //TODO
         /*if (size > 0)
@@ -62,7 +63,7 @@ public class RollPacketToServer implements IMessage {
         else
             this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
         */
-        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
+        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template, critFail);
         this.withWildDice = ByteBufUtils.readVarShort(buf) == 1; // 1 - true, 0 (or other) - false
     }
 
@@ -94,6 +95,7 @@ public class RollPacketToServer implements IMessage {
         }
         
         ByteBufUtils.writeUTF8String(buf, diceRollMessage.getTemplate());
+        ByteBufUtils.writeUTF8String(buf, diceRollMessage.getCritFailTemplate());
         ByteBufUtils.writeVarShort(buf, withWildDice ? 1 : 0);
     }
     
