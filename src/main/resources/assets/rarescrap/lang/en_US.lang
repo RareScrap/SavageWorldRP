@@ -13,3 +13,5 @@ item.StatItem.relevantSkillsTip=NOT_TRANSLATED
 item.StatItem.roll=Roll
 item.StatItem.rollChatMessage=%1$s is rolling skill %2$s(d%3$d): %4$s TOTAL: %5$d
 item.StatItem.level=%1$d level
+
+modifier.string=§%3$s(§%3$s%1$s: %2$s)§r
