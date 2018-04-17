@@ -14,13 +14,16 @@ import rsstats.inventory.StatsInventory;
 import java.util.ArrayList;
 
 /**
- * Пакет, синхронизирующий некоторый поля {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
+ * Пакет, синхронизирующий некоторый поля и инвентари {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
  */
 public class PacketSyncPlayer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
 
+    /** Объект, хранящий распакованне статы */
     private ItemStack[] stats;
+    /** Объект, хранящий распакованне скиллы */
     private ArrayList<ItemStack> skills;
+    /** Объект, хранящий распакованный уровень игрока */
     private int lvl;
 
     /**
@@ -46,10 +49,9 @@ public class PacketSyncPlayer implements IMessage {
         // Восстанавливаем список статов из ByteBuf
         stats = new ItemStack[StatsInventory.INV_SIZE];
         for (int i = 0; i < statsSize; i++) {
-            //try {
                 ItemStack itemStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
+                // TODO: Т.к. в буфере может быть пустой ItemStack, я боюсь что может возникнуть ситуация, что игра интерпретирует пустой стак как пустой предмет, а не как свободное место. Следует ли мне заменять пустые стаки на null? Это нужно хорошенько проверить
                 stats[i] = itemStack;
-            //} catch (Exception e) {}
         }
 
         // Читаем размер списка скиллов
@@ -71,29 +73,18 @@ public class PacketSyncPlayer implements IMessage {
      */
     @Override
     public void toBytes(ByteBuf buf) {
-        // Считаем и записываем количество не null элементов
-        /*int nonNullStatsCount = 0;
-        for (ItemStack stat : stats) {
-            if (stat != null) {
-                nonNullStatsCount++;
-            }
-        }
-        ByteBufUtils.writeVarShort(buf, nonNullStatsCount);*/
-        ByteBufUtils.writeVarShort(buf, stats.length);
-
+        ByteBufUtils.writeVarShort(buf, stats.length); // Записываем размер списка статов
         for (ItemStack stat : stats) { // А теперь записываем сам список
-            //if (stat != null) {
                 NBTTagCompound NBTSkillItem = new NBTTagCompound();
                 if (stat != null)
-                    stat.writeToNBT(NBTSkillItem);
+                    stat.writeToNBT(NBTSkillItem); // В случае, если stat == null, мы запишем в buf пустой стак
                 ByteBufUtils.writeTag(buf, NBTSkillItem);
-            //}
         }
 
-        ByteBufUtils.writeVarShort(buf, skills.size()); // Записываем размер списка
+        ByteBufUtils.writeVarShort(buf, skills.size()); // Записываем размер списка скиллов
         for (ItemStack skill : skills) { // и сам список
             NBTTagCompound NBTSkillItem = new NBTTagCompound();
-            skill.writeToNBT(NBTSkillItem);
+            skill.writeToNBT(NBTSkillItem); // TODO: Элемент разве не может быть null?
             ByteBufUtils.writeTag(buf, NBTSkillItem);
         }
 
