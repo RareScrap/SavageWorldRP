@@ -258,7 +258,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      */
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
         }
     }
 

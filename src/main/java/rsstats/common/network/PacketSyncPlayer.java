@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import rsstats.data.ExtendedPlayer;
+import rsstats.inventory.StatsInventory;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class PacketSyncPlayer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
 
+    private ItemStack[] stats;
     private ArrayList<ItemStack> skills;
     private int lvl;
 
@@ -26,7 +28,8 @@ public class PacketSyncPlayer implements IMessage {
      */
     public PacketSyncPlayer() {}
 
-    public PacketSyncPlayer(ArrayList<ItemStack> skills, int lvl) {
+    public PacketSyncPlayer(ItemStack[] stats, ArrayList<ItemStack> skills, int lvl) {
+        this.stats = stats;
         this.skills = skills;
         this.lvl = lvl;
     }
@@ -38,10 +41,20 @@ public class PacketSyncPlayer implements IMessage {
      */
     @Override
     public void fromBytes(ByteBuf buf) {
-        // Читаем размер списка
-        int skillsSize = ByteBufUtils.readVarShort(buf);
+        // Читаем размер списка статов
+        int statsSize = ByteBufUtils.readVarShort(buf);
+        // Восстанавливаем список статов из ByteBuf
+        stats = new ItemStack[StatsInventory.INV_SIZE];
+        for (int i = 0; i < statsSize; i++) {
+            //try {
+                ItemStack itemStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
+                stats[i] = itemStack;
+            //} catch (Exception e) {}
+        }
 
-        // Восстанавливаем список из ByteBuf
+        // Читаем размер списка скиллов
+        int skillsSize = ByteBufUtils.readVarShort(buf);
+        // Восстанавливаем список скиллов из ByteBuf
         skills = new ArrayList<ItemStack>();
         for (int i = 0; i < skillsSize; i++) {
             ItemStack itemStack = ItemStack.loadItemStackFromNBT(ByteBufUtils.readTag(buf));
@@ -58,6 +71,25 @@ public class PacketSyncPlayer implements IMessage {
      */
     @Override
     public void toBytes(ByteBuf buf) {
+        // Считаем и записываем количество не null элементов
+        /*int nonNullStatsCount = 0;
+        for (ItemStack stat : stats) {
+            if (stat != null) {
+                nonNullStatsCount++;
+            }
+        }
+        ByteBufUtils.writeVarShort(buf, nonNullStatsCount);*/
+        ByteBufUtils.writeVarShort(buf, stats.length);
+
+        for (ItemStack stat : stats) { // А теперь записываем сам список
+            //if (stat != null) {
+                NBTTagCompound NBTSkillItem = new NBTTagCompound();
+                if (stat != null)
+                    stat.writeToNBT(NBTSkillItem);
+                ByteBufUtils.writeTag(buf, NBTSkillItem);
+            //}
+        }
+
         ByteBufUtils.writeVarShort(buf, skills.size()); // Записываем размер списка
         for (ItemStack skill : skills) { // и сам список
             NBTTagCompound NBTSkillItem = new NBTTagCompound();
@@ -75,6 +107,7 @@ public class PacketSyncPlayer implements IMessage {
         @Override
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
+            extendedPlayer.statsInventory.setNewStats(message.stats);
             extendedPlayer.skillsInventory.setNewSkills(message.skills);
             extendedPlayer.setLvl(message.lvl);
             extendedPlayer.updateParams();

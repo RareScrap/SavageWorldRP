@@ -1,6 +1,7 @@
 package rsstats.inventory;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -24,7 +25,7 @@ public class StatsInventory implements IInventory {
     /** Define the inventory size here for easy reference */
     /* This is also the place to define which slot is which if you have different types,
      * for example SLOT_SHIELD = 0, SLOT_AMULET = 1; */
-    private static final int INV_SIZE = 9;
+    public static final int INV_SIZE = 9;
     /** Масимальный размер стака для предметов в инвенторе {@link #inventory} */
     private static final int STACK_LIMIT = 1;
 
@@ -264,5 +265,26 @@ public class StatsInventory implements IInventory {
         for (int i = 0; i < getSizeInventory(); ++i) {
             inventory[i] = null;
         }
+    }
+
+    /**
+     * Устанавливает новое содержимое для хранилища статов ({@link #inventory})
+     * @param stats Обновленное хранилие статов
+     */
+    public void setNewStats(ItemStack[] stats) {
+        this.inventory = stats;
+
+        // Если выведено GUI - обновим его на всякий случай
+        if (Minecraft.getMinecraft().currentScreen != null) {
+            Minecraft.getMinecraft().currentScreen.updateScreen();
+        }
+    }
+
+    /**
+     * Геттер для {@link #inventory}.
+     * @return Массив стаков, представляющих собой инвентарь статов
+     */
+    public ItemStack[] getStats() {
+        return inventory;
     }
 }
