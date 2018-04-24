@@ -55,6 +55,8 @@ public class RollPacketToServer implements IMessage {
         }
         
         String template = ByteBufUtils.readUTF8String(buf);
+
+        // TODO: Какая-то хуйня на этапе подключения к серву. fromByte вызываются без вызова toByte, что странно. Кажется вызывалось неправильной регистрацией пакета
         String critFail = ByteBufUtils.readUTF8String(buf);
 
         //TODO

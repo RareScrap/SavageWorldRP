@@ -4,12 +4,14 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.StatsInventory;
-import rsstats.utils.SideOnlyMethods;
 
 import java.util.ArrayList;
 
@@ -96,10 +98,9 @@ public class PacketSyncPlayer implements IMessage {
      */
     public static class MessageHandler implements IMessageHandler<PacketSyncPlayer, IMessage> {
         @Override
+        @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
-            //ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
-            //ExtendedPlayer extendedPlayer = ExtendedPlayer.get(ctx.getServerHandler().playerEntity);
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(SideOnlyMethods.getPlayer());
+            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
             extendedPlayer.statsInventory.setNewStats(message.stats);
             extendedPlayer.skillsInventory.setNewSkills(message.skills);
             extendedPlayer.setLvl(message.lvl);

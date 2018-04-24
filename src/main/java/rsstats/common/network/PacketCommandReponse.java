@@ -75,7 +75,7 @@ public class PacketCommandReponse  implements IMessage {
         public MessageHandler() {}
 
         @Override
-        @SideOnly(Side.CLIENT)
+        @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
         public IMessage onMessage(PacketCommandReponse message, MessageContext ctx) {
             if (message.status != 404) {
                 String result = String.format(
@@ -83,8 +83,6 @@ public class PacketCommandReponse  implements IMessage {
                         (Object[]) message.args);
 
                 EntityPlayer entityPlayer = Minecraft.getMinecraft().thePlayer;
-                //EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
-                //EntityPlayer entityPlayer = SideOnlyMethods.getPlayer();
                 entityPlayer.addChatComponentMessage(new ChatComponentText(result));
             }
 
