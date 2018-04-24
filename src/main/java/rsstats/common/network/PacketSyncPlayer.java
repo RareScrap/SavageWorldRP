@@ -5,11 +5,11 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.StatsInventory;
+import rsstats.utils.SideOnlyMethods;
 
 import java.util.ArrayList;
 
@@ -97,7 +97,9 @@ public class PacketSyncPlayer implements IMessage {
     public static class MessageHandler implements IMessageHandler<PacketSyncPlayer, IMessage> {
         @Override
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
+            //ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
+            //ExtendedPlayer extendedPlayer = ExtendedPlayer.get(ctx.getServerHandler().playerEntity);
+            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(SideOnlyMethods.getPlayer());
             extendedPlayer.statsInventory.setNewStats(message.stats);
             extendedPlayer.skillsInventory.setNewSkills(message.skills);
             extendedPlayer.setLvl(message.lvl);

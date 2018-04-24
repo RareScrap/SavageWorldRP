@@ -3,11 +3,13 @@ package rsstats.common.command;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import rsstats.common.CommonProxy;
+import rsstats.common.network.PacketCommandReponse;
 import rsstats.data.ExtendedPlayer;
 
 import java.util.List;
@@ -54,8 +56,20 @@ public class ParamsPlayer implements ICommand {
                         }
                     }
 
-                    sender.addChatMessage(new ChatComponentText(String.format(
-                            StatCollector.translateToLocal(PARAMS_MESSAGE_LOCALE_KEY),
+                    CommonProxy.INSTANCE.sendTo(new PacketCommandReponse(PARAMS_MESSAGE_LOCALE_KEY, 200,
+                            ((EntityPlayer) playerEntity).getDisplayName(),
+                            String.valueOf(ExtendedPlayer.get((EntityPlayer) playerEntity).getStep()),
+                            String.valueOf(ExtendedPlayer.get((EntityPlayer) playerEntity).getProtection()),
+                            String.valueOf(ExtendedPlayer.get((EntityPlayer) playerEntity).getPersistence()),
+                            String.valueOf(ExtendedPlayer.get((EntityPlayer) playerEntity).getCharisma()),
+                            String.valueOf(armor[3]),
+                            String.valueOf(armor[2]),
+                            String.valueOf(armor[1]),
+                            String.valueOf(armor[0])
+                    ), (EntityPlayerMP) playerEntity);
+                    //String debugTemplate = "Параметры %1$s: Шаг: %2$d, Защита %3$d, Стойкость: %4$d, Харизма:%5$d (броня: голова %6$d, торс %7$d, ноги %8$d, ступни %9$d)";
+                    /*sender.addChatMessage(new ChatComponentText(String.format(
+                            /*debugTemplate, *//*fStatCollector.translateToLocal(PARAMS_MESSAGE_LOCALE_KEY),
                             ((EntityPlayer) playerEntity).getDisplayName(),
                             ExtendedPlayer.get((EntityPlayer) playerEntity).getStep(),
                             ExtendedPlayer.get((EntityPlayer) playerEntity).getProtection(),
@@ -65,7 +79,7 @@ public class ParamsPlayer implements ICommand {
                             armor[2],
                             armor[1],
                             armor[0]
-                    )));
+                    )));*/
                     return;
                 }
             }
