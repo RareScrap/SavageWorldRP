@@ -1,22 +1,16 @@
 package rsstats.common.command;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import rsstats.common.RSStats;
-import rsstats.data.ExtendedPlayer;
 
 import java.util.List;
+import java.util.Random;
 
-public class AddLevel implements ICommand {
-    private static final String ADDLEVEL_MESSAGE_SUCCESS_LOCALE_KEY = "command.addLevel.success";
-    private static final String ADDLEVEL_MESSAGE_ERROR_LOCALE_KEY = "command.addLevel.error";
-    private String commandName = "addlevel";
+public class Card implements ICommand {
+    private String commandName = "card";
 
     @Override
     public String getCommandName() {
@@ -25,7 +19,7 @@ public class AddLevel implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender p_71518_1_) {
-        return commandName + " <player nickname>"; // liza
+        return null;
     }
 
     @Override
@@ -37,75 +31,50 @@ public class AddLevel implements ICommand {
     public void processCommand(ICommandSender sender, String[] argString) {
         World world = sender.getEntityWorld();
 
-
-        if (world.isRemote)
-
-        {
-
-            System.out.println("Not processing on Client side");
-
-        } else
-
-        {
-
-            System.out.println("Processing on Server side");
-
-            if (argString.length == 0)
-
-            {
-
+        if (!world.isRemote)  {
+            /*if (argString.length == 0)  {
                 sender.addChatMessage(new ChatComponentText("Invalid argument"));
-
                 return;
+            }*/
 
+            Random random = new Random();
+            String card = "";
+
+            int suit = random.nextInt(4); // Масть
+            switch (suit) {
+                case 0:
+                    card = "§5♠";
+                    break;
+                case 1:
+                    card = "§4♥";
+                    break;
+                case 2:
+                    card = "§0♣";
+                    break;
+                case 3:
+                    card = "§c♦";
+                    break;
             }
 
-            EntityPlayer entityPlayer = (EntityPlayer) sender.getEntityWorld().playerEntities.get(0);
-            ExtendedPlayer player =  ExtendedPlayer.get(entityPlayer);
-
-            // TODO: Реролл заменить на опыт
-            ItemStack exps = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"), 2);
-            boolean status = entityPlayer.inventory.addItemStackToInventory(exps);
-            /*if (status && entityPlayer.capabilities.isCreativeMode) {
-                status = false;
-            }*/
-            if (status) {
-                player.setLvl(player.getLvl() + 1);
-                player.sync();
-                String result = StatCollector.translateToLocal(ADDLEVEL_MESSAGE_SUCCESS_LOCALE_KEY);
-                sender.addChatMessage(new ChatComponentText(
-                        String.format(result, entityPlayer.getDisplayName(), player.getLvl())
-                ));
-            } else {
-                String result = StatCollector.translateToLocal(ADDLEVEL_MESSAGE_ERROR_LOCALE_KEY);
-                sender.addChatMessage(new ChatComponentText(result));
+            int num = random.nextInt(13)+1;
+            switch (num) {
+                case 11:
+                    card += "Д§r";
+                    break;
+                case 12:
+                    card += "В§r";
+                    break;
+                case 13:
+                    card += "К§r";
+                    break;
+                default:
+                    card += String.valueOf(num) + "§r";
             }
 
-            /*sender.addChatMessage(new ChatComponentText("Conjuring: [" + argString[0]
+            FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(
+                    new ChatComponentText(sender.getCommandSenderName() + " тянет карту: "  +card)
+            );
 
-                    + "]"));
-
-
-            String fullEntityName = RSStats.MODID + "." + argString[0];
-
-            if (EntityList.stringToClassMapping.containsKey(fullEntityName))
-
-            {
-                List a = sender.getEntityWorld().playerEntities;
-                EntityPlayer conjuredEntity = (EntityPlayer) EntityList.createEntityByName(fullEntityName, world);
-
-                ExtendedPlayer extendedPlayer = ExtendedPlayer.get(conjuredEntity);
-                extendedPlayer.setLvl(extendedPlayer.getLvl()+1);
-
-            } else
-
-            {
-
-                List a = sender.getEntityWorld().playerEntities;
-                EntityPlayer conjuredEntity = (EntityPlayer) EntityList.createEntityByName(fullEntityName, world);
-                sender.addChatMessage(new ChatComponentText("Entity not found"));
-
-            }*/
 
         }
     }

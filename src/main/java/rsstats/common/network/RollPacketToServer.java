@@ -19,6 +19,8 @@ import java.util.ArrayList;
 public class RollPacketToServer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
     private DiceRoll diceRollMessage;
+    /** Определяет стоит ли включить в результаты броска Дикий Кубик */
+    private boolean withWildDice;
     
     /**
      * Необходимый конструктор по умолчанию. Он необходим для того, чтобы на
@@ -26,9 +28,9 @@ public class RollPacketToServer implements IMessage {
      */
     public RollPacketToServer() {}
 
-    public RollPacketToServer(DiceRoll message) {
-        System.out.print("const");
+    public RollPacketToServer(DiceRoll message, boolean withWildDice) {
         this.diceRollMessage = message;
+        this.withWildDice = withWildDice;
     }
     
     @Override
@@ -54,13 +56,17 @@ public class RollPacketToServer implements IMessage {
         
         String template = ByteBufUtils.readUTF8String(buf);
 
+        // TODO: Какая-то хуйня на этапе подключения к серву. fromByte вызываются без вызова toByte, что странно. Кажется вызывалось неправильной регистрацией пакета
+        String critFail = ByteBufUtils.readUTF8String(buf);
+
         //TODO
         /*if (size > 0)
             this.diceRollMessage = new DiceRoll(playerName, rollName, dice, template);
         else
             this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
         */
-        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template);
+        this.diceRollMessage = new DiceRoll(playerName, rollName, dice, modificators, template, critFail);
+        this.withWildDice = ByteBufUtils.readVarShort(buf) == 1; // 1 - true, 0 (or other) - false
     }
 
     /**
@@ -91,6 +97,8 @@ public class RollPacketToServer implements IMessage {
         }
         
         ByteBufUtils.writeUTF8String(buf, diceRollMessage.getTemplate());
+        ByteBufUtils.writeUTF8String(buf, diceRollMessage.getCritFailTemplate());
+        ByteBufUtils.writeVarShort(buf, withWildDice ? 1 : 0);
     }
     
     /**
@@ -108,7 +116,7 @@ public class RollPacketToServer implements IMessage {
             if (message.diceRollMessage == null)
                 throw new NullPointerException("diceRollMessage is null");
 
-            String result = message.diceRollMessage.roll();
+            String result = message.diceRollMessage.roll(message.withWildDice);
 
             // и вывести его в чат
             //serverPlayer.addChatComponentMessage(new ChatComponentText(result));

@@ -3,6 +3,7 @@ package rsstats.inventory.container;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -37,6 +38,7 @@ public class MainContainer extends Container {
     private final WearableInventory wearableInventory;
 
     private final SkillsInventory skillsInventory;
+    private boolean withWildDice;
 
     public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory) {
         this.player = player;
@@ -117,7 +119,9 @@ public class MainContainer extends Container {
                  */
                 @Override
                 public void putStack(ItemStack itemStack) {
-                    if (!player.worldObj.isRemote) {
+                    // TODO: Баг с рассинхронизацией модификаторов на клиенте и серве был впервые замечен тут
+                    // if (!player.worldObj.isRemote) - не работает на клиенте
+                    if (/*!*/player.worldObj.isRemote) {
                         // Если в слоте уже был предмет - удаляем его модификаторы
                         if (this.getStack() != null) {
                             ExtendedPlayer.get(player).removeModifiersFromItemStack(this.getStack());
@@ -126,6 +130,19 @@ public class MainContainer extends Container {
                         ExtendedPlayer.get(player).extractModifiersFromItemStack(itemStack);
                     }
                     super.putStack(itemStack);
+
+                    // Дебажная инфа
+                    /*if (player.worldObj.isRemote) {
+                        System.out.println("Клиентские модификаторы:");
+                    } else {
+                        System.out.println("Серверные модификаторы:");
+                    }
+                    for (ArrayList<RollModifier> modifiers : ExtendedPlayer.get(player).getModifierMap().values()) {
+                        for (RollModifier modifier : modifiers) {
+                            System.out.println(modifier);
+                        }
+
+                    }*/
                 }
             });
         }
@@ -334,12 +351,12 @@ public class MainContainer extends Container {
             //return null;
         }
 
-        if (clickedButton == 1) { // ПКМ
+        if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
             statUp(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
         }
-        if (clickedButton == 2) { // СКМ
+        if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
             statDown(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
@@ -348,9 +365,9 @@ public class MainContainer extends Container {
         if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
             ItemStack itemStack = getSlot(slotId).getStack();
 
-            // Защита от дублирующихся сообщений в чате
-            if (!playerIn.worldObj.isRemote) {
-                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn);
+            // Защита от дублирующихся сообщений в чате + ролл посылается в клиента, где определен класс GuiScreen
+            if (playerIn.worldObj.isRemote) {
+                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn, !GuiScreen.isCtrlKeyDown());
             }
             return null;
         }

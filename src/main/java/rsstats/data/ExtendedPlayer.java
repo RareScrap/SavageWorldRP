@@ -258,7 +258,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      */
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
         }
     }
 
@@ -274,8 +274,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
                 int value = modifierTag.getInteger("value");
                 String description = modifierTag.getString("description");
                 String to = modifierTag.getString("to");
-                RollModifier modifier = new RollModifier(value, description);
-                this.addModifier(to, modifier);
+                RollModifier modifier = new RollModifier(value, description); // TODO: Замечен странный баг. При создании modifier с руским Description он создается нормально ...
+                this.addModifier(to, modifier); // ... Но при входе в этот метод все русские буквы из поля modifier.description удаляются! Как? Без понятия.
             }
         }
     }

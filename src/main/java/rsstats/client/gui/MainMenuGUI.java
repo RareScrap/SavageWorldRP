@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import rsstats.common.CommonProxy;
@@ -19,7 +20,6 @@ import rsstats.inventory.container.MainContainer;
 import rsstats.items.SkillItem;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
@@ -124,13 +124,13 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     @Override
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         int textY = 123;
-        mc.fontRenderer.drawString("Шаг: " + player.getStep(), 8, textY, 0x444444, false);
-        mc.fontRenderer.drawString("Уровень: " + player.getLvl(), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString("Защита: " + player.getProtection(), 8, textY+=10, 0x444444, false);
-        mc.fontRenderer.drawString("Очки опыта: " + player.getExp(), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString("Стойкость: " + player.getPersistence(), 8, textY+=10, 0x444444, false);
-        mc.fontRenderer.drawString("Усталость: " + player.getTiredness(), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString("Харизма: " + player.getCharisma(), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.step", player.getStep()), 8, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.level", player.getLvl()), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.protection", player.getProtection()), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.getExp()), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.persistence", player.getPersistence()), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.tiredness", player.getTiredness()), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getCharisma()), 8, textY+=10, 0x444444, false);
 
         super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
     }
@@ -210,8 +210,8 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        timer.cancel();
-        timer.purge();
+        //timer.cancel();
+        //timer.purge();
     }
 
     /**
@@ -220,13 +220,13 @@ public class MainMenuGUI extends InventoryEffectRenderer {
     @Override
     public void initGui() {
         super.initGui();
-        timer = new Timer();
+        /*timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 player.updateParams();
                 updateScreen();
             }
-        }, 0, UPDATE_PERIOD);
+        }, 0, UPDATE_PERIOD);*/
     }
 }

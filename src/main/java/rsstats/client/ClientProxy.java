@@ -1,6 +1,7 @@
 package rsstats.client;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -62,5 +63,10 @@ public class ClientProxy extends CommonProxy {
         keyHandler = new KeyHandler();
         FMLCommonHandler.instance().bus().register(keyHandler);
         MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer()));
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
     }
 }
