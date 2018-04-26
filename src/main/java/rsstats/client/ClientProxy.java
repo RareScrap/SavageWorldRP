@@ -1,6 +1,8 @@
 package rsstats.client;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,11 +10,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.MainMenuGUI;
 import rsstats.client.gui.SSPPage;
+import rsstats.client.gui.UpgradeGUI;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.event.KeyHandler;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
+import rsstats.inventory.container.UpgradeContainer;
+import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
+import rsstats.inventory.container.rsstats.blocks.UpgradeStationTESR;
 
 /**
  * Прокси, исполняемый на стороне клиента
@@ -52,6 +58,8 @@ public class ClientProxy extends CommonProxy {
                 у меня все работает и при таком раскладе, я пока оставлю все как есть
                 */
                 case RSStats.SSP_UI_CODE: return new SSPPage(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
+                case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: return new UpgradeGUI(new UpgradeContainer(player.inventory, ((UpgradeStationEntity)world.getTileEntity(x, y, z)).upgradeStationInventory));
+                case RSStats.UPGRADE_UI_FROM_CMD_CODE: return new UpgradeGUI(new UpgradeContainer(player.inventory, null));
             }
         }
         return null;
@@ -68,5 +76,12 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
+    }
+
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        // Регистрируем рендереры
+        ClientRegistry.bindTileEntitySpecialRenderer(UpgradeStationEntity.class, new UpgradeStationTESR());
     }
 }

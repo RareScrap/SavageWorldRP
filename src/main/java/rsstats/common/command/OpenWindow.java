@@ -2,13 +2,17 @@ package rsstats.common.command;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import rsstats.common.CommonProxy;
-import rsstats.common.network.PacketOpenWindow;
+import rsstats.common.RSStats;
 
 import java.util.List;
 
+// Пока только UpgradeGUI
+/**
+ * Команда, открывающая различные меню.
+ */
 public class OpenWindow implements ICommand {
     private static final String PARAMS_MESSAGE_LOCALE_KEY = "command.openWindow";
     private String commandName = "openw";
@@ -33,10 +37,10 @@ public class OpenWindow implements ICommand {
     public void processCommand(ICommandSender sender, String[] argString) {
         World world = sender.getEntityWorld();
 
-
         if (!world.isRemote)  {
-            CommonProxy.INSTANCE.sendToServer(new PacketOpenWindow());
-
+            //CommonProxy.INSTANCE.sendToServer(new PacketOpenWindow());
+            EntityPlayer entityPlayer = world.getPlayerEntityByName(sender.getCommandSenderName());
+            entityPlayer.openGui(RSStats.instance, RSStats.UPGRADE_UI_FROM_CMD_CODE, world, (int) entityPlayer.posX, (int) entityPlayer.posY, (int) entityPlayer.posZ);
             return;
         }
 

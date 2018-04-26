@@ -42,7 +42,9 @@ public class RSStats {
     /** ID интерфейса {@link SSPPage} */
     public static final int SSP_UI_CODE = 1;
     /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI} от блока {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock} */
-    public static final int UPGRADE_UI_CODE = 2;
+    public static final int UPGRADE_UI_FROM_BLOCK_CODE = 2;
+    /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI}, запускаемого из команды консоли ({@link OpenWindow}) */
+    public static final int UPGRADE_UI_FROM_CMD_CODE = 3;
     
     /** Объект-экземпляр мода */
     @Mod.Instance(MODID)

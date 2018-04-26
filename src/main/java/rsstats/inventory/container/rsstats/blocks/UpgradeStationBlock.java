@@ -2,6 +2,7 @@ package rsstats.inventory.container.rsstats.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -16,30 +17,40 @@ public class UpgradeStationBlock extends BlockContainer {
         //setBlockBounds(0.25F, 0, 0.25F, 0.75F, 0.5F, 0.75F);
         setBlockName(name);
         setCreativeTab(RSStats.CREATIVE_TAB);
-
-        //GameRegistry.registerBlock(this, name);
+        setHardness(2.5F); // Как у верстака, судя по вики
+        // TODO: Установить подходящий инструмент, взывоустойчивость, горение и другие свойства
     }
+
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
-    {
+    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
         return false;
     }
 
     @Override
-    public boolean isOpaqueCube()
-    {
+    public boolean isOpaqueCube() {
         return false;
     }
 
     @Override
-    public boolean renderAsNormalBlock()
-    {
+    public boolean renderAsNormalBlock() {
         return false;
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int par2)
-    {
+    public TileEntity createNewTileEntity(World world, int par2) {
         return new UpgradeStationEntity();
+    }
+
+    /**
+     * Called upon block activation (right click on the block.)
+     */
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            entityPlayer.openGui(RSStats.instance, RSStats.UPGRADE_UI_FROM_BLOCK_CODE, world, x, y, z);
+            //CommonProxy.INSTANCE.sendToServer(new PacketOpenWindow(x, y, z));
+            //return false; // TODO: Зачем?
+        }
+        return super.onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
     }
 }
