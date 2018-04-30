@@ -25,6 +25,24 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.0F, (float) z + 0.5F);
         //GL11.glScalef(0.09375F, 0.09375F, 0.09375F);
 
+        // Поворачиваем блок в нужном направлении (направление хранится в метадате блока, которая выставляется когда игрок ставит блок)
+        int dir = entity.blockMetadata;
+        if (dir == 0)
+        {
+            GL11.glRotatef(-180F, 0.0F, 1.0F, 0.0F);
+        }
+
+        if (dir % 2 != 0)
+        {
+            GL11.glRotatef(dir * (/*-*/90F), 0.0F, 1.0F, 0.0F);
+        }
+
+        if (dir % 2 == 0)
+        {
+            GL11.glRotatef(dir * (-180F), 0.0F, 1.0F, 0.0F);
+        }
+
+        // Рендерим блок
         model.renderAll();
         GL11.glPopMatrix();
     }
