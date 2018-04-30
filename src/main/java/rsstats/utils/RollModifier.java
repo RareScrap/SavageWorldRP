@@ -36,6 +36,7 @@ public class RollModifier {
             formatCode = RSStats.config.modifierColorNegative;
         }
 
+        // TODO: Использовать функцию из DescriptionCutter
         String[] words = description.split(" "); // Получаем слова из описания
 
         // Присоединяем форматирование к каждому слову, если оно отсуствует

@@ -32,4 +32,32 @@ public class DescriptionCutter {
         // Возвращем получившиеся строки
         return returnStrings;
     }
+
+    /**
+     * Присоединяет к каждому слову в строке форматирование, если слово его не имеет
+     * @param source Исходная строка
+     * @param formatPrefix Форматирование, которое будет присоединено к каждому слову
+     * @return Строка с форматированными словами
+     */
+    public static String formatEveryWord(String source, String formatPrefix ) {
+        String[] words = source.split(" "); // Получаем слова
+
+        // Присоединяем форматирование к каждому слову, если оно отсуствует
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (word.isEmpty()) break; // Защита от пустых слов
+
+            if (word.charAt(0) != '§')
+                stringBuilder.append(formatPrefix).append(word);
+
+            // Предотвращаем наличие пробела в конце последнего слова
+            if (i != words.length-1) {
+                stringBuilder.append(" ");
+            }
+        }
+
+        return stringBuilder.toString();
+
+    }
 }

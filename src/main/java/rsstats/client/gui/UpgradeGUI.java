@@ -12,6 +12,7 @@ import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncGUI;
 import rsstats.inventory.container.UpgradeContainer;
+import rsstats.utils.DescriptionCutter;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
     private UpgradeContainer upgradeContainer;
     /** Поле ввода описания улучшения */
     private GuiTextField descriptionTextField;
+    private GuiTextField valueTextField;
 
     public UpgradeGUI(Container container) {
         super(container);
@@ -66,8 +68,10 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
         UpgradeContainer container = (UpgradeContainer) this.inventorySlots;
         if (container.isTextFieldAvailable()) {
             this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-105, 2, this.ySize + /*(this.field_147092_v.getSlot(0).getHasStack() ? 0 : */15/*)*/, 110, 16);
+            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-105, 200, this.ySize - 19, 19, 16);
         } else {
             this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-105, 113, this.ySize + /*(this.field_147092_v.getSlot(0).getHasStack() ? 0 : */15/*)*/, 110, 16);
+            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-105, 220, this.ySize - 19, 19, 16);
         }
     }
 
@@ -77,12 +81,19 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
     @Override
     public void initGui() {
         Keyboard.enableRepeatEvents(true); // Позволяет зажать клавишу и напечатать "аааааааа"
-        this.descriptionTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 28, this.height/2-104, 108, 14);
+        this.descriptionTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 26, this.height/2-102, 101, 16);
         this.descriptionTextField.setFocused(false); // Нам не нужен фокус на момент открытия
         this.descriptionTextField.setTextColor(-1);
         this.descriptionTextField.setDisabledTextColour(-1);
         this.descriptionTextField.setEnableBackgroundDrawing(false);
         this.descriptionTextField.setMaxStringLength(40);
+
+        valueTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 47, this.height/2-102, 12, 16); // 105
+        this.valueTextField.setFocused(false); // Нам не нужен фокус на момент открытия
+        this.valueTextField.setTextColor(-1);
+        this.valueTextField.setDisabledTextColour(-1);
+        this.valueTextField.setEnableBackgroundDrawing(false);
+        this.valueTextField.setMaxStringLength(4);
 
         this.inventorySlots.removeCraftingFromCrafters(this); // TODO: ХЗ зачем это. Кажется всякое GUI с крафтом должно делать это
         this.inventorySlots.addCraftingToCrafters(this);
@@ -98,10 +109,35 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
      */
     @Override
     protected void keyTyped(char par1, int par2) {
-        super.keyTyped(par1, par2);
-        this.descriptionTextField.textboxKeyTyped(par1, par2); // Добавляем букву в поле. Метод сам проверит фокус.
-        this.upgradeContainer.updateModifierDescription(descriptionTextField.getText()); // Обновим описание модификатора в контейнере клиента (кажется)
-        CommonProxy.INSTANCE.sendToServer(new PacketSyncGUI(descriptionTextField.getText(), 5)); // Отошлем ввод игрока серверу, чтоб тот мог сгенерить предмет
+        if (descriptionTextField.isFocused() || valueTextField.isFocused()) { // Окно можно закрыть только если поля не в фокусе
+            this.descriptionTextField.textboxKeyTyped(par1, par2); // Добавляем букву в поле. Метод сам проверит фокус.
+            if ((par1 >= 48 && par1 <= 57) || par1 == 45 || par1 == 43 || par1 == 8) { // Допустимые символы: 0-9, стереть и +-
+                this.valueTextField.textboxKeyTyped(par1, par2);
+            }
+
+            // Получаем значение модификатора
+            int value = 0;
+            if (!valueTextField.getText().isEmpty()) { // Условие, дабы не использовать затратный try слишком часто
+                try {
+                    value = Integer.parseInt(valueTextField.getText());
+                } catch (NumberFormatException e) {
+                }
+            }
+
+            // Форматируем вид текста
+            String formatCode;
+            if (value > 0) {
+                formatCode = "\u00A7" + String.valueOf(2); // Символ §
+            } else {
+                formatCode = "\u00A7" + String.valueOf(4);
+            }
+            String formattedDescription = DescriptionCutter.formatEveryWord(descriptionTextField.getText(), formatCode);
+
+            this.upgradeContainer.updateFields(formattedDescription, value); // Обновим описание модификатора в контейнере клиента (кажется)
+            CommonProxy.INSTANCE.sendToServer(new PacketSyncGUI(descriptionTextField.getText(), value)); // Отошлем ввод игрока серверу, чтоб тот мог сгенерить предмет
+        } else {
+            super.keyTyped(par1, par2);
+        }
     }
 
     /**
@@ -111,14 +147,18 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
     public void updateScreen() {
         super.updateScreen();
         this.descriptionTextField.updateCursorCounter();
+        this.valueTextField.updateCursorCounter();
 
         // Выставляем активность текстого поля в зависимости от его доступности
         UpgradeContainer container = (UpgradeContainer) this.inventorySlots;
         if (container.isTextFieldAvailable()) {
             descriptionTextField.setEnabled(true);
+            valueTextField.setEnabled(true);
         } else {
             descriptionTextField.setEnabled(false);
+            valueTextField.setEnabled(false);
             descriptionTextField.setText("");
+            valueTextField.setText("");
         }
     }
 
@@ -131,6 +171,7 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
 
         super.drawScreen(par1, par2, par3);
         this.descriptionTextField.drawTextBox();
+        this.valueTextField.drawTextBox();
     }
 
     /**
@@ -140,6 +181,7 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
     protected void mouseClicked(int x, int y, int btn) {
         super.mouseClicked(x, y, btn);
         this.descriptionTextField.mouseClicked(x, y, btn);
+        this.valueTextField.mouseClicked(x, y, btn);
     }
 
     /**

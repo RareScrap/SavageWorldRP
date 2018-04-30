@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
+import rsstats.common.Config;
 import rsstats.items.StatItem;
 
 // TODO: Контейнер не адаптирован под вызов из консоли
@@ -36,7 +37,10 @@ public class UpgradeContainer extends Container {
         }
     };
 
+    /** Описание, полученный с поля {@link rsstats.client.gui.UpgradeGUI#descriptionTextField} */
     private String description = "";
+    /** Значение модификатора, полученное с поля {@link rsstats.client.gui.UpgradeGUI#valueTextField} */
+    private int value;
 
     /**
      * Конструктор, иницилазирующий свои поля
@@ -84,9 +88,13 @@ public class UpgradeContainer extends Container {
                 return super.canTakeStack(p_82869_1_);
             }
 
-            // TODO: роллить скилл и удалять реагенты для крафта
+            // TODO: роллить скилл
             @Override
             public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack p_82870_2_) {
+                // Удаляем реагенты
+                inputSlots.setInventorySlotContents(0, null);
+                inputSlots.setInventorySlotContents(1, null);
+
                 super.onPickupFromSlot(p_82870_1_, p_82870_2_);
             }
         });
@@ -176,7 +184,7 @@ public class UpgradeContainer extends Container {
             NBTTagCompound modifier = new NBTTagCompound();
             modifier.setString("description", description);
             modifier.setString("to", inputSlots.getStackInSlot(1).getItem().getUnlocalizedName());
-            modifier.setInteger("value", 5);
+            modifier.setInteger("value", value);
 
             // Добавляем модификатор к другим модификаторам
             modifiers.appendTag(modifier);
@@ -189,10 +197,13 @@ public class UpgradeContainer extends Container {
             if (display == null) {
                 display = new NBTTagCompound();
             }
-            NBTTagList lore = display.getTagList("Lore", Constants.NBT.TAG_COMPOUND);
+            NBTTagList lore = display.getTagList("Lore", Constants.NBT.TAG_STRING);
 
             // И добавляем к тултипу текстовое представление модификатора
-            lore.appendTag(new NBTTagString("+5 " + description)); // TODO: Не добавляется представление модификаторов, если добавлен второй модификатор
+            String valueStr = value > 0 ?
+                    ("\u00A7" + Config.DEFAULT_MODIFIER_COLOR_POSITIVE + "+" + value) :
+                    ("\u00A7" + Config.DEFAULT_MODIFIER_COLOR_NEGATIVE + String.valueOf(value));
+            lore.appendTag(new NBTTagString(valueStr + " " + description));
 
             // Сохраняем тултип
             display.setTag("Lore", lore);
@@ -202,22 +213,19 @@ public class UpgradeContainer extends Container {
             resultItemStack.stackTagCompound = data;
             this.outputSlot.setInventorySlotContents(0, resultItemStack);
 
-            // Эта хуйня делает так, чтоб надпись описания улучшения мигала на выходном предмете. Связано с разными данными на сторонах
-            //x();
-
             this.detectAndSendChanges(); // TODO: Хз зачем это
         }
     }
 
-    public void updateModifierDescription(String description) {
+    /**
+     * Сеттер для полей класса
+     * @param description Новое описание модификатора
+     * @param value Новое значение модификатора
+     */
+    public void updateFields(String description, int value) {
         this.description = description;
+        this.value = value;
     }
-
-    /*@SideOnly(Side.CLIENT)
-    private void x() {
-        CommonProxy.INSTANCE.sendToServer(new PacketSyncGUI(description, 5));
-    }*/
-
 
     public boolean isCalledFromBlock() {
         return blockInventory != null;
