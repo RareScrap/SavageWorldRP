@@ -44,7 +44,7 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
             this.ySize = 224;
             background = new ResourceLocation(RSStats.MODID,"textures/gui/upgrade_window.png");
         } else { // GUI вызывается командой консоли
-            this.xSize = 175;
+            this.xSize = 176;
             this.ySize = 165;
             background = new ResourceLocation(RSStats.MODID,"textures/gui/upgrade_window_cmd.png");
         }
@@ -56,22 +56,24 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
         this.mc.getTextureManager().bindTexture(background);
 
         // Отрисовываем текстуру GUI
-        //drawTexturedRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize, xSize, ySize);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        //drawTexturedRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize, xSize, ySize);
+
+        // Расчитываем координаты текстур полей, для вызова из консоли или из блока
+        UpgradeContainer container = (UpgradeContainer) this.inventorySlots;
+        int fieldsTextureY;
+        if (container.isCalledFromBlock()) {
+            fieldsTextureY = 105;
+        } else {
+            fieldsTextureY = 75; // TODO: странный баг. Если игра не на весь экран - видны красные текстуры-заполнители. Сдвину значение до 76 - Все наоборот: теперь заполнители видны в полноэкранном режиме, но не видны в маленьком
+        }
 
         // Отрисовываем активную/неактивную текстуру текстого поля description поверх цвета-маркера
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        //this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-105, 113, this.ySize + /*(this.field_147092_v.getSlot(0).getHasStack() ? 0 : */15/*)*/, 110, 16);
-
-        UpgradeContainer container = (UpgradeContainer) this.inventorySlots;
         if (container.isTextFieldAvailable()) {
-            this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-105, 2, this.ySize + /*(this.field_147092_v.getSlot(0).getHasStack() ? 0 : */15/*)*/, 110, 16);
-            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-105, 200, this.ySize - 19, 19, 16);
+            this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-fieldsTextureY, 2, 239, 110, 16);
+            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-fieldsTextureY, 200, 205, 19, 16);
         } else {
-            this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-105, 113, this.ySize + /*(this.field_147092_v.getSlot(0).getHasStack() ? 0 : */15/*)*/, 110, 16);
-            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-105, 220, this.ySize - 19, 19, 16);
+            this.drawTexturedModalRect(this.width / 2 - 29, this.height/2-fieldsTextureY, 113, 239, 110, 16); // Не расчитывай начало текстур относительно xSize и ySize. Расчитывай отностительно начала текстуры.
+            this.drawTexturedModalRect(this.width / 2 - 49, this.height/2-fieldsTextureY, 220, 205, 19, 16);
         }
     }
 
@@ -80,15 +82,24 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
      */
     @Override
     public void initGui() {
+        // Расчитываем координаты текстовых полей, для вызова из консоли или из блока
+        UpgradeContainer container = (UpgradeContainer) this.inventorySlots;
+        int fieldsY;
+        if (container.isCalledFromBlock()) {
+            fieldsY = 102;
+        } else {
+            fieldsY = 72;
+        }
+
         Keyboard.enableRepeatEvents(true); // Позволяет зажать клавишу и напечатать "аааааааа"
-        this.descriptionTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 26, this.height/2-102, 101, 16);
+        descriptionTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 26, this.height/2-fieldsY, 101, 16);
         this.descriptionTextField.setFocused(false); // Нам не нужен фокус на момент открытия
         this.descriptionTextField.setTextColor(-1);
         this.descriptionTextField.setDisabledTextColour(-1);
         this.descriptionTextField.setEnableBackgroundDrawing(false);
         this.descriptionTextField.setMaxStringLength(40);
 
-        valueTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 47, this.height/2-102, 12, 16); // 105
+        valueTextField = new GuiTextField(this.fontRendererObj,  this.width / 2 - 47, this.height/2-fieldsY, 12, 16); // 105
         this.valueTextField.setFocused(false); // Нам не нужен фокус на момент открытия
         this.valueTextField.setTextColor(-1);
         this.valueTextField.setDisabledTextColour(-1);
