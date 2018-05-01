@@ -70,7 +70,7 @@ public class UpgradeContainer extends Container {
         });
 
         // Добавляем слот результата крафта
-        this.addSlotToContainer(new Slot(this.outputSlot, 2, 134, 47) {
+        this.addSlotToContainer(new Slot(this.outputSlot, 2, 136, 47) {
             @Override
             public int getSlotStackLimit() {
                 return 1;
