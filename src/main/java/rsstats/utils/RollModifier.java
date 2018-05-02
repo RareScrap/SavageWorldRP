@@ -36,28 +36,9 @@ public class RollModifier {
             formatCode = RSStats.config.modifierColorNegative;
         }
 
-        String[] words = description.split(" "); // Получаем слова из описания
-
-        // Присоединяем форматирование к каждому слову, если оно отсуствует
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i];
-            if (word.isEmpty()) break; // TODO: эта костылина не совсем костылина. Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово
-            
-            // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку
-            if (word.charAt(0) != '§')
-                stringBuilder.append("\u00A7" + formatCode) // Символ §
-                        .append(word);
-
-            // Предотвращаем наличие пробела в конце последнего слова
-            if (i != words.length-1) {
-                stringBuilder.append(" ");
-            }
-
-        }
-
-        // Сохраняем форматированное описание
-        description = stringBuilder.toString();
+        // TODO: Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово. Все работает норм, но при юзании отладчика - можно увидеть как сюда приходит пустое слово. В игре такое не разу не замечено
+        // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку на § в этой функции
+        description = DescriptionCutter.formatEveryWord(description, "\u00A7" + formatCode); // Символ §
 
         // Форматируем выходную строку
         return StatCollector.translateToLocalFormatted("modifier.string", value > 0 ? "+"+value : String.valueOf(value), description, formatCode);

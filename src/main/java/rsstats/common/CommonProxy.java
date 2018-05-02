@@ -9,6 +9,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import rsstats.common.event.KeyHandler;
@@ -16,6 +17,9 @@ import rsstats.common.network.*;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
+import rsstats.inventory.container.UpgradeContainer;
+import rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock;
+import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
 import rsstats.items.ExpItem;
 import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
@@ -74,14 +78,18 @@ public class CommonProxy implements IGuiHandler {
             NetworkRegistry.INSTANCE.newSimpleChannel(RSStats.MODID.toLowerCase());
 
     public void preInit(FMLPreInitializationEvent event) {
-        // Когда сообщений станет много, их можно вынести в отдельный класс в метод init()
-        INSTANCE.registerMessage(RollPacketToServer.MessageHandler.class, RollPacketToServer.class, 0, Side.SERVER); // Регистрация сообщения о пробросе статы
-        INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, 1, Side.SERVER);
-        INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, 2, Side.SERVER);
-        INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, 3, Side.SERVER);
+        int discriminator = 0;
 
-        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, 4, Side.CLIENT);
-        INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, 5, Side.CLIENT);
+        // Когда сообщений станет много, их можно вынести в отдельный класс в метод init()
+        INSTANCE.registerMessage(RollPacketToServer.MessageHandler.class, RollPacketToServer.class, discriminator++, Side.SERVER); // Регистрация сообщения о пробросе статы
+        INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, discriminator++, Side.SERVER);
+        INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, discriminator++, Side.SERVER);
+        INSTANCE.registerMessage(PacketOpenWindow.MessageHandler.class, PacketOpenWindow.class, discriminator++, Side.SERVER);
+        INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, discriminator++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSyncGUI.MessageHandler.class, PacketSyncGUI.class, discriminator++, Side.SERVER);
+
+        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
 
         // Дайсы для статов
         ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
@@ -166,7 +174,34 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
         ExpItem expItem = new ExpItem("ExpItem");
         GameRegistry.registerItem(expItem, "ExpItem");
+
+        // Регистрация сущностей
+        GameRegistry.registerTileEntity(UpgradeStationEntity.class, "UpgradeStationEntity");
+
+        /// регистрация блоков
+        //UpgradeStationBlock b = new UpgradeStationBlock(); // TODO: Нужно найти способ снова использовать локальне переменные. Или хотя бы узнать, почему их не следует использовать
+
+        /* Нет смысла регистрировать Item для блока. Потому что они регаются автоматические
+         * при регистрации самого блока. Попытка сделать это еще раз привет к ошибке того,
+         * что регитсрационный слот под итем уже занят
+         */
+        //GameRegistry.registerItem(new ItemBlock(b), UpgradeStationBlock.item_name);
+
+        GameRegistry.registerBlock(b, UpgradeStationBlock.name);
+
+
+        // Это не срабатывает. Скорее всего, это решение предназначено для более поздних версий Forge
+        /*UpgradeStationBlock block3DWeb = (Block3DWeb)(new Block3DWeb().setUnlocalizedName("mbe05_block_3d_web_unlocalised_name"));
+        block3DWeb.setRegistryName("mbe05_block_3d_web_registry_name");
+        ForgeRegistries.BLOCKS.register(block3DWeb);
+
+        // We also need to create and register an ItemBlock for this block otherwise it won't appear in the inventory
+        ItemBlock itemBlock3DWeb = new ItemBlock(block3DWeb);
+        itemBlock3DWeb.setRegistryName(block3DWeb.getRegistryName());
+        ForgeRegistries.ITEMS.register(itemBlock3DWeb);*/
     }
+    // TODO: Это статик поле - полный пиздец как по мне, но без него не зарегать ItemRender в ClientProxy для этого блока
+    public static UpgradeStationBlock  b = new UpgradeStationBlock();
 
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
@@ -182,7 +217,17 @@ public class CommonProxy implements IGuiHandler {
                 return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory);
             case RSStats.SSP_UI_CODE:
                 return new StatsContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
-
+            case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: {
+                // Получение сущности по координатам блока, по которому кликнул игрок
+                TileEntity tileEntity = world.getTileEntity(x, y, z);
+                if (tileEntity instanceof UpgradeStationEntity) {
+                    UpgradeStationEntity upgradeStationEntity = (UpgradeStationEntity) tileEntity;
+                    return new UpgradeContainer(player.inventory, upgradeStationEntity.upgradeStationInventory);
+                }
+                break;
+            }
+            case RSStats.UPGRADE_UI_FROM_CMD_CODE:
+                return new UpgradeContainer(player.inventory, null);
         }
         return null;
     }

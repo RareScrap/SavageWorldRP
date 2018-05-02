@@ -85,3 +85,5 @@ gui.ExpPoints=Очки опыта: %1$d
 gui.tiredness=Усталость: %1$d
 
 modifiers.MissingSkill=Отсуствующий навык
+
+tile.block.upgrade_station.name=Верстак улучшений

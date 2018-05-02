@@ -16,6 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.command.AddLevel;
 import rsstats.common.command.Card;
+import rsstats.common.command.OpenWindow;
 import rsstats.common.command.ParamsPlayer;
 import rsstats.common.event.TestEventHandler;
 
@@ -36,10 +37,14 @@ public class RSStats {
     /** Версия мода */
     public static final String VERSION = "0.0.1a";
     
-    /** ID тестового UI (первый UI, который я сделал) */
+    /** ID интерфейса для панели информации о персонаже - {@link rsstats.client.gui.MainMenuGUI} */
     public static final int GUI = 0;
     /** ID интерфейса {@link SSPPage} */
     public static final int SSP_UI_CODE = 1;
+    /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI} от блока {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock} */
+    public static final int UPGRADE_UI_FROM_BLOCK_CODE = 2;
+    /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI}, запускаемого из команды консоли ({@link OpenWindow}) */
+    public static final int UPGRADE_UI_FROM_CMD_CODE = 3;
     
     /** Объект-экземпляр мода */
     @Mod.Instance(MODID)
@@ -106,6 +111,7 @@ public class RSStats {
         //event.registerServerCommand(new OpenInventory());
         event.registerServerCommand(new ParamsPlayer());
         event.registerServerCommand(new Card());
+        event.registerServerCommand(new OpenWindow());
 
         // Создаем gamerule, который будет сохранять предметы в инвентарях мода после смерти
         MinecraftServer.getServer().worldServerForDimension(0).getGameRules().addGameRule("keepStats", "true");
