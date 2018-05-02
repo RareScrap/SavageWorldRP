@@ -179,8 +179,29 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerTileEntity(UpgradeStationEntity.class, "UpgradeStationEntity");
 
         /// регистрация блоков
-        GameRegistry.registerBlock(new UpgradeStationBlock(), UpgradeStationBlock.name);
+        //UpgradeStationBlock b = new UpgradeStationBlock(); // TODO: Нужно найти способ снова использовать локальне переменные. Или хотя бы узнать, почему их не следует использовать
+
+        /* Нет смысла регистрировать Item для блока. Потому что они регаются автоматические
+         * при регистрации самого блока. Попытка сделать это еще раз привет к ошибке того,
+         * что регитсрационный слот под итем уже занят
+         */
+        //GameRegistry.registerItem(new ItemBlock(b), UpgradeStationBlock.item_name);
+
+        GameRegistry.registerBlock(b, UpgradeStationBlock.name);
+
+
+        // Это не срабатывает. Скорее всего, это решение предназначено для более поздних версий Forge
+        /*UpgradeStationBlock block3DWeb = (Block3DWeb)(new Block3DWeb().setUnlocalizedName("mbe05_block_3d_web_unlocalised_name"));
+        block3DWeb.setRegistryName("mbe05_block_3d_web_registry_name");
+        ForgeRegistries.BLOCKS.register(block3DWeb);
+
+        // We also need to create and register an ItemBlock for this block otherwise it won't appear in the inventory
+        ItemBlock itemBlock3DWeb = new ItemBlock(block3DWeb);
+        itemBlock3DWeb.setRegistryName(block3DWeb.getRegistryName());
+        ForgeRegistries.ITEMS.register(itemBlock3DWeb);*/
     }
+    // TODO: Это статик поле - полный пиздец как по мне, но без него не зарегать ItemRender в ClientProxy для этого блока
+    public static UpgradeStationBlock  b = new UpgradeStationBlock();
 
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
