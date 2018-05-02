@@ -18,7 +18,7 @@ public class UpgradeStationBlock extends BlockContainer {
         super(Material.wood);
         setBlockTextureName(RSStats.MODID + ":" + name);
         //setBlockBounds(0.25F, 0, 0.25F, 0.75F, 0.5F, 0.75F);
-        setBlockName(name);
+        setBlockName("block." + name);
         setCreativeTab(RSStats.CREATIVE_TAB);
         setHardness(2.5F); // Как у верстака, судя по вики
         // TODO: Установить подходящий инструмент, взывоустойчивость, горение и другие свойства
