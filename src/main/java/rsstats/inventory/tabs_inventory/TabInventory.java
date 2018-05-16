@@ -203,7 +203,7 @@ public class TabInventory implements IInventory {
                 NBTTagCompound item = tabItemsList.getCompoundTagAt(i1);
                 byte slot = item.getByte("Slot");
                 if (slot >= 0 && slot < getSizeInventory()) {
-                    itemStacks[i1] = ItemStack.loadItemStackFromNBT(item);
+                    itemStacks[i1] = ItemStack.loadItemStackFromNBT(item); // TODO: Пофиксить баг со "сползающим" инвентарем
                 }
             }
             addTab(tabName, itemStacks);
