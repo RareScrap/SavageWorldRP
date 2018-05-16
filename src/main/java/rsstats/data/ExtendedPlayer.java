@@ -15,6 +15,8 @@ import rsstats.common.network.PacketSyncPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
+import rsstats.inventory.tabs_inventory.TabHostInventory;
+import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.RollModifier;
@@ -53,6 +55,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public final SkillsInventory skillsInventory;
     /** Инвентарь для носимых предметов */
     public final WearableInventory wearableInventory;
+    /** Хост вкладок для {@link #otherTabsInventory} */
+    public TabHostInventory otherTabsHost;
+    /** Инвентарь с вкладками для прочей информации вроде перков, изъянов и т.д. */
+    public TabInventory otherTabsInventory;
+
     /** Хранилище модификаторов, преминимых с броскам данного игрока */
     private Map<String, ArrayList<RollModifier>> modifierMap = new HashMap<String, ArrayList<RollModifier>>();
     
@@ -67,6 +74,9 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         statsInventory = new StatsInventory(player);
         skillsInventory = new SkillsInventory(player);
         wearableInventory = new WearableInventory(this);
+
+        otherTabsInventory = new TabInventory("effects", 36);
+        otherTabsHost = new TabHostInventory(false, 4, otherTabsInventory);
     }
     
     /**
@@ -100,6 +110,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.statsInventory.writeToNBT(properties);
         this.skillsInventory.writeToNBT(properties);
         this.wearableInventory.writeToNBT(properties);
+        this.otherTabsHost.writeToNBT(properties);
+        this.otherTabsInventory.writeToNBT(properties);
     }
 
     // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
@@ -116,6 +128,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
         this.wearableInventory.readFromNBT(properties);
+        this.otherTabsHost.readFromNBT(properties);
+        this.otherTabsInventory.readFromNBT(properties);
 
         /* Т.к. ванильный инвентарь переписывать нежелательно, начальная инициализация модификатором от брони
          * реализована здесь */

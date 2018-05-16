@@ -20,6 +20,8 @@ import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
 import rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock;
 import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
+import rsstats.inventory.tabs_inventory.TabHostInventory;
+import rsstats.inventory.tabs_inventory.TabMessageHandler;
 import rsstats.items.ExpItem;
 import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
@@ -90,6 +92,10 @@ public class CommonProxy implements IGuiHandler {
 
         INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
+
+        TabHostInventory.registerHandler(TabMessageHandler.class, discriminator++);
+        // Класические спосб регистрации для дебага
+        //CommonProxy.INSTANCE.registerMessage(TabMessageHandler.class, TabHostInventory.SetCurrentTabPacket.class, discriminator++, Side.SERVER);
 
         // Дайсы для статов
         ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
@@ -214,7 +220,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case RSStats.GUI:
-                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory);
+                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory, ExtendedPlayer.get(player).otherTabsHost, ExtendedPlayer.get(player).otherTabsInventory);
             case RSStats.SSP_UI_CODE:
                 return new StatsContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
             case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: {

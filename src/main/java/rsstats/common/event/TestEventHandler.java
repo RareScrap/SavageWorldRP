@@ -7,6 +7,8 @@ package rsstats.common.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -49,6 +51,15 @@ public class TestEventHandler {
             ExtendedPlayer data = ExtendedPlayer.get((EntityPlayer) e.entity);
             if (data != null)
                 data.sync();
+
+            // Альтернативная начальная инициализация
+            if (data.otherTabsHost.isEmpty()) {
+                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(Items.diamond_axe, 1));
+                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(Items.carrot, 1));
+                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(Items.chainmail_chestplate, 1));
+                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(Items.wheat_seeds, 1));
+
+            }
         }
     }
 

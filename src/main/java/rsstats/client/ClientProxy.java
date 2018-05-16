@@ -51,10 +51,12 @@ public class ClientProxy extends CommonProxy {
                     return new MainMenuGUI(
                             ExtendedPlayer.get(player),
                             new MainContainer(player,
-                                    player.inventory,
+                                    player.inventory, // TODO: Уменьшить количество аргументов
                                     ExtendedPlayer.get(player).statsInventory,
                                     ExtendedPlayer.get(player).skillsInventory,
-                                    ExtendedPlayer.get(player).wearableInventory)
+                                    ExtendedPlayer.get(player).wearableInventory,
+                                    ExtendedPlayer.get(player).otherTabsHost,
+                                    ExtendedPlayer.get(player).otherTabsInventory)
                     );
                 }
                 /*
