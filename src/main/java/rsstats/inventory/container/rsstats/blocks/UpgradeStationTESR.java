@@ -118,7 +118,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
             //model.renderAll();
 
             // Дебажная вещь
-            switch (type) {
+            /*switch (type) {
                 case ENTITY: {
                     System.out.println("ENTITY");
                     break;
@@ -137,7 +137,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
                     System.out.println("INVENTORY");
                     break;
                 }
-            }
+            }*/
         }
     }
 }
