@@ -1,5 +1,6 @@
 package rsstats.inventory.tabs_inventory;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -26,15 +27,19 @@ public class TabInventory implements IInventory {
     /** Хранилище вкладок с предметами */
     private HashMap<String, Tab> items = new HashMap<String, Tab>();
 
+    /** Сущность, к которой привязан инвентарь */
+    private Entity inventoryOwnerEntity; // TODO: Добавить такое же поле к TabHostInventory
+
     /**
      * Конструктор, создающий инвентарь с указанными параметрами. После взова конструктора, вам
      * следует добавить в инвентарь вкладки вызовом метода {@link #addTab(String)}.
      * @param inventoryName Имя инвентарая, которое будет использовано при сохранении его содержимого в NBT
      * @param tabSlotsCount Вместимость каждой вкладки
      */
-    public TabInventory(String inventoryName, int tabSlotsCount) {
+    public TabInventory(String inventoryName, int tabSlotsCount, Entity inventoryOwnerEntity) {
         this.inventoryName = inventoryName;
         this.tabSlotsCount = tabSlotsCount;
+        this.inventoryOwnerEntity = inventoryOwnerEntity;
     }
 
     @Override
@@ -47,7 +52,6 @@ public class TabInventory implements IInventory {
         if (items.isEmpty()) {
             throw new RuntimeException("TabInventory hasn't any tab");
         }
-        //System.out.println("currentTab - " + currentTabKey + " Side - " + RSStats.proxy.toString());
 
         if (slotIndex >= 0 && slotIndex < getSizeInventory()) {
             if (this.items.get(currentTabKey) != null) {
@@ -112,14 +116,29 @@ public class TabInventory implements IInventory {
         return items.get(currentTabKey).stackLimit;
     }
 
+    // http://www.minecraftforge.net/forum/topic/44810-111-how-does-notifyblockupdate-amp-markdirty-work/#comment-242622
+    // http://www.minecraftforge.net/forum/topic/47811-what-is-the-function-of-markdirty/
     @Override
     public void markDirty() {
-        // TODO
+        // Чистим стаки с пустыми предметами
+        for (Tab tab : items.values()) {
+            ItemStack[] stacks = tab.stacks;
+
+            for (int i = 0; i < stacks.length; i++) {
+                if (stacks[i] != null && stacks[i].stackSize == 0) {
+                    tab.stacks[i] = null;
+                }
+            }
+        }
+
+        // TODO: Проверить при помощи NBTEdit как мод ведет себя без этой строки
+        // Сохраняем изменившиеся данные
+        writeToNBT(inventoryOwnerEntity.getEntityData());
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-        return true;
+        return entityPlayer.capabilities.isCreativeMode; // Инвентарь можно изменять, только если юзер в креативе
     }
 
     @Override
