@@ -406,7 +406,7 @@ public class MainContainer extends Container {
 
         // Поведение, если кликнут слот инвентаря otherTabsHost
         if (slot.inventory == otherTabsHost) {
-            if (otherTabsHost.isUseableByPlayer(playerIn)) {
+            if (otherTabsHost.isUseableByPlayer(playerIn)) { // TODO: Не лучше ли использовать isItemValid из переопределенного слота?
                 return super.slotClick(slotId, clickedButton, mode, playerIn); // "Захватваем" стак
             } else {
                 return null; // Ничего не делаем
