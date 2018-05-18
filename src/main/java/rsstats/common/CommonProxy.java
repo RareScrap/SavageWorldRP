@@ -9,6 +9,8 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -26,10 +28,12 @@ import rsstats.items.ExpItem;
 import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static rsstats.common.RSStats.instance;
@@ -71,6 +75,22 @@ public class CommonProxy implements IGuiHandler {
         IntelligenceStatItem,
         EnduranceStatItem,
         CharacterStatItem
+    }
+
+    public static class OtherItems {
+        public static Item flawsTabItem = new OtherItem().setTextureName("rsstats:other_items/flawsTab").setUnlocalizedName("FlawsTabItem");
+        public static Item perksTabItem = new OtherItem().setTextureName("rsstats:other_items/perksTab").setUnlocalizedName("PerksTabItem");
+        public static Item positiveEffectsTabItem = new OtherItem().setTextureName("rsstats:other_items/positiveEffectsTab").setUnlocalizedName("PositiveEffectsTabItem");
+        public static Item negativeEffectsTabItem = new OtherItem().setTextureName("rsstats:other_items/negativeEffectsTab").setUnlocalizedName("NegativeEffectsTabItem");
+
+        public static class OtherItem extends Item {
+            // Получаем информацию предмета из файла локализации
+            @Override
+            public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List infoLines, boolean p_77624_4_) {
+                String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(getUnlocalizedName() + ".lore"));
+                infoLines.addAll(Arrays.asList(strs));
+            }
+        }
     }
 
     /** Обработчик нажатия кнопок, используемых для вызова GUI */
@@ -174,6 +194,11 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerItem(intimidationSkillItem, "IntimidationSkillItem");
         GameRegistry.registerItem(diplomacySkillItem, "DiplomacySkillItem");
         GameRegistry.registerItem(climbingSkillItem, "ClimbingSkillItem");
+
+        GameRegistry.registerItem(OtherItems.perksTabItem, OtherItems.perksTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.flawsTabItem, OtherItems.flawsTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.positiveEffectsTabItem, OtherItems.positiveEffectsTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.negativeEffectsTabItem, OtherItems.negativeEffectsTabItem.getUnlocalizedName());
 
         // Регистрация прочих предметов
         RerollCoin rerollCoinItem = new RerollCoin("RerollCoinItem");

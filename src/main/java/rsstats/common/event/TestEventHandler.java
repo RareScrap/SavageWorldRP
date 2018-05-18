@@ -7,13 +7,13 @@ package rsstats.common.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import rsstats.common.CommonProxy;
 import rsstats.data.ExtendedPlayer;
 
 /**
@@ -52,12 +52,12 @@ public class TestEventHandler {
             if (data != null)
                 data.sync();
 
-            // Альтернативная начальная инициализация
+            // Альтернативная начальная инициализация вкладок
             if (data.otherTabsHost.isEmpty()) {
-                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(Items.diamond_axe, 1));
-                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(Items.carrot, 1));
-                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(Items.chainmail_chestplate, 1));
-                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(Items.wheat_seeds, 1));
+                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(CommonProxy.OtherItems.perksTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(CommonProxy.OtherItems.flawsTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(CommonProxy.OtherItems.positiveEffectsTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(CommonProxy.OtherItems.negativeEffectsTabItem, 1));
 
             }
         }
