@@ -334,21 +334,6 @@ public class TabInventory implements IInventory {
             return true; // TODO
         }
     }
-
-
-
-
-    /*public static class MessageHandler implements IMessageHandler<TabHostInventory.SetCurrentTabPacket, IMessage> {
-
-        public MessageHandler() {
-        }
-
-        @Override
-        public IMessage onMessage(TabHostInventory.SetCurrentTabPacket message, MessageContext ctx) {
-            ExtendedPlayer.get(ctx.getServerHandler().playerEntity).tabInventory.currentTabKey = message.newCurrentTabName;
-            return null;
-        }
-    }*/
 }
 
 
