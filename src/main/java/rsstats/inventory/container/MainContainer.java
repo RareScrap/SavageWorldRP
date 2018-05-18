@@ -174,13 +174,24 @@ public class MainContainer extends Container {
 
         // Расставляем слоты на панели вкладок
         for (int i = 0, slotIndex = 0; i < otherTabsHost.getSizeInventory(); ++i, slotIndex++) {
-            this.addSlotToContainer(new Slot(otherTabsHost, i, (i*18 +167) +8, 116));
+            this.addSlotToContainer(new Slot(otherTabsHost, i, (i*18 +167) +8, 116) {
+                @Override
+                public boolean isItemValid(ItemStack p_75214_1_) {
+                    return otherTabsHost.isUseableByPlayer(player);
+                }
+            });
+
         }
 
         // Расставляем слоты, которе будут хранить содержимое вкладок
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlotToContainer(new Slot(otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 133));
+                this.addSlotToContainer(new Slot(otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 134) {
+                    @Override
+                    public boolean isItemValid(ItemStack p_75214_1_) {
+                        return otherTabsHost.isUseableByPlayer(player);
+                    }
+                });
             }
         }
     }
@@ -392,6 +403,24 @@ public class MainContainer extends Container {
             }
             return null;
         }
+
+        // Поведение, если кликнут слот инвентаря otherTabsHost
+        if (slot.inventory == otherTabsHost) {
+            if (otherTabsHost.isUseableByPlayer(playerIn)) {
+                return super.slotClick(slotId, clickedButton, mode, playerIn); // "Захватваем" стак
+            } else {
+                return null; // Ничего не делаем
+            }
+        }
+        // Поведение, если кликнут слот инвентаря otherTabsInventory
+        if (slot.inventory == otherTabsInventory) {
+            if (otherTabsInventory.isUseableByPlayer(playerIn)) {
+                return super.slotClick(slotId, clickedButton, mode, playerIn);
+            } else {
+                return null;
+            }
+        }
+
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
