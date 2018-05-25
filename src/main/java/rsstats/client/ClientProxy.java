@@ -60,13 +60,18 @@ public class ClientProxy extends CommonProxy {
                     );
                 }
                 /*
-                ВНИМАНИЕ! По туториалу, мне не нужно делать проверку в строке 25.
+                TODO: ВНИМАНИЕ! По туториалу, мне не нужно делать проверку в строке 25.
                 Более того, мне нужно свитч затолкать в CommonProxy. Но так как
                 у меня все работает и при таком раскладе, я пока оставлю все как есть
                 */
                 case RSStats.SSP_UI_CODE: return new SSPPage(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
                 case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: return new UpgradeGUI(new UpgradeContainer(player.inventory, ((UpgradeStationEntity)world.getTileEntity(x, y, z)).upgradeStationInventory));
                 case RSStats.UPGRADE_UI_FROM_CMD_CODE: return new UpgradeGUI(new UpgradeContainer(player.inventory, null));
+                //case RSStats.DIALOG_GUI_CODE: return new MainMenuGUI.Dialog();
+                /* Тут не выйдет открывать диалоговое окно, потому что в один момент времени может быть открыт только
+                 * один GuiScreen (см код откртия GUI). Выход - вызывать drawScreen() диалогового окна прямо из того
+                 * GuiScreen, над которым нужно отобразить диалог. Используйте этот подход, если вам нужно отобразить
+                 * один GuiScreen поверх другого. */
             }
         }
         return null;
@@ -77,7 +82,7 @@ public class ClientProxy extends CommonProxy {
     public void registerKeyBindings() {
         keyHandler = new KeyHandler();
         FMLCommonHandler.instance().bus().register(keyHandler);
-        MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer()));
+        MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer())); // TODO: Нужно ли?
     }
 
     @Override
