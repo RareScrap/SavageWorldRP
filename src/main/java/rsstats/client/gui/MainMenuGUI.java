@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -18,6 +17,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import rsstats.client.gui.advanced.AdvanceInventoryEffectRenderer;
 import rsstats.client.gui.advanced.ZLevelFontRenderer;
 import rsstats.client.gui.advanced.ZLevelGuiButton;
 import rsstats.common.CommonProxy;
@@ -38,7 +38,7 @@ import java.util.Timer;
  * стойкость), панель предметов и панели статов, навыков и перков.
  * @author RareScrap
  */
-public class MainMenuGUI extends InventoryEffectRenderer {
+public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     /** Расположение фона GUI */
     private static final ResourceLocation background =
             new ResourceLocation(RSStats.MODID,"textures/gui/StatsAndInvTab_FIT.png");
