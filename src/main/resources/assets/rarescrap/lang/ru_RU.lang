@@ -92,6 +92,10 @@ gui.charisma=Харизма: %1$d
 gui.level=Уровень: %1$d
 gui.ExpPoints=Очки опыта: %1$d
 gui.tiredness=Усталость: %1$d
+gui.MainMenu.CloseDialog=Подтвердить улучшение навыков?
+gui.MainMenu.CloseDialog.positive=Да
+gui.MainMenu.CloseDialog.negative=Вернуться
+gui.MainMenu.CloseDialog.cancel=Отменить изменения
 
 modifiers.MissingSkill=Отсуствующий навык
 

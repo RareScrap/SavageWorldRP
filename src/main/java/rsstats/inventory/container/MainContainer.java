@@ -44,6 +44,8 @@ public class MainContainer extends Container {
     private final TabInventory otherTabsInventory;
 
     private boolean withWildDice; // TODO: Удалить ненужное поле
+    /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
+    public boolean isEditMode = false;
 
     public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory, TabHostInventory otherTabsHost, TabInventory otherTabsInventory) {
         this.player = player;
@@ -384,6 +386,7 @@ public class MainContainer extends Container {
         }
 
         if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
+            isEditMode = true; // Игрок начал прокачиваться и перешел в режим редактирования
             statUp(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
