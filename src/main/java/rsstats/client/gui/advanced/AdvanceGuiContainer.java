@@ -18,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -50,6 +52,14 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
     private int field_146988_G;
     private Slot field_146985_D;
     private long field_146986_E;
+    // Это поле было в GuiScreen
+    /** The button that was just pressed. */
+    private GuiButton selectedButton;
+
+    // Кастомные поля
+    private boolean shouldDrawDefaultBackground = true;
+    /** Если true - контейнер не реагирует на наведение мыши на слот*/
+    public boolean disableSlot = false;
 
     public AdvanceGuiContainer(Container p_i1072_1_) {
         super(p_i1072_1_);
@@ -59,7 +69,10 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
     // Копипаст из родителя-GuiContainer
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
-        this.drawDefaultBackground();
+        if (shouldDrawDefaultBackground) { // Проверка - кастомная
+            this.drawDefaultBackground();
+        }
+
         int k = this.guiLeft;
         int l = this.guiTop;
         this.drawGuiContainerBackgroundLayer(p_73863_3_, p_73863_1_, p_73863_2_);
@@ -97,7 +110,7 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
             Slot slot = (Slot)this.inventorySlots.inventorySlots.get(i1);
             this.func_146977_a(slot);
 
-            if (this.isMouseOverSlot(slot, p_73863_1_, p_73863_2_) && slot.func_111238_b())
+            if (this.isMouseOverSlot(slot, p_73863_1_, p_73863_2_) && slot.func_111238_b() && !disableSlot)
             {
                 this.theSlot = slot;
                 GL11.glDisable(GL11.GL_LIGHTING);
@@ -303,6 +316,7 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
     // Копипаст из родителя-GuiContainer
     private void drawItemStack(ItemStack p_146982_1_, int p_146982_2_, int p_146982_3_, String p_146982_4_)
     {
+        // Вызывается, когда стак прилипает к мыши при переносе
         GL11.glTranslatef(0.0F, 0.0F, 32.0F);
         this.zLevel = 200.0F;
         itemRender.zLevel = 200.0F;
@@ -315,14 +329,40 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
         itemRender.zLevel = 0.0F;
     }
 
-    // Копипаст из родителя-GuiContainer
+    // Копипаст из родителя GuiContainer'а
     /**
      * Called when the mouse is clicked.
      */
     @Override
     protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_)
     {
-        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+        // Код из супер-супера
+        //super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+        if (p_73864_3_ == 0)
+        {
+            for (int l = 0; l < this.buttonList.size(); ++l)
+            {
+                GuiButton guibutton = (GuiButton)this.buttonList.get(l);
+
+                if (guibutton.mousePressed(this.mc, p_73864_1_, p_73864_2_))
+                {
+                    GuiScreenEvent.ActionPerformedEvent.Pre event = new GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.buttonList);
+                    if (MinecraftForge.EVENT_BUS.post(event))
+                        break;
+                    this.selectedButton = event.button;
+                    event.button.func_146113_a(this.mc.getSoundHandler());
+                    this.actionPerformed(event.button);
+                    if (this.equals(this.mc.currentScreen))
+                        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.buttonList));
+                }
+            }
+        }
+
+        // Отключаем реакцию на клик, если активен флаг
+        if (disableSlot) {
+            return;
+        }
+
         boolean flag = p_73864_3_ == this.mc.gameSettings.keyBindPickBlock.getKeyCode() + 100;
         Slot slot = this.getSlotAtPosition(p_73864_1_, p_73864_2_);
         long l = Minecraft.getSystemTime();
@@ -479,7 +519,15 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
     @Override
     protected void mouseMovedOrUp(int p_146286_1_, int p_146286_2_, int p_146286_3_)
     {
-        super.mouseMovedOrUp(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
+        // Код из супер-супера
+        //super.mouseMovedOrUp(p_146286_1_, p_146286_2_, p_146286_3_); //Forge, Call parent to release buttons
+        if (this.selectedButton != null && p_146286_3_ == 0)
+        {
+            this.selectedButton.mouseReleased(p_146286_1_, p_146286_2_);
+            this.selectedButton = null;
+        }
+
+        // Код из супера
         Slot slot = this.getSlotAtPosition(p_146286_1_, p_146286_2_);
         int l = this.guiLeft;
         int i1 = this.guiTop;
@@ -676,5 +724,13 @@ public abstract class AdvanceGuiContainer extends GuiContainer {
         }
 
         return null;
+    }
+
+    public void shouldDrawDefaultBackground(boolean b) {
+        shouldDrawDefaultBackground = b;
+    }
+
+    public boolean isDefaultBackgroundDrawing() {
+        return shouldDrawDefaultBackground;
     }
 }

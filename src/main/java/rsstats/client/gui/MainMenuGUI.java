@@ -43,6 +43,11 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     private static final ResourceLocation background =
             new ResourceLocation(RSStats.MODID,"textures/gui/StatsAndInvTab_FIT.png");
 
+    // TODO: Удалить ненужные константы
+    public static final float MainMenuGUIZLevel = 5.0F;
+    public static float DialogZLevel = 400.0F;
+    public static float DialogBacgroundZLevel = 300.0F;
+
     /** Период обновления экрана в мс */
     private static final int UPDATE_PERIOD = 100;
     /** Игрок, открывший GUI */
@@ -130,9 +135,16 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             //}
         }*/
 
-        // TODO: Может стоить отрисовывать диалог в drawGuiContainerForegroundLayer()?
-        if (isPlayerTryExitWhileEditStats == true) {
-            //inventorySlots.inventorySlots.clear();
+        /* ВНИМАНИЕ! При выборе метода для отрисовки между drawGuiContainerBackgroundLayer и
+         * drawGuiContainerForegroundLayer следует помнить, что при неправильном порядке отрисовке
+         * некоторые элементы не пройдут GL_DEPTH_TEST и не отрендерятся.
+         * См. https://forum.mcmodding.ru/threads/Не-могу-отрисовать-свой-drawdefaultbackground.21455/
+         */
+        if (isPlayerTryExitWhileEditStats) {
+            // Например, тут не следует рендерить бэкграунд диалогового окна, т.к. итемстаки не пройдут GL_DEPTH_TEST
+            //drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
+
+            // А вот отрисовать текстуру диалогового окна можно
             exitDialog.drawScreen(mouseX, mouseY, partialTicks, xSize, ySize, guiLeft, guiTop);
         }
     }
@@ -155,6 +167,16 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getCharisma()), 8, textY+=10, 0x444444, false);
 
         super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
+
+        /*
+         * Бэкграунд диалогового окна отрисовывается в drawGuiContainerForegroundLayer, т.к. должен быть
+         * отрисован после итемстаком. В противном случае оне не пройдут GL_DEPTH_TEST.
+         */
+        if (isPlayerTryExitWhileEditStats) {
+            // TODO: непонятно почему, но первые два параметра считаются относительно guiLeft и guiTop
+            drawGradientRectZLevel(0-guiLeft, 0-guiTop, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
+            // Само диалоговое окно отрисовывается в drawGuiContainerBackgroundLayer
+        }
     }
 
     /**
@@ -276,6 +298,8 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         // Проверка на нажатие ESC во время прокачки
         if (p_73869_1_ == 27 && ((MainContainer) this.player.getEntityPlayer().openContainer).isEditMode) {
             isPlayerTryExitWhileEditStats = true;
+            disableSlot = true; // Отключаем реакцию слотов на наведение мыши
+            shouldDrawDefaultBackground(false); // Отключаем дефолтных бэкграунд, чтоб отрисовать свой собственный с более высоким zLevel
             exitDialog.initGui();
         } else {
             super.keyTyped(p_73869_1_, p_73869_2_);
@@ -299,7 +323,8 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     public void initGui() {
         exitDialog = new Dialog(this, this.xSize, this.ySize, this.guiLeft, this.guiTop, Minecraft.getMinecraft());
         exitDialog.initGui();
-        this.zLevel = 5;
+        this.zLevel = MainMenuGUI.MainMenuGUIZLevel;
+        shouldDrawDefaultBackground(true);
         super.initGui();
         /*timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -388,7 +413,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             xSize = 228; // TODO: Заменить на width из родителя
             ySize = 64; // TODO: Заменить на height из родителя
             this.mc = mc; // TODO: Заменить на Minecraft.getMinecraft()
-            this.zLevel = 500.F;
+            this.zLevel = MainMenuGUI.DialogZLevel; // TODO: Перенести в initGui
 
             this.parent = parent;
             this.parentGuiLeft = parentGuiLeft;
@@ -449,6 +474,8 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         @Override
         public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
             //drawDefaultBackground(); // TODO: Не срабатвает
+            //this.drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, Dialog.this.zLevel + 5000);
+
             this.mc.getTextureManager().bindTexture(background);
             this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
@@ -481,6 +508,11 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
 
                     // TODO: Возвращаться к редактированию прокачки
 
+                    ((MainMenuGUI) parent).shouldDrawDefaultBackground(true);
+
+                    ((MainMenuGUI) parent).disableSlot = false;
+                    ((MainMenuGUI) parent).isPlayerTryExitWhileEditStats = false;
+
                     break;
                 }
                 case 2: {
@@ -492,5 +524,40 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
                 }
             }
         }
+    }
+
+    /**
+     * Draws a rectangle with a vertical gradient between the specified colors.
+     * Аналог метода {@link net.minecraft.client.gui.Gui#drawGradientRect(int, int, int, int, int, int)}
+     * но с возможностью задавать свой zlevel
+     */
+    protected void drawGradientRectZLevel(int p_73733_1_, int p_73733_2_, int p_73733_3_, int p_73733_4_, int p_73733_5_, int p_73733_6_, float z)
+    {
+        float f = (float)(p_73733_5_ >> 24 & 255) / 255.0F;
+        float f1 = (float)(p_73733_5_ >> 16 & 255) / 255.0F;
+        float f2 = (float)(p_73733_5_ >> 8 & 255) / 255.0F;
+        float f3 = (float)(p_73733_5_ & 255) / 255.0F;
+        float f4 = (float)(p_73733_6_ >> 24 & 255) / 255.0F;
+        float f5 = (float)(p_73733_6_ >> 16 & 255) / 255.0F;
+        float f6 = (float)(p_73733_6_ >> 8 & 255) / 255.0F;
+        float f7 = (float)(p_73733_6_ & 255) / 255.0F;
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.setColorRGBA_F(f1, f2, f3, f);
+        tessellator.addVertex((double)p_73733_3_, (double)p_73733_2_, (double)z);
+        tessellator.addVertex((double)p_73733_1_, (double)p_73733_2_, (double)z);
+        tessellator.setColorRGBA_F(f5, f6, f7, f4);
+        tessellator.addVertex((double)p_73733_1_, (double)p_73733_4_, (double)z);
+        tessellator.addVertex((double)p_73733_3_, (double)p_73733_4_, (double)z);
+        tessellator.draw();
+        GL11.glShadeModel(GL11.GL_FLAT);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 }
