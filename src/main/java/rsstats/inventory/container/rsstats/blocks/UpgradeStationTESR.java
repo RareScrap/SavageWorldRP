@@ -50,7 +50,8 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
         GL11.glPopMatrix();
     }
 
-    // TODO: Найти сслку на тутор, по которому я это делал
+    // https://www.youtube.com/watch?v=OkoQ78ktAb8
+    // Это не совсем тот тутор, по которому я это делал, но он натолкнул меня на многие важные мысли
     /**
      * Рендерер блока {@link UpgradeStationBlock} в инвентаре и в руке
      */
@@ -117,7 +118,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
             //model.renderAll();
 
             // Дебажная вещь
-            switch (type) {
+            /*switch (type) {
                 case ENTITY: {
                     System.out.println("ENTITY");
                     break;
@@ -136,7 +137,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
                     System.out.println("INVENTORY");
                     break;
                 }
-            }
+            }*/
         }
     }
 }

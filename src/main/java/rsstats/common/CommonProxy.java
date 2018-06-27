@@ -9,6 +9,8 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -20,14 +22,18 @@ import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
 import rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock;
 import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
+import rsstats.inventory.tabs_inventory.TabHostInventory;
+import rsstats.inventory.tabs_inventory.TabMessageHandler;
 import rsstats.items.ExpItem;
 import rsstats.items.RerollCoin;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.utils.DescriptionCutter;
 import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static rsstats.common.RSStats.instance;
@@ -71,6 +77,22 @@ public class CommonProxy implements IGuiHandler {
         CharacterStatItem
     }
 
+    public static class OtherItems {
+        public static Item flawsTabItem = new OtherItem().setTextureName("rsstats:other_items/flawsTab").setUnlocalizedName("FlawsTabItem");
+        public static Item perksTabItem = new OtherItem().setTextureName("rsstats:other_items/perksTab").setUnlocalizedName("PerksTabItem");
+        public static Item positiveEffectsTabItem = new OtherItem().setTextureName("rsstats:other_items/positiveEffectsTab").setUnlocalizedName("PositiveEffectsTabItem");
+        public static Item negativeEffectsTabItem = new OtherItem().setTextureName("rsstats:other_items/negativeEffectsTab").setUnlocalizedName("NegativeEffectsTabItem");
+
+        public static class OtherItem extends Item {
+            // Получаем информацию предмета из файла локализации
+            @Override
+            public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List infoLines, boolean p_77624_4_) {
+                String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(getUnlocalizedName() + ".lore"));
+                infoLines.addAll(Arrays.asList(strs));
+            }
+        }
+    }
+
     /** Обработчик нажатия кнопок, используемых для вызова GUI */
     protected KeyHandler keyHandler;
     /** Обертка для работы с сетью */
@@ -90,6 +112,10 @@ public class CommonProxy implements IGuiHandler {
 
         INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
+
+        TabHostInventory.registerHandler(TabMessageHandler.class, discriminator++);
+        // Класические спосб регистрации для дебага
+        //CommonProxy.INSTANCE.registerMessage(TabMessageHandler.class, TabHostInventory.SetCurrentTabPacket.class, discriminator++, Side.SERVER);
 
         // Дайсы для статов
         ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
@@ -169,6 +195,11 @@ public class CommonProxy implements IGuiHandler {
         GameRegistry.registerItem(diplomacySkillItem, "DiplomacySkillItem");
         GameRegistry.registerItem(climbingSkillItem, "ClimbingSkillItem");
 
+        GameRegistry.registerItem(OtherItems.perksTabItem, OtherItems.perksTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.flawsTabItem, OtherItems.flawsTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.positiveEffectsTabItem, OtherItems.positiveEffectsTabItem.getUnlocalizedName());
+        GameRegistry.registerItem(OtherItems.negativeEffectsTabItem, OtherItems.negativeEffectsTabItem.getUnlocalizedName());
+
         // Регистрация прочих предметов
         RerollCoin rerollCoinItem = new RerollCoin("RerollCoinItem");
         GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
@@ -214,7 +245,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case RSStats.GUI:
-                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory);
+                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory, ExtendedPlayer.get(player).otherTabsHost, ExtendedPlayer.get(player).otherTabsInventory);
             case RSStats.SSP_UI_CODE:
                 return new StatsContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
             case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: {

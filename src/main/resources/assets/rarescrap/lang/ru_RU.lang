@@ -70,6 +70,15 @@ item.RerollCoinItem.name=Фикшка переброса
 item.RerollCoinItem.lore=Позволяет перебросить предыдующий просок. Такие вишки выдаются в начале каждой игровой сессии. Если бросок перебросить нельзя - ГМ вернет вам эту фишку назад. ПКМ для использования.
 item.RerollCoinItem.msg=§o§6%1$s §o§6использует §o§6фишку §o§6переброса!§r
 
+item.PerksTabItem.name=Черты
+item.PerksTabItem.lore=Положительные черты характера вашего персонажа, придающие ему индивидуальность. Вы может использовать их, чтобы положительно повлиять на сюжет, который отыгрывет ваш персонаж, если это обосновано.
+item.FlawsTabItem.name=Изъяны
+item.FlawsTabItem.lore=Отрицательные черты, присущие вашему персонажу. ГМ может использовать их, чтобы негативно повлиять на сюжет, который отыгрывет ваш персонаж.
+item.PositiveEffectsTabItem.name=Баффы
+item.PositiveEffectsTabItem.lore=Временные эффекты, положительно влияющие на вашего персонажа
+item.NegativeEffectsTabItem.name=Дебаффы
+item.NegativeEffectsTabItem.lore=Временные эффекты,отрицательно влияющие на вашего персонажа. Если вовремя от них не избавиться - они могут стать изъянами и их будет заметно тяжелее искоренить.
+
 inventory.skills=Навыки
 
 command.addLevel.success=Уровень %1$s теперь %2$d!
@@ -83,6 +92,10 @@ gui.charisma=Харизма: %1$d
 gui.level=Уровень: %1$d
 gui.ExpPoints=Очки опыта: %1$d
 gui.tiredness=Усталость: %1$d
+gui.MainMenu.CloseDialog=Подтвердить улучшение навыков?
+gui.MainMenu.CloseDialog.positive=Да
+gui.MainMenu.CloseDialog.negative=Вернуться
+gui.MainMenu.CloseDialog.cancel=Отменить изменения
 
 modifiers.MissingSkill=Отсуствующий навык
 

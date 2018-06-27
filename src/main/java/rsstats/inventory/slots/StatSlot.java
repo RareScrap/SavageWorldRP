@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 
+// TODO: Переименовать в TabSlot и перенести в либу
 /**
  * Слот для статов
  * @author RareScrap

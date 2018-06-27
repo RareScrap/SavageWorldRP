@@ -21,6 +21,8 @@ import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
+import rsstats.inventory.tabs_inventory.TabHostInventory;
+import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 
@@ -36,16 +38,23 @@ public class MainContainer extends Container {
     private final InventoryPlayer inventoryPlayer;
     private final StatsInventory statsInventory;
     private final WearableInventory wearableInventory;
-
     private final SkillsInventory skillsInventory;
-    private boolean withWildDice;
 
-    public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory) {
+    private final TabHostInventory otherTabsHost;
+    private final TabInventory otherTabsInventory;
+
+    private boolean withWildDice; // TODO: Удалить ненужное поле
+    /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
+    public boolean isEditMode = false;
+
+    public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory, TabHostInventory otherTabsHost, TabInventory otherTabsInventory) {
         this.player = player;
         this.inventoryPlayer = inventoryPlayer;
         this.statsInventory = statsInventory;
         this.skillsInventory = skillsInventory;
         this.wearableInventory = wearableInventory;
+        this.otherTabsHost = otherTabsHost;
+        this.otherTabsInventory = otherTabsInventory;
         addSlots();
     }
 
@@ -56,6 +65,8 @@ public class MainContainer extends Container {
         this.statsInventory = null;
         this.skillsInventory = null;
         this.wearableInventory = null;
+        this.otherTabsHost = null;
+        this.otherTabsInventory = null;
     }
     
     private void addSlots() {
@@ -85,25 +96,25 @@ public class MainContainer extends Container {
         }
 
         // Расставляем слоты для брони
-        for (int i = 0; i < 4; ++i)
-        {
+        for (int i = 0; i < 4; ++i) {
             final int k = i;
-            this.addSlotToContainer(new Slot(inventoryPlayer, inventoryPlayer.getSizeInventory() - 1 - i, (i*18 + 51) +8, 8)
-            {
+            this.addSlotToContainer(new Slot(inventoryPlayer, inventoryPlayer.getSizeInventory() - 1 - i, (i * 18 + 51) + 8, 8) {
 
                 @Override
-                public int getSlotStackLimit() { return 1; }
+                public int getSlotStackLimit() {
+                    return 1;
+                }
+
                 @Override
-                public boolean isItemValid(ItemStack par1ItemStack)
-                {
+                public boolean isItemValid(ItemStack par1ItemStack) {
                     if (par1ItemStack == null) return false;
                     return par1ItemStack.getItem().isValidArmor(par1ItemStack, k, player);
                 }
+
                 @SideOnly(Side.CLIENT)
                 public IIcon getBackgroundIconIndex() {
                     return ItemArmor.func_94602_b(k);
                 }
-
 
 
                 @Override
@@ -158,6 +169,29 @@ public class MainContainer extends Container {
                             return false;
                         else
                             return super.isItemValid(p_75214_1_);
+                    }
+                });
+            }
+        }
+
+        // Расставляем слоты на панели вкладок
+        for (int i = 0, slotIndex = 0; i < otherTabsHost.getSizeInventory(); ++i, slotIndex++) {
+            this.addSlotToContainer(new Slot(otherTabsHost, i, (i*18 +167) +8, 116) {
+                @Override
+                public boolean isItemValid(ItemStack p_75214_1_) {
+                    return otherTabsHost.isUseableByPlayer(player);
+                }
+            });
+
+        }
+
+        // Расставляем слоты, которе будут хранить содержимое вкладок
+        for (int y = 0; y < 4; ++y) {
+            for (int x = 0; x < 9; ++x) {
+                this.addSlotToContainer(new Slot(otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 134) {
+                    @Override
+                    public boolean isItemValid(ItemStack p_75214_1_) {
+                        return otherTabsHost.isUseableByPlayer(player);
                     }
                 });
             }
@@ -352,6 +386,7 @@ public class MainContainer extends Container {
         }
 
         if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
+            isEditMode = true; // Игрок начал прокачиваться и перешел в режим редактирования
             statUp(slot);
             ExtendedPlayer.get(playerIn).updateParams();
             return null;
@@ -371,6 +406,24 @@ public class MainContainer extends Container {
             }
             return null;
         }
+
+        // Поведение, если кликнут слот инвентаря otherTabsHost
+        if (slot.inventory == otherTabsHost) {
+            if (otherTabsHost.isUseableByPlayer(playerIn)) { // TODO: Не лучше ли использовать isItemValid из переопределенного слота?
+                return super.slotClick(slotId, clickedButton, mode, playerIn); // "Захватваем" стак
+            } else {
+                return null; // Ничего не делаем
+            }
+        }
+        // Поведение, если кликнут слот инвентаря otherTabsInventory
+        if (slot.inventory == otherTabsInventory) {
+            if (otherTabsInventory.isUseableByPlayer(playerIn)) {
+                return super.slotClick(slotId, clickedButton, mode, playerIn);
+            } else {
+                return null;
+            }
+        }
+
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
