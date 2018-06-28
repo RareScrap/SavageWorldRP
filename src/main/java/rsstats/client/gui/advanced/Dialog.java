@@ -31,6 +31,10 @@ public class Dialog extends GuiScreen {
             Minecraft.getMinecraft().renderEngine,
             false);
 
+    /** The X size of the inventory window in pixels. */
+    protected int xSize = 228; // Размеры GUI. Соответствует размерам GUI на текстуре.
+    /** The Y size of the inventory window in pixels. */
+    protected int ySize = 64;
     /** Starting X position for the Gui. Inconsistent use for Gui backgrounds. */
     public int guiLeft;
     /** Starting Y position for the Gui. Inconsistent use for Gui backgrounds. */
@@ -44,17 +48,19 @@ public class Dialog extends GuiScreen {
 
 
     public Dialog(GuiScreen parent) {
-        // Высталяем размеры GUI. Соответствует размерам GUI на текстуре.
-        width = 228;
-        height = 64;
         this.mc = Minecraft.getMinecraft();
-        this.zLevel = MainMenuGUI.DialogZLevel; // Это не в initGui, т.к. то вызывается для добавления контролов, а не настройки себя
-
         this.parent = parent;
     }
 
+    // Minecraft спользует этот метод как для добавления контролов, так и для настройки самого GUI (полей, например)
     @Override
     public void initGui() {
+        this.zLevel = MainMenuGUI.DialogZLevel;
+
+        // Устанавливаем размер окна диалога, такой же как у родителя
+        this.width = parent.width;
+        this.height = parent.height;
+
         positiveButton = new ZLevelGuiButton(0, guiLeft+6, guiTop+35, 70, 20, StatCollector.translateToLocal("gui.MainMenu.CloseDialog.positive"));
         negativeButton = new ZLevelGuiButton(1, guiLeft+79, guiTop+35, 70, 20,StatCollector.translateToLocal("gui.MainMenu.CloseDialog.negative"));
         cancelButton = new ZLevelGuiButton(2, guiLeft+152, guiTop+35, 70, 20,StatCollector.translateToLocal("gui.MainMenu.CloseDialog.cancel"));
@@ -83,8 +89,8 @@ public class Dialog extends GuiScreen {
      */
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
         // Централизируем GUI диалога
-        guiLeft = (parentXSize - width)/2 + parentGuiLeft;
-        guiTop = (parentYSize - height)/2 + parentGuiTop;
+        guiLeft = (parentXSize - xSize)/2 + parentGuiLeft;
+        guiTop = (parentYSize - ySize)/2 + parentGuiTop;
 
         // Обновляем корд кнопок // TODO: Зачем?
         //buttonList.clear(); // TODO: НО БЛЯТЬ НЕ ТАК ЖЕ ГРУБО!
@@ -108,7 +114,7 @@ public class Dialog extends GuiScreen {
         //this.drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, Dialog.this.zLevel + 5000);
 
         this.mc.getTextureManager().bindTexture(background);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, width, height);
+        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
         // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
         fontRenderer.zLevel = zLevel + 1;
