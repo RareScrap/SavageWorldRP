@@ -38,11 +38,11 @@ public class Dialog extends GuiScreen {
     /** Starting Y position for the Gui. Inconsistent use for Gui backgrounds. */
     public int guiTop;
     /** Родитель, поверх которого вызывается диалоговое окно. */
-    GuiScreen parent;
+    protected GuiScreen parent;
 
-    ZLevelGuiButton positiveButton;
-    ZLevelGuiButton negativeButton;
-    ZLevelGuiButton cancelButton;
+    protected ZLevelGuiButton positiveButton;
+    protected ZLevelGuiButton negativeButton;
+    protected ZLevelGuiButton cancelButton;
 
 
     public Dialog(GuiScreen parent) {
@@ -65,8 +65,12 @@ public class Dialog extends GuiScreen {
         negativeButton.setZLevel(this.zLevel);
         cancelButton.setZLevel(this.zLevel);
 
+        /*
+         * Хотя сама игра и очищает buttonList, возможна ситуация, когда
+         * initGui() был вызван вручную. В этом случае buttonList может быть не пустым
+         */
         if (!buttonList.isEmpty()) {
-            buttonList.clear(); // TODO: Есть подозрение, что это никогда не вызовется
+            buttonList.clear();
         }
 
         buttonList.add(positiveButton);

@@ -297,7 +297,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             isPlayerTryExitWhileEditStats = true;
             disableSlot = true; // Отключаем реакцию слотов на наведение мыши
             shouldDrawDefaultBackground(false); // Отключаем дефолтных бэкграунд, чтоб отрисовать свой собственный с более высоким zLevel
-            exitDialog.initGui();
         } else {
             super.keyTyped(p_73869_1_, p_73869_2_);
         }
