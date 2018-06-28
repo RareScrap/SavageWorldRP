@@ -132,11 +132,11 @@ public class Dialog extends GuiScreen {
 
         // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
         fontRenderer.zLevel = zLevel + 1;
-        fontRenderer.drawString(StatCollector.translateToLocal("gui.MainMenu.CloseDialog"),
-                guiLeft+31,
-                guiTop+15,
-                0x444444,
-                false);
+        drawCenteredString(fontRenderer,
+                StatCollector.translateToLocal("gui.MainMenu.CloseDialog"),
+                guiLeft + (xSize / 2),
+                guiTop + 15,
+                0x444444);
 
         super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
     }
