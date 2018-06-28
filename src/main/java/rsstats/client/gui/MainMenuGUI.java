@@ -318,7 +318,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
      */
     @Override
     public void initGui() {
-        exitDialog = new Dialog(this, this.xSize, this.ySize, this.guiLeft, this.guiTop) {
+        exitDialog = new Dialog(this) {
             @Override
             public void positiveActionPerformed() {
                 System.out.println("stub1");

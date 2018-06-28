@@ -39,17 +39,13 @@ public class Dialog extends GuiScreen {
     public int guiTop;
     /** Родитель, поверх которого вызывается диалоговое окно. */
     GuiScreen parent;
-    int parentGuiLeft;
-    int parentGuiTop;
-    int parentXSize;
-    int parentYSize;
 
     ZLevelGuiButton positiveButton;
     ZLevelGuiButton negativeButton;
     ZLevelGuiButton cancelButton;
 
 
-    public Dialog(GuiScreen parent, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
+    public Dialog(GuiScreen parent) {
         // Высталяем размеры GUI. Соответствует размерам GUI на текстуре.
         width = 228;
         height = 64;
@@ -57,10 +53,6 @@ public class Dialog extends GuiScreen {
         this.zLevel = MainMenuGUI.DialogZLevel; // TODO: Перенести в initGui
 
         this.parent = parent;
-        this.parentGuiLeft = parentGuiLeft;
-        this.parentGuiTop = parentGuiTop;
-        this.parentXSize = parentXSize;
-        this.parentYSize = parentYSize;
     }
 
     @Override
