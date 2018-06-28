@@ -50,7 +50,7 @@ public class Dialog extends GuiScreen {
         width = 228;
         height = 64;
         this.mc = Minecraft.getMinecraft();
-        this.zLevel = MainMenuGUI.DialogZLevel; // TODO: Перенести в initGui
+        this.zLevel = MainMenuGUI.DialogZLevel; // Это не в initGui, т.к. то вызывается для добавления контролов, а не настройки себя
 
         this.parent = parent;
     }
