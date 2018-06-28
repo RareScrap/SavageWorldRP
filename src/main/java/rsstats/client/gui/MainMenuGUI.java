@@ -26,8 +26,6 @@ import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.items.SkillItem;
 
-import java.util.Timer;
-
 /**
  * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
  * стойкость), панель предметов и панели статов, навыков и перков.
@@ -43,8 +41,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     public static float DialogZLevel = 400.0F;
     public static float DialogBacgroundZLevel = 300.0F;
 
-    /** Период обновления экрана в мс */
-    private static final int UPDATE_PERIOD = 100;
     /** Игрок, открывший GUI */
     public ExtendedPlayer player;
     /** UnlocalozedName текущей выбранно статы */
@@ -58,12 +54,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     // Could use IInventory type to be more generic, but this way will save an import...
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
-
-    /** Таймер, выполняющий перерасчет параметров {@link ExtendedPlayer}'ра на стороне клиента.
-     * Для этих целей можно использовать и пакет, который будет слаться при клике/заполнеии слота, но
-     * зачем, когда можно обойтись и без пакета?*/
-    private Timer timer; // TODO: Удалить
-
 
     public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
         super(mainContainer);
@@ -351,14 +341,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         this.zLevel = MainMenuGUI.MainMenuGUIZLevel;
         shouldDrawDefaultBackground(true);
         super.initGui();
-        /*timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                player.updateParams();
-                updateScreen();
-            }
-        }, 0, UPDATE_PERIOD);*/
     }
 
     @Override
