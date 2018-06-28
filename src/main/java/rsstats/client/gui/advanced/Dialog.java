@@ -53,13 +53,21 @@ public class Dialog extends GuiScreen {
     }
 
     // Minecraft спользует этот метод как для добавления контролов, так и для настройки самого GUI (полей, например)
+    // ВНИМАНИЕ! Для правильной работы диалога вы обязаны вызвать этот метод из одноименного метода в parent'те
     @Override
     public void initGui() {
         this.zLevel = MainMenuGUI.DialogZLevel;
-
         // Устанавливаем размер окна диалога, такой же как у родителя
         this.width = parent.width;
         this.height = parent.height;
+
+        /* Централизируем GUI диалога
+         * Нет необходимости вычислять guiLeft и guiTop в drawScreen(), т.к.
+         * необходимость в пересчете этих значений есть только при изменении размера экрана.
+         * Игра автоматически вызывает initGui(), для пересчета необходимых параметров.
+         */
+        guiLeft = (this.width - this.xSize) / 2;
+        guiTop = (this.height - this.ySize) / 2;
 
         positiveButton = new ZLevelGuiButton(0, guiLeft+6, guiTop+35, 70, 20, StatCollector.translateToLocal("gui.MainMenu.CloseDialog.positive"));
         negativeButton = new ZLevelGuiButton(1, guiLeft+79, guiTop+35, 70, 20,StatCollector.translateToLocal("gui.MainMenu.CloseDialog.negative"));
@@ -88,10 +96,6 @@ public class Dialog extends GuiScreen {
      * Метод-обертка для {@link #drawScreen(int, int, float)},
      */
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
-        // Централизируем GUI диалога
-        guiLeft = (parentXSize - xSize)/2 + parentGuiLeft;
-        guiTop = (parentYSize - ySize)/2 + parentGuiTop;
-
         // Обновляем корд кнопок // TODO: Зачем?
         //buttonList.clear(); // TODO: НО БЛЯТЬ НЕ ТАК ЖЕ ГРУБО!
         //initGui();
@@ -114,6 +118,16 @@ public class Dialog extends GuiScreen {
         //this.drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, Dialog.this.zLevel + 5000);
 
         this.mc.getTextureManager().bindTexture(background);
+
+        // debug
+        /*
+         * Эта проверка никогда не пройдет, что подтверждает бессмысленность перерасчета guiLeft и
+         * guiTop в drawScreen. Это следует делать в initGui()
+         */
+        /*if (guiLeft != (this.width - this.xSize) / 2) {
+            System.out.println("TEST");
+        }*/
+
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
         // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
