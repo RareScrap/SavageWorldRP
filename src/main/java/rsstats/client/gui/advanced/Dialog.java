@@ -8,8 +8,6 @@ import net.minecraft.util.StatCollector;
 import rsstats.client.gui.MainMenuGUI;
 import rsstats.common.RSStats;
 
-import java.util.List;
-
 /**
  * Диалоговое окно, способное отображаться поверх другого {@link GuiScreen}
  *
@@ -77,10 +75,6 @@ public class Dialog extends GuiScreen {
         buttonList.add(negativeButton);
         buttonList.add(cancelButton);
 
-    }
-
-    public List getButtonList() {
-        return buttonList;
     }
 
     /**
