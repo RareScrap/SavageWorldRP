@@ -127,17 +127,6 @@ public class Dialog extends GuiScreen {
         super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
     }
 
-    /**
-     * Обертка для {@link #actionPerformed(GuiButton)}, которую можно вызвать из родительского GUI
-     * @param guiButton Кнопка, по которой было сделано действие.
-     */
-    public void handleAction(GuiButton guiButton) {
-        actionPerformed(guiButton);
-    }
-
-    /**
-     * @see #handleAction(GuiButton)
-     */
     @Override
     protected void actionPerformed(GuiButton guiButton) {
         switch (guiButton.id) {
@@ -154,6 +143,22 @@ public class Dialog extends GuiScreen {
                 break;
             }
         }
+    }
+
+    /**
+     * Обертка для {@link #mouseClicked(int, int, int)}, которыю можно вызвать из родительского GUI.
+     */
+    public void mouseClickDone(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
+        mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+    }
+
+    /**
+     * В случае, если вам нужно вызвать этот метод за пределами диалога, используйте метод-обертку
+     * @see #mouseClickDone(int, int, int)
+     */
+    @Override
+    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
+        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
     }
 
     /**

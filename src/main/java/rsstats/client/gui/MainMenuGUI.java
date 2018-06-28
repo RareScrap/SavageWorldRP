@@ -1,7 +1,6 @@
 package rsstats.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -12,7 +11,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -366,28 +364,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     @Override
     protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
         super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-
-        // TODO: Затолкать в диалог т.к. нарушается инкапсуляция
-        if (p_73864_3_ == 0)
-        {
-            for (int l = 0; l < exitDialog.getButtonList().size(); ++l)
-            {
-                GuiButton guibutton = (GuiButton) exitDialog.getButtonList().get(l);
-
-                if (guibutton.mousePressed(this.mc, p_73864_1_, p_73864_2_))
-                {
-                    GuiScreenEvent.ActionPerformedEvent.Pre event = new GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.buttonList);
-                    /*if (MinecraftForge.EVENT_BUS.post(event)) // TODO: Нужно ли отсылать ивенты?
-                        break;
-                    this.selectedButton = event.button;*/
-                    event.button.func_146113_a(this.mc.getSoundHandler());
-                    exitDialog.handleAction(event.button);
-                    /*if (this.equals(this.mc.currentScreen))
-                        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.buttonList));
-                    */
-                }
-            }
-        }
+        exitDialog.mouseClickDone(p_73864_1_, p_73864_2_, p_73864_3_);
     }
 
     /**
