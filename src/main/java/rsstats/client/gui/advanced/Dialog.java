@@ -93,24 +93,6 @@ public class Dialog extends GuiScreen {
 
     /**
      * ДОЛЖЕН вызываться в {@link GuiScreen#drawScreen(int, int, float)} родителя!
-     * Метод-обертка для {@link #drawScreen(int, int, float)},
-     */
-    public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
-        // Обновляем корд кнопок // TODO: Зачем?
-        //buttonList.clear(); // TODO: НО БЛЯТЬ НЕ ТАК ЖЕ ГРУБО!
-        //initGui();
-        positiveButton.xPosition = guiLeft+6;
-        positiveButton.yPosition = guiTop+35;
-        negativeButton.xPosition = guiLeft+79;
-        negativeButton.yPosition = guiTop+35;
-        cancelButton.xPosition = guiLeft+152;
-        cancelButton.yPosition = guiTop+35;
-
-        drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-    }
-
-    /**
-     * Не вызывайте этот метод напрямую. Используйте обертку {@link #drawScreen(int, int, float, int, int, int, int)}
      */
     @Override
     public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {

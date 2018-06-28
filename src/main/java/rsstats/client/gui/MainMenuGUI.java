@@ -140,7 +140,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             //drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
 
             // А вот отрисовать текстуру диалогового окна можно
-            exitDialog.drawScreen(mouseX, mouseY, partialTicks, xSize, ySize, guiLeft, guiTop);
+            exitDialog.drawScreen(mouseX, mouseY, partialTicks);
         }
     }
 
