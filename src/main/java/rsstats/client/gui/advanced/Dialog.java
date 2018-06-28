@@ -49,11 +49,11 @@ public class Dialog extends GuiScreen {
     ZLevelGuiButton cancelButton;
 
 
-    public Dialog(GuiScreen parent, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop, Minecraft mc) {
+    public Dialog(GuiScreen parent, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
         // Высталяем размеры GUI. Соответствует размерам GUI на текстуре.
         width = 228;
         height = 64;
-        this.mc = mc; // TODO: Заменить на Minecraft.getMinecraft()
+        this.mc = Minecraft.getMinecraft();
         this.zLevel = MainMenuGUI.DialogZLevel; // TODO: Перенести в initGui
 
         this.parent = parent;
