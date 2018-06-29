@@ -260,7 +260,10 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             }
         }
 
-        super.handleMouseInput();
+        if (isPlayerTryExitWhileEditStats) {
+            exitDialog.handleMouseInput(); // Обрабатываем нажатие на GUI диалога
+        }
+        super.handleMouseInput(); // Обрабатываем нажатие на GUI-родителе
     }
 
     /**
@@ -341,12 +344,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         this.zLevel = MainMenuGUI.MainMenuGUIZLevel;
         shouldDrawDefaultBackground(true);
         super.initGui();
-    }
-
-    @Override
-    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
-        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-        exitDialog.mouseClickDone(p_73864_1_, p_73864_2_, p_73864_3_);
     }
 
     /**

@@ -11,14 +11,36 @@ import rsstats.common.RSStats;
 /**
  * Диалоговое окно, способное отображаться поверх другого {@link GuiScreen}
  *
- * <p>Внимание! Не отображайте это GUI, используя:
+ * <p><strong>Внимание!</strong> Не отображайте это GUI, используя:
  * <ul>
- *     <li>Minecraft.getMinecraft().displayGuiScreen(new Dialog());</li>
- *     <li>player.getEntityPlayer().openGui(RSStats.instance, RSStats.DIALOG_GUI_CODE, player.getEntityPlayer().worldObj, (int) player.getEntityPlayer().posX, (int) player.getEntityPlayer().posY, (int) player.getEntityPlayer().posZ);</li>
- *     <li>FMLClientHandler.instance().displayGuiScreen(this.player.getEntityPlayer(), new Dialog());</li>
+ *     <li>Minecraft.getMinecraft().displayGuiScreen(GuiScreen guiScreen);</li>
+ *     <li>player.getEntityPlayer().openGui(Object mod, int modGuiId, World world, int x, int y, int z);</li>
+ *     <li>FMLClientHandler.instance().displayGuiScreen(EntityPlayer player, GuiScreen gui);</li>
  * </ul>
  * т.к. это закрвает предыдущее GUI и ваш диалог будет отрисован как новое окно, а не поверх старого.
- * </p>
+ *
+ *
+ * <p>
+ *     Чтобы диалог заработал, из gui-родителя, в родителе необходимо вызывать следующие методы:
+ *     <ul>
+ *         <li>{@link #initGui()} нужно вызвать в initGui() GUI-родителя</li>
+ *         <li>{@link #drawScreen(int, int, float)} нужно вызвать в drawScreen() GUI-родителя, проверя флаг.
+ *         Где флаг - обычная boolean переменная, которая true, если диалог следует показать на экране, и false,
+ *         если диалог скрыт. Пример:
+ *         <pre>
+ *           <code>
+ *               if (isPlayerTryExitWhileEditStats) {
+ *                  dialog.drawScreen(mouseX, mouseY, partialTicks);
+ *               }
+ *           </code>
+ *           </pre>
+ *         </li>
+ *         <li>{@link #handleMouseInput()} нужно вызвать в handleMouseInput() GUI-родителя, проверя флаг.
+ *         Если вы попытаетесь вызвать этот метод, не окружив ее if'ом, то нажимать на кнопки диалога можно будет
+ *         даже тогда, когда диалога нет на экране.</li>
+ *     </ul>
+ *     Под родителем понимается не родительский класс, а о GUI, поверх которого будет отображаться
+ *     диалог
  */
 public class Dialog extends GuiScreen {
     /** Текстура диалогового окна */
@@ -139,22 +161,6 @@ public class Dialog extends GuiScreen {
                 break;
             }
         }
-    }
-
-    /**
-     * Обертка для {@link #mouseClicked(int, int, int)}, которыю можно вызвать из родительского GUI.
-     */
-    public void mouseClickDone(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
-        mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-    }
-
-    /**
-     * В случае, если вам нужно вызвать этот метод за пределами диалога, используйте метод-обертку
-     * @see #mouseClickDone(int, int, int)
-     */
-    @Override
-    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
-        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
     }
 
     /**
