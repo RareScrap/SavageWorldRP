@@ -113,6 +113,7 @@ public class Dialog extends GuiScreen {
 
     }
 
+    // TODO: Сделать так, чтобы бэкграунд отрисовывался прямо в диалоге, а не в гуи-родителе
     /**
      * ДОЛЖЕН вызываться в {@link GuiScreen#drawScreen(int, int, float)} родителя!
      */
@@ -135,7 +136,7 @@ public class Dialog extends GuiScreen {
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
         // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
-        fontRenderer.zLevel = zLevel + 1;
+        fontRenderer.zLevel = zLevel + 1; // TODO: Перенести в initGui()
         drawCenteredString(fontRenderer,
                 StatCollector.translateToLocal("gui.MainMenu.CloseDialog"),
                 guiLeft + (xSize / 2),
@@ -161,6 +162,15 @@ public class Dialog extends GuiScreen {
                 break;
             }
         }
+    }
+
+    // Не нужно переопределять drawGradientRect ради установки своего zLevel, т.к. тот используется не только для бэкграунда
+    /**
+     * Отрисовывает фон позади диалога, схожий с тем, что отрисовывается при помощи
+     * {@link GuiScreen#drawDefaultBackground()}
+     */
+    public void drawDialogGradientBackground(int x, int y) {
+        DrawUtils.drawGradientRectZLevel(x, y, width, height, -1072689136, -804253680, zLevel - 1);
     }
 
     /**

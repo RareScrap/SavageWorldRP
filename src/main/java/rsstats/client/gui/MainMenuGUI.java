@@ -155,12 +155,20 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
 
         /*
          * Бэкграунд диалогового окна отрисовывается в drawGuiContainerForegroundLayer, т.к. должен быть
-         * отрисован после итемстаком. В противном случае оне не пройдут GL_DEPTH_TEST.
+         * отрисован после итемстаков. В противном случае они не пройдут GL_DEPTH_TEST.
          */
         if (isPlayerTryExitWhileEditStats) {
-            // TODO: непонятно почему, но первые два параметра считаются относительно guiLeft и guiTop
-            drawGradientRectZLevel(0-guiLeft, 0-guiTop, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
-            // Само диалоговое окно отрисовывается в drawGuiContainerBackgroundLayer
+            /* Т.к. перед вызывом drawGuiContainerForegroundLayer в супер-методе drawScreen
+             * происходит смещение на guiLeft вправо и guiTop вниз, то нужно восстановить нормальное смещение.
+             */
+            GL11.glTranslatef((float) -guiLeft, (float) -guiTop, 0.0F);
+            /* Лучше способа это сделать я пока не знаю, но это гораздо лучше, чем вызывать
+             * exitDialog.drawDialogGradientBackground(-guiLeft, -guiTop), т.к. в этом случае при слишком маленьком
+             * экране игры, когда верхний левый уголок текстуры GUI окажется за экраном, начнутся баги с отрисовкой
+             * бэкграуда диалога в виде того, что бэкграунд отображается лишь частично.
+             */
+
+            exitDialog.drawDialogGradientBackground(0, 0); // Само диалоговое окно отрисовывается в drawGuiContainerBackgroundLayer
         }
     }
 
@@ -342,42 +350,9 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
 
         exitDialog.initGui();
         this.zLevel = MainMenuGUI.MainMenuGUIZLevel;
-        shouldDrawDefaultBackground(true);
+        /* Нет смысла переопределять setWorldAndResolution для отключения базового бэкграунда, если тот метод
+         * уже по-дефолту вызывает initGui() без пересоздания объекта MainGUI */
+        shouldDrawDefaultBackground(!isPlayerTryExitWhileEditStats);
         super.initGui();
-    }
-
-    /**
-     * Draws a rectangle with a vertical gradient between the specified colors.
-     * Аналог метода {@link net.minecraft.client.gui.Gui#drawGradientRect(int, int, int, int, int, int)}
-     * но с возможностью задавать свой zlevel
-     */
-    protected void drawGradientRectZLevel(int p_73733_1_, int p_73733_2_, int p_73733_3_, int p_73733_4_, int p_73733_5_, int p_73733_6_, float z)
-    {
-        float f = (float)(p_73733_5_ >> 24 & 255) / 255.0F;
-        float f1 = (float)(p_73733_5_ >> 16 & 255) / 255.0F;
-        float f2 = (float)(p_73733_5_ >> 8 & 255) / 255.0F;
-        float f3 = (float)(p_73733_5_ & 255) / 255.0F;
-        float f4 = (float)(p_73733_6_ >> 24 & 255) / 255.0F;
-        float f5 = (float)(p_73733_6_ >> 16 & 255) / 255.0F;
-        float f6 = (float)(p_73733_6_ >> 8 & 255) / 255.0F;
-        float f7 = (float)(p_73733_6_ & 255) / 255.0F;
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(f1, f2, f3, f);
-        tessellator.addVertex((double)p_73733_3_, (double)p_73733_2_, (double)z);
-        tessellator.addVertex((double)p_73733_1_, (double)p_73733_2_, (double)z);
-        tessellator.setColorRGBA_F(f5, f6, f7, f4);
-        tessellator.addVertex((double)p_73733_1_, (double)p_73733_4_, (double)z);
-        tessellator.addVertex((double)p_73733_3_, (double)p_73733_4_, (double)z);
-        tessellator.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 }
