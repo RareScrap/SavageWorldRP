@@ -79,6 +79,7 @@ public class Dialog extends GuiScreen {
     @Override
     public void initGui() {
         this.zLevel = MainMenuGUI.DialogZLevel;
+        fontRenderer.zLevel = zLevel + 1; // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопками
         // Устанавливаем размер окна диалога, такой же как у родителя
         this.width = parent.width;
         this.height = parent.height;
@@ -135,8 +136,7 @@ public class Dialog extends GuiScreen {
 
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
-        // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
-        fontRenderer.zLevel = zLevel + 1; // TODO: Перенести в initGui()
+        // Рисуем основную строку диалога
         drawCenteredString(fontRenderer,
                 StatCollector.translateToLocal("gui.MainMenu.CloseDialog"),
                 guiLeft + (xSize / 2),

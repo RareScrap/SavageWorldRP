@@ -27,13 +27,12 @@ public class ZLevelGuiButton extends GuiButton {
      */
     public void setZLevel(float zLevel) {
         this.zLevel = zLevel;
+        fontrenderer.zLevel = zLevel + 1;
     }
 
     // Копипаст из родителя с измененным fontRenderer'ом
     @Override
     public void drawButton(Minecraft p_146112_1_, int p_146112_2_, int p_146112_3_) {
-        fontrenderer.zLevel = zLevel + 1;
-
         if (this.visible)
         {
             p_146112_1_.getTextureManager().bindTexture(buttonTextures);
