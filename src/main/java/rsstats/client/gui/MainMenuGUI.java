@@ -1,8 +1,6 @@
 package rsstats.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -13,13 +11,11 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import rsstats.client.gui.advanced.AdvanceInventoryEffectRenderer;
-import rsstats.client.gui.advanced.ZLevelFontRenderer;
-import rsstats.client.gui.advanced.ZLevelGuiButton;
+import rsstats.client.gui.advanced.Dialog;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketShowSkillsByStat;
@@ -29,9 +25,6 @@ import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.items.SkillItem;
-
-import java.util.List;
-import java.util.Timer;
 
 /**
  * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
@@ -48,8 +41,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     public static float DialogZLevel = 400.0F;
     public static float DialogBacgroundZLevel = 300.0F;
 
-    /** Период обновления экрана в мс */
-    private static final int UPDATE_PERIOD = 100;
     /** Игрок, открывший GUI */
     public ExtendedPlayer player;
     /** UnlocalozedName текущей выбранно статы */
@@ -63,12 +54,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     // Could use IInventory type to be more generic, but this way will save an import...
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
-
-    /** Таймер, выполняющий перерасчет параметров {@link ExtendedPlayer}'ра на стороне клиента.
-     * Для этих целей можно использовать и пакет, который будет слаться при клике/заполнеии слота, но
-     * зачем, когда можно обойтись и без пакета?*/
-    private Timer timer; // TODO: Удалить
-
 
     public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
         super(mainContainer);
@@ -145,7 +130,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             //drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
 
             // А вот отрисовать текстуру диалогового окна можно
-            exitDialog.drawScreen(mouseX, mouseY, partialTicks, xSize, ySize, guiLeft, guiTop);
+            exitDialog.drawScreen(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -170,12 +155,20 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
 
         /*
          * Бэкграунд диалогового окна отрисовывается в drawGuiContainerForegroundLayer, т.к. должен быть
-         * отрисован после итемстаком. В противном случае оне не пройдут GL_DEPTH_TEST.
+         * отрисован после итемстаков. В противном случае они не пройдут GL_DEPTH_TEST.
          */
         if (isPlayerTryExitWhileEditStats) {
-            // TODO: непонятно почему, но первые два параметра считаются относительно guiLeft и guiTop
-            drawGradientRectZLevel(0-guiLeft, 0-guiTop, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, MainMenuGUI.DialogBacgroundZLevel);
-            // Само диалоговое окно отрисовывается в drawGuiContainerBackgroundLayer
+            /* Т.к. перед вызывом drawGuiContainerForegroundLayer в супер-методе drawScreen
+             * происходит смещение на guiLeft вправо и guiTop вниз, то нужно восстановить нормальное смещение.
+             */
+            GL11.glTranslatef((float) -guiLeft, (float) -guiTop, 0.0F);
+            /* Лучше способа это сделать я пока не знаю, но это гораздо лучше, чем вызывать
+             * exitDialog.drawDialogGradientBackground(-guiLeft, -guiTop), т.к. в этом случае при слишком маленьком
+             * экране игры, когда верхний левый уголок текстуры GUI окажется за экраном, начнутся баги с отрисовкой
+             * бэкграуда диалога в виде того, что бэкграунд отображается лишь частично.
+             */
+
+            exitDialog.drawDialogGradientBackground(0, 0); // Само диалоговое окно отрисовывается в drawGuiContainerBackgroundLayer
         }
     }
 
@@ -275,7 +268,10 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             }
         }
 
-        super.handleMouseInput();
+        if (isPlayerTryExitWhileEditStats) {
+            exitDialog.handleMouseInput(); // Обрабатываем нажатие на GUI диалога
+        }
+        super.handleMouseInput(); // Обрабатываем нажатие на GUI-родителе
     }
 
     /**
@@ -300,7 +296,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             isPlayerTryExitWhileEditStats = true;
             disableSlot = true; // Отключаем реакцию слотов на наведение мыши
             shouldDrawDefaultBackground(false); // Отключаем дефолтных бэкграунд, чтоб отрисовать свой собственный с более высоким zLevel
-            exitDialog.initGui();
         } else {
             super.keyTyped(p_73869_1_, p_73869_2_);
         }
@@ -321,243 +316,43 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
      */
     @Override
     public void initGui() {
-        exitDialog = new Dialog(this, this.xSize, this.ySize, this.guiLeft, this.guiTop, Minecraft.getMinecraft());
+        exitDialog = new Dialog(this) {
+            @Override
+            public void positiveActionPerformed() {
+                System.out.println("stub1");
+
+                // TODO: Сохранять прокачку навыков
+
+                super.positiveActionPerformed();
+            }
+
+            @Override
+            public void negativeActionPerformed() {
+                System.out.println("stub2");
+
+                // TODO: Возвращаться к редактированию прокачки
+
+                MainMenuGUI.this.shouldDrawDefaultBackground(true);
+
+                MainMenuGUI.this.disableSlot = false;
+                MainMenuGUI.this.isPlayerTryExitWhileEditStats = false;
+            }
+
+            @Override
+            public void cancelActionPerformed() {
+                System.out.println("stub3");
+
+                // TODO: Отбрасывать прокачку
+
+                super.cancelActionPerformed();
+            }
+        };
+
         exitDialog.initGui();
         this.zLevel = MainMenuGUI.MainMenuGUIZLevel;
-        shouldDrawDefaultBackground(true);
+        /* Нет смысла переопределять setWorldAndResolution для отключения базового бэкграунда, если тот метод
+         * уже по-дефолту вызывает initGui() без пересоздания объекта MainGUI */
+        shouldDrawDefaultBackground(!isPlayerTryExitWhileEditStats);
         super.initGui();
-        /*timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                player.updateParams();
-                updateScreen();
-            }
-        }, 0, UPDATE_PERIOD);*/
-    }
-
-    @Override
-    protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
-        super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
-
-        // TODO: Затолкать в диалог т.к. нарушается инкапсуляция
-        if (p_73864_3_ == 0)
-        {
-            for (int l = 0; l < exitDialog.getButtonList().size(); ++l)
-            {
-                GuiButton guibutton = (GuiButton) exitDialog.getButtonList().get(l);
-
-                if (guibutton.mousePressed(this.mc, p_73864_1_, p_73864_2_))
-                {
-                    GuiScreenEvent.ActionPerformedEvent.Pre event = new GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.buttonList);
-                    /*if (MinecraftForge.EVENT_BUS.post(event)) // TODO: Нужно ли отсылать ивенты?
-                        break;
-                    this.selectedButton = event.button;*/
-                    event.button.func_146113_a(this.mc.getSoundHandler());
-                    exitDialog.actionPerformed(event.button);
-                    /*if (this.equals(this.mc.currentScreen))
-                        MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.ActionPerformedEvent.Post(this, event.button, this.buttonList));
-                    */
-                }
-            }
-        }
-    }
-
-
-
-    /**
-     * Диалоговое окно, способное отображаться поверх другого {@link GuiScreen}
-     *
-     * <p>Внимание! Не отображайте это GUI, используя:
-     * <ul>
-     *     <li>Minecraft.getMinecraft().displayGuiScreen(new Dialog());</li>
-     *     <li>player.getEntityPlayer().openGui(RSStats.instance, RSStats.DIALOG_GUI_CODE, player.getEntityPlayer().worldObj, (int) player.getEntityPlayer().posX, (int) player.getEntityPlayer().posY, (int) player.getEntityPlayer().posZ);</li>
-     *     <li>FMLClientHandler.instance().displayGuiScreen(this.player.getEntityPlayer(), new Dialog());</li>
-     * </ul>
-     * т.к. это закрвает предыдущее GUI и ваш диалог будет отрисован как новое окно, а не поверх старого.
-     * </p>
-     */
-    public static class Dialog extends GuiScreen {
-        /** Текстура диалогового окна */
-        public static final ResourceLocation background =
-                new ResourceLocation(RSStats.MODID,"textures/gui/dialog.png");
-        /** Отрисовщик текста */
-        ZLevelFontRenderer fontRenderer = new ZLevelFontRenderer(
-                Minecraft.getMinecraft().gameSettings,
-                new ResourceLocation("textures/font/ascii.png"),
-                Minecraft.getMinecraft().renderEngine,
-                false);
-
-        /** The X size of the inventory window in pixels. */
-        int xSize;
-        /** The Y size of the inventory window in pixels. */
-        int ySize;
-        /** Starting X position for the Gui. Inconsistent use for Gui backgrounds. */
-        int guiLeft;
-        /** Starting Y position for the Gui. Inconsistent use for Gui backgrounds. */
-        int guiTop;
-        /** Родитель, поверх которого вызывается диалоговое окно. */
-        GuiScreen parent;
-        int parentGuiLeft;
-        int parentGuiTop;
-        int parentXSize;
-        int parentYSize;
-
-        ZLevelGuiButton positiveButton;
-        ZLevelGuiButton negativeButton;
-        ZLevelGuiButton cancelButton;
-
-
-        public Dialog(GuiScreen parent, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop, Minecraft mc) {
-            // Высталяем размеры GUI. Соответствует размерам GUI на текстуре.
-            xSize = 228; // TODO: Заменить на width из родителя
-            ySize = 64; // TODO: Заменить на height из родителя
-            this.mc = mc; // TODO: Заменить на Minecraft.getMinecraft()
-            this.zLevel = MainMenuGUI.DialogZLevel; // TODO: Перенести в initGui
-
-            this.parent = parent;
-            this.parentGuiLeft = parentGuiLeft;
-            this.parentGuiTop = parentGuiTop;
-            this.parentXSize = parentXSize;
-            this.parentYSize = parentYSize;
-        }
-
-        @Override
-        public void initGui() {
-            positiveButton = new ZLevelGuiButton(0, guiLeft+6, guiTop+35, 70, 20, StatCollector.translateToLocal("gui.MainMenu.CloseDialog.positive"));
-            negativeButton = new ZLevelGuiButton(1, guiLeft+79, guiTop+35, 70, 20,StatCollector.translateToLocal("gui.MainMenu.CloseDialog.negative"));
-            cancelButton = new ZLevelGuiButton(2, guiLeft+152, guiTop+35, 70, 20,StatCollector.translateToLocal("gui.MainMenu.CloseDialog.cancel"));
-
-            positiveButton.setZLevel(this.zLevel);
-            negativeButton.setZLevel(this.zLevel);
-            cancelButton.setZLevel(this.zLevel);
-
-            if (!buttonList.isEmpty()) {
-                buttonList.clear(); // TODO: Есть подозрение, что это никогда не вызовется
-            }
-
-            buttonList.add(positiveButton);
-            buttonList.add(negativeButton);
-            buttonList.add(cancelButton);
-
-        }
-
-        public List getButtonList() {
-            return buttonList;
-        }
-
-        /**
-         * ДОЛЖЕН вызываться в {@link GuiScreen#drawScreen(int, int, float)} родителя!
-         * Метод-обертка для {@link #drawScreen(int, int, float)},
-         */
-        public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_, int parentXSize, int parentYSize, int parentGuiLeft, int parentGuiTop) {
-            // Централизируем GUI диалога
-            guiLeft = (parentXSize - xSize)/2 + parentGuiLeft;
-            guiTop = (parentYSize - ySize)/2 + parentGuiTop;
-
-            // Обновляем корд кнопок // TODO: Зачем?
-            //buttonList.clear(); // TODO: НО БЛЯТЬ НЕ ТАК ЖЕ ГРУБО!
-            //initGui();
-            positiveButton.xPosition = guiLeft+6;
-            positiveButton.yPosition = guiTop+35;
-            negativeButton.xPosition = guiLeft+79;
-            negativeButton.yPosition = guiTop+35;
-            cancelButton.xPosition = guiLeft+152;
-            cancelButton.yPosition = guiTop+35;
-
-            drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-        }
-
-        /**
-         * Не вызывайте этот метод напрямую. Используйте обертку {@link #drawScreen(int, int, float, int, int, int, int)}
-         */
-        @Override
-        public void drawScreen(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
-            //drawDefaultBackground(); // TODO: Не срабатвает
-            //this.drawGradientRectZLevel(0, 0, 1000/*this.width*/, 1000/*this.height*/, -1072689136, -804253680, Dialog.this.zLevel + 5000);
-
-            this.mc.getTextureManager().bindTexture(background);
-            this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-
-            // Увеличиваем zLevel текста, чтоб тот отрисовывался над кнопкой и рисуем строку
-            fontRenderer.zLevel = zLevel + 1;
-            fontRenderer.drawString(StatCollector.translateToLocal("gui.MainMenu.CloseDialog"),
-                    guiLeft+31,
-                    guiTop+15,
-                    0x444444,
-                    false);
-
-            super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
-        }
-
-        @Override
-        protected void actionPerformed(GuiButton guiButton) {
-            switch (guiButton.id) {
-                case 0: {
-                    System.out.println("stub1");
-
-                    // TODO: Сохранять прокачку навыков
-
-                    // Закрываем GUI
-                    Minecraft.getMinecraft().displayGuiScreen(null);
-
-                    break;
-                }
-                case 1: {
-                    System.out.println("stub2");
-
-                    // TODO: Возвращаться к редактированию прокачки
-
-                    ((MainMenuGUI) parent).shouldDrawDefaultBackground(true);
-
-                    ((MainMenuGUI) parent).disableSlot = false;
-                    ((MainMenuGUI) parent).isPlayerTryExitWhileEditStats = false;
-
-                    break;
-                }
-                case 2: {
-                    System.out.println("stub3");
-
-                    // TODO: Отбрасывать прокачку
-
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Draws a rectangle with a vertical gradient between the specified colors.
-     * Аналог метода {@link net.minecraft.client.gui.Gui#drawGradientRect(int, int, int, int, int, int)}
-     * но с возможностью задавать свой zlevel
-     */
-    protected void drawGradientRectZLevel(int p_73733_1_, int p_73733_2_, int p_73733_3_, int p_73733_4_, int p_73733_5_, int p_73733_6_, float z)
-    {
-        float f = (float)(p_73733_5_ >> 24 & 255) / 255.0F;
-        float f1 = (float)(p_73733_5_ >> 16 & 255) / 255.0F;
-        float f2 = (float)(p_73733_5_ >> 8 & 255) / 255.0F;
-        float f3 = (float)(p_73733_5_ & 255) / 255.0F;
-        float f4 = (float)(p_73733_6_ >> 24 & 255) / 255.0F;
-        float f5 = (float)(p_73733_6_ >> 16 & 255) / 255.0F;
-        float f6 = (float)(p_73733_6_ >> 8 & 255) / 255.0F;
-        float f7 = (float)(p_73733_6_ & 255) / 255.0F;
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F(f1, f2, f3, f);
-        tessellator.addVertex((double)p_73733_3_, (double)p_73733_2_, (double)z);
-        tessellator.addVertex((double)p_73733_1_, (double)p_73733_2_, (double)z);
-        tessellator.setColorRGBA_F(f5, f6, f7, f4);
-        tessellator.addVertex((double)p_73733_1_, (double)p_73733_4_, (double)z);
-        tessellator.addVertex((double)p_73733_3_, (double)p_73733_4_, (double)z);
-        tessellator.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 }
