@@ -25,9 +25,12 @@ import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -46,6 +49,12 @@ public class MainContainer extends Container {
     private boolean withWildDice; // TODO: Удалить ненужное поле
     /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
     public boolean isEditMode = false;
+
+    /** Хранит в себе прокачку игрока, которая была до того как он начал раскидывать очки прокачки.
+     * Используется для отката изменений. */
+    private Map<ItemStack, Integer> savedBild = new HashMap<ItemStack, Integer>(); // TODO: Ключ уже хранит свой itemDamage, который является уровнем статы. Может просто сделать ArrayList?
+    /** Количество очков прокачки, которые следует вернуть игроку, если тот решил отменить прокачку */
+    private int wastedPoints;
 
     public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory, TabHostInventory otherTabsHost, TabInventory otherTabsInventory) {
         this.player = player;
@@ -223,6 +232,7 @@ public class MainContainer extends Container {
     }
 
     // TODO: баг при стаках очков прокачки 64 и 1
+    // TODO: Стоимость прокачки статы должна быть 2 очка, а не 1
     /**
      * Увеличивает переданную стату на 1, если в {@link #inventoryPlayer} есть хотя бы один {@link rsstats.items.ExpItem}.
      * Так же уменьшает ExpItem на 1.
@@ -262,6 +272,7 @@ public class MainContainer extends Container {
 
             // Отнимает очко прокачки ...
             if (expStack.stackSize >= price) {
+                wastedPoints += price; // Сохраняем количество очков, что потратил пользователь
                 if (expStack.stackSize == price) {
                     inventoryPlayer.mainInventory[expStackPos] = null; // Убираем стак
                 } else {
@@ -281,10 +292,24 @@ public class MainContainer extends Container {
         }
     }
 
+    // TODO: Рефакторить. См addItemStackToInventory
     private void statDown(Slot slot) {
         StatItem statItem = (StatItem) slot.getStack().getItem();
         int statItemDamage = statItem.getDamage(slot.getStack());
         boolean isExpStackCreated = false;
+
+        /* В случае, если игрок в ходе одной сессии прокачки захотел обнулить
+         * навыки, прокачанный в прошлой сесии - останавливаем его */
+        ItemStack s = slot.getStack();
+        for (ItemStack keyStack : savedBild.keySet()) { // TODO: Нужно найти и использовать уже имеющийся поиск. Задолбало его писать каждый раз
+            if (keyStack.getUnlocalizedName().equals(slot.getStack().getUnlocalizedName())) {
+                s = keyStack;
+                break;
+            }
+        }
+        if (statItemDamage <= savedBild.get(s)) {
+            return;
+        }
 
         // Находим стак с очками прокачки
         ItemStack expStack = null;
@@ -324,6 +349,9 @@ public class MainContainer extends Container {
 
             // возвращаем игроку очки прокачки ...
             if (expStack.stackSize + reward <= expStack.getMaxStackSize()) {
+                // Убираем очки из "возмещения", если тот сам (т.е. без диалога) отменил прокачку конкретного навыка или статы
+                wastedPoints -= reward;
+
                 if (isExpStackCreated) {
                     expStack.stackSize = reward;
                 } else {
@@ -348,7 +376,7 @@ public class MainContainer extends Container {
                     slot.getStack(),
                     statItemDamage > 0 ? statItemDamage-1 : 0
             );
-        } else { // Стата уже прокачана до предела - выходим
+        } else { // Стата уже спущена до минимального предела - выходим
             return;
         }
     }
@@ -368,6 +396,7 @@ public class MainContainer extends Container {
         return -1;
     }
 
+    // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
     @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
         Slot slot;
@@ -386,14 +415,26 @@ public class MainContainer extends Container {
         }
 
         if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
-            isEditMode = true; // Игрок начал прокачиваться и перешел в режим редактирования
-            statUp(slot);
-            ExtendedPlayer.get(playerIn).updateParams();
+            // Если у игрока есть очки прокачки и он не в режиме редактирования ...
+            if (Utils.isPlayerHave(player, "item.ExpItem") != null & !isEditMode) { // TODO: Magic string
+                // ... тогда инициализируем режим прокачки и сохраняем текущий билд игрока
+                wastedPoints = 0;
+                saveBild();
+                isEditMode = true;
+            }
+
+            if (isEditMode) { // Игрок в режиме прокачки - пытается повысить стату/навык
+                statUp(slot);
+                ExtendedPlayer.get(playerIn).updateParams();
+            }
+
             return null;
         }
         if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
-            statDown(slot);
-            ExtendedPlayer.get(playerIn).updateParams();
+            if (isEditMode) { // Игрок в режиме прокачки - пытается понизить стату/навык
+                statDown(slot);
+                ExtendedPlayer.get(playerIn).updateParams();
+            }
             return null;
         }
 
@@ -429,5 +470,47 @@ public class MainContainer extends Container {
 
     public SkillsInventory getSkillsInventory() {
         return skillsInventory;
+    }
+
+    /**
+     * Сохраняет прокачку персонажа, дабыы иметь возможность ее восстановить
+     */
+    public void saveBild() {
+        savedBild.clear();
+        for (ItemStack statStack : statsInventory.getStats()) {
+            if (statStack != null)
+                savedBild.put(statStack, statStack.getItemDamage());
+        }
+        for (ItemStack skillStack : skillsInventory.getSkills()) {
+            if (skillStack != null)
+                savedBild.put(skillStack, skillStack.getItemDamage());
+        }
+    }
+
+    /**
+     * Восстанавливает прокачку персонажа
+     */
+    public void restoreBild() {
+        for (ItemStack bildStack : savedBild.keySet()) {
+            int lvl = savedBild.get(bildStack);
+            if (bildStack.getItem() instanceof SkillItem) {
+                for (ItemStack currentSkillStack : skillsInventory.getSkills()) {
+                    if (currentSkillStack != null && currentSkillStack.getItem() == bildStack.getItem()) {
+                        currentSkillStack.setItemDamage(lvl);
+                    }
+                }
+            } else {
+                for (ItemStack currentStatStack : statsInventory.getStats()) {
+                    if (currentStatStack != null && currentStatStack.getItem() == bildStack.getItem()) {
+                        currentStatStack.setItemDamage(lvl);
+                    }
+                }
+            }
+        }
+
+        /* addItemStackToInventory успешно работает с ситуацией, если вернутся больше чем 64 предмета.
+         * Нет нужды в своих проверках. */
+        ItemStack expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"), wastedPoints);
+        this.player.inventory.addItemStackToInventory(expStack);
     }
 }
