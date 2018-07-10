@@ -52,7 +52,10 @@ public class MainContainer extends Container {
 
     /** Хранит в себе прокачку игрока, которая была до того как он начал раскидывать очки прокачки.
      * Используется для отката изменений. */
-    private Map<ItemStack, Integer> savedBild = new HashMap<ItemStack, Integer>(); // TODO: Ключ уже хранит свой itemDamage, который является уровнем статы. Может просто сделать ArrayList?
+    /* Может показаться, что ключ уже хранит свой itemDamage, который является уровнем статы, и можно просто
+     * реализовать хранение через ArrayList, но не нужно забывать, что itemDamage в ключах - может быть измен
+     * игроком, что делает хранилище ArrayList, т.к. сохраненные уровни стат будут утеряны */
+    private Map<ItemStack, Integer> savedBild = new HashMap<ItemStack, Integer>(); // TODO: Заменить пару на String-Integer
     /** Количество очков прокачки, которые следует вернуть игроку, если тот решил отменить прокачку */
     private int wastedPoints;
 
