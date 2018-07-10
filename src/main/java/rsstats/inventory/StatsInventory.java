@@ -280,6 +280,7 @@ public class StatsInventory implements IInventory {
         }
     }
 
+    // TODO: Заменить на getAll и преопределять в потомках
     /**
      * Геттер для {@link #inventory}.
      * @return Массив стаков, представляющих собой инвентарь статов

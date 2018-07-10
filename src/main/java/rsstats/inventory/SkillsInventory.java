@@ -189,6 +189,13 @@ public class SkillsInventory extends StatsInventory {
         markDirty();
     }
 
+    // TODO: Контейнер должен вызывать эти методы, как в ванильных блоках. Сейчас MainContainer их просто игнорирует. Это касается всех инвентарей
+    @Override
+    public void openInventory() {}
+
+    @Override
+    public void closeInventory() {}
+
     /**
      * Очищает {@link #inventory}, выставляя все его элементы null
      */
