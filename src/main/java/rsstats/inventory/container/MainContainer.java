@@ -239,10 +239,15 @@ public class MainContainer extends Container {
     /**
      * Увеличивает переданную стату на 1, если в {@link #inventoryPlayer} есть хотя бы один {@link rsstats.items.ExpItem}.
      * Так же уменьшает ExpItem на 1.
-     * @param slot Слот0 в котором находится стата, которую необходимо прокачать
+     * @param statStack Стак со статой, которую необходимо прокачать
+     * @throws IllegalAccessException Если в statStack нет {@link StatItem}'а
      */
-    private void statUp(Slot slot) {
-        StatItem statItem = (StatItem) slot.getStack().getItem();
+    private void statUp(ItemStack statStack) {
+        if ( !(statStack.getItem() instanceof StatItem) ) {
+            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
+        }
+
+        StatItem statItem = (StatItem) statStack.getItem();
 
         // Находим стак с очками прокачки
         ItemStack expStack = null;
@@ -263,7 +268,7 @@ public class MainContainer extends Container {
         List subitems = new ArrayList();
         statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
 
-        int statItemDamage = statItem.getDamage(slot.getStack());
+        int statItemDamage = statItem.getDamage(statStack);
         if (statItemDamage != subitems.size() - 1) {
             int price = 1; // Цена прокачки
             if (statItem instanceof SkillItem) {
@@ -287,7 +292,7 @@ public class MainContainer extends Container {
 
             // и увеличиваем стату ...
             statItem.setDamage(
-                    slot.getStack(),
+                    statStack,
                     statItemDamage < subitems.size() - 1 ? statItemDamage + 1 : subitems.size() - 1
             );
         } else { // Стата уже прокачана до предела - выходим
@@ -296,16 +301,20 @@ public class MainContainer extends Container {
     }
 
     // TODO: Рефакторить. См addItemStackToInventory
-    private void statDown(Slot slot) {
-        StatItem statItem = (StatItem) slot.getStack().getItem();
-        int statItemDamage = statItem.getDamage(slot.getStack());
+    private void statDown(ItemStack statStack) {
+        if ( !(statStack.getItem() instanceof StatItem) ) {
+            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
+        }
+
+        StatItem statItem = (StatItem) statStack.getItem();
+        int statItemDamage = statItem.getDamage(statStack);
         boolean isExpStackCreated = false;
 
         /* В случае, если игрок в ходе одной сессии прокачки захотел обнулить
          * навыки, прокачанный в прошлой сесии - останавливаем его */
-        ItemStack s = slot.getStack();
+        ItemStack s = statStack;
         for (ItemStack keyStack : savedBild.keySet()) { // TODO: Нужно найти и использовать уже имеющийся поиск. Задолбало его писать каждый раз
-            if (keyStack.getUnlocalizedName().equals(slot.getStack().getUnlocalizedName())) {
+            if (keyStack.getUnlocalizedName().equals(statStack.getUnlocalizedName())) {
                 s = keyStack;
                 break;
             }
@@ -376,7 +385,7 @@ public class MainContainer extends Container {
 
             // и уменьшаем стату ...
             statItem.setDamage(
-                    slot.getStack(),
+                    statStack,
                     statItemDamage > 0 ? statItemDamage-1 : 0
             );
         } else { // Стата уже спущена до минимального предела - выходим
@@ -427,7 +436,7 @@ public class MainContainer extends Container {
             }
 
             if (isEditMode) { // Игрок в режиме прокачки - пытается повысить стату/навык
-                statUp(slot);
+                statUp(slot.getStack());
                 ExtendedPlayer.get(playerIn).updateParams();
             }
 
@@ -435,7 +444,7 @@ public class MainContainer extends Container {
         }
         if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
             if (isEditMode) { // Игрок в режиме прокачки - пытается понизить стату/навык
-                statDown(slot);
+                statDown(slot.getStack());
                 ExtendedPlayer.get(playerIn).updateParams();
             }
             return null;
