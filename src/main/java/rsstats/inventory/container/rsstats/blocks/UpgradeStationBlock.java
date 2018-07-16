@@ -53,9 +53,14 @@ public class UpgradeStationBlock extends BlockContainer {
         if (!world.isRemote) {
             entityPlayer.openGui(RSStats.instance, RSStats.UPGRADE_UI_FROM_BLOCK_CODE, world, x, y, z);
             //CommonProxy.INSTANCE.sendToServer(new PacketOpenWindow(x, y, z));
-            //return false; // TODO: Зачем?
         }
-        return super.onBlockActivated(world, x, y, z, entityPlayer, side, hitX, hitY, hitZ);
+
+        /* Не нужно вызывать супер, т.к. он по-умолчанию возвращает false.
+         * Можно возвращать false, чтобы попытка использовать блок провалилась.
+         * Например, если игрок не держит в руках ключ и пытается сделать ПКМ на сейв,
+         * можно возвращать false.
+         */
+        return true;
     }
 
     @Override

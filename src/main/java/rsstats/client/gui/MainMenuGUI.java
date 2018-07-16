@@ -18,6 +18,7 @@ import rsstats.client.gui.advanced.AdvanceInventoryEffectRenderer;
 import rsstats.client.gui.advanced.Dialog;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
+import rsstats.common.network.PacketDialogAction;
 import rsstats.common.network.PacketShowSkillsByStat;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
@@ -318,31 +319,16 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     public void initGui() {
         exitDialog = new Dialog(this) {
             @Override
-            public void positiveActionPerformed() {
-                System.out.println("stub1");
-
-                // TODO: Сохранять прокачку навыков
-
-                super.positiveActionPerformed();
-            }
-
-            @Override
             public void negativeActionPerformed() {
-                System.out.println("stub2");
-
-                // TODO: Возвращаться к редактированию прокачки
-
                 MainMenuGUI.this.shouldDrawDefaultBackground(true);
-
                 MainMenuGUI.this.disableSlot = false;
                 MainMenuGUI.this.isPlayerTryExitWhileEditStats = false;
             }
 
             @Override
             public void cancelActionPerformed() {
-                System.out.println("stub3");
-
-                // TODO: Отбрасывать прокачку
+                // Отбрасываем прокачку
+                CommonProxy.INSTANCE.sendToServer(new PacketDialogAction(PacketDialogAction.ActionType.CANCEL));
 
                 super.cancelActionPerformed();
             }

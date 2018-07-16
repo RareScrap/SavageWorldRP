@@ -36,6 +36,7 @@ public class UpgradeStationEntity extends TileEntity {
 
     }
 
+    // TODO: Отказаться от хранения поворота в NBT. Это следует делать в метадате блока как в печке!
     // Синхронизирует переменные блока с блоком на клиенте
     @Override
     public Packet getDescriptionPacket() {
