@@ -406,19 +406,17 @@ public class MainContainer extends Container {
     // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
     @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
-        Slot slot;
-        try {
-            slot = getSlot(slotId);
-        } catch(Exception e) {
+        // -999 - "переносимый" стак кликается за предеты контейнера (т.е. выбрасывается)
+        // -1 - игрок тыкает переносимым стаков в то место в контейнере, в котором нет слота
+        if (slotId == -999 || slotId == -1)
             return super.slotClick(slotId, clickedButton, mode, playerIn);
-            //return null; // костыль
-        }
+
+        Slot slot = getSlot(slotId);
         Item itemInSlot;
-        if (slot.getStack() != null && slot.getStack().getItem() != null) {
+        if (slot.getStack() != null) {
             itemInSlot = slot.getStack().getItem();
         } else {
             return super.slotClick(slotId, clickedButton, mode, playerIn);
-            //return null;
         }
 
         if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
