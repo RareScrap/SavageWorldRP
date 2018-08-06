@@ -58,6 +58,11 @@ public class PacketShowSkillsByStat implements IMessage {
 
             ((MainContainer) ctx.getServerHandler().playerEntity.openContainer).getSkillsInventory().setSkillsFor(message.parentStatName);
 
+            /* Т.к. за один тик сервера может быть обработано несколько PacketShowSkillsByStat, то
+             * необходимо удостовериться, что каждый обработанный пакет проинформирует об этом клиента.
+             * Иначе, предметы могут начать скакать между вкдалками */
+            ctx.getServerHandler().playerEntity.openContainer.detectAndSendChanges();
+
             //MainContainer serverMainContainer = RSStats.proxy.serverMainContainer;
             //serverMainContainer.setSkillsFor(message.parentStatName);
 
