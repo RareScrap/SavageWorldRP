@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class StatItem extends Item {
     /** Общее количество уровней статы */
-    private static int NUMBER_OF_LEVELS = 5;
+    private static int NUMBER_OF_LEVELS = 5; // TODO: Зачем?
     
     /** Хранилище иконов для каждого уровня статы */
     private IIcon[] icons = new IIcon[NUMBER_OF_LEVELS]; // хранилище иконок для всего семейства предмета
@@ -68,6 +68,7 @@ public class StatItem extends Item {
         this.setMaxStackSize(1);
         this.setCreativeTab(RSStats.CREATIVE_TAB);
         this.setHasSubtypes(true);
+        this.setMaxDamage(basicRolls.size()-1); // нумерация меты начинается с 0
     }
 
     // Создание вкладок для режима креатива
@@ -228,6 +229,13 @@ public class StatItem extends Item {
         return itemstack;
         //return super.onItemRightClick(itemstack, world, entityplayer); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return false;
+    }
+
+    // TODO: Переопределить такие методы iRepearable и isDamagable, чтобы сделать поведение предмета более конкретным
 
     public void roll(ItemStack itemStack, EntityPlayer entityplayer, boolean withWildDice) {
         // If нужен, чтобы броить бросок только один раз
