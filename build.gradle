@@ -9,12 +9,14 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        jcenter()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
+apply plugin: 'java' // TODO: Зачем? Можно ли тестить без этого?
 apply plugin: 'forge'
 
 version = "0.0.1a"
@@ -35,6 +37,12 @@ dependencies {
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-core:2.+" // TODO: Может удалить?
+    testCompile 'org.powermock:powermock-module-junit4:2.0.0-beta.5'
+    testCompile 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
+    //testCompile 'org.powermock:powermock:1.6.5' // TODO: Нужно ли?
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
@@ -71,3 +79,10 @@ compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+
+// Debug option: Включает access-трансформеры
+//jar {
+//    manifest {
+//        attributes 'FMLAT': 'rsstats_at.cfg'
+//    }
+//}
