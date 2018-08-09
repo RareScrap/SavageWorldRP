@@ -93,10 +93,19 @@ public class CommonProxy implements IGuiHandler {
         }
     }
 
+    // TODO Перенести в отдельный класс
+    public static class Items {
+        public static ExpItem expItem = new ExpItem("ExpItem");
+
+        public static void registerItems() {
+            GameRegistry.registerItem(expItem, "ExpItem");
+        }
+    }
+
     /** Обработчик нажатия кнопок, используемых для вызова GUI */
     protected KeyHandler keyHandler;
     /** Обертка для работы с сетью */
-    public static final SimpleNetworkWrapper INSTANCE =
+    public static /*final*/ SimpleNetworkWrapper INSTANCE = // TODO: Филан убран из-за тестов. Восстановить финал
             NetworkRegistry.INSTANCE.newSimpleChannel(RSStats.MODID.toLowerCase());
 
     public void preInit(FMLPreInitializationEvent event) {
@@ -204,8 +213,7 @@ public class CommonProxy implements IGuiHandler {
         // Регистрация прочих предметов
         RerollCoin rerollCoinItem = new RerollCoin("RerollCoinItem");
         GameRegistry.registerItem(rerollCoinItem, "RerollCoinItem");
-        ExpItem expItem = new ExpItem("ExpItem");
-        GameRegistry.registerItem(expItem, "ExpItem");
+        Items.registerItems();
 
         // Регистрация сущностей
         GameRegistry.registerTileEntity(UpgradeStationEntity.class, "UpgradeStationEntity");
