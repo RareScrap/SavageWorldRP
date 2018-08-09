@@ -2,15 +2,15 @@ language: java
 sudo: false # Ускоряет тесты
 
 install:
-- gradle wrapper --gradle-version 4.2 # Нужно, чтобы не хранить зависимости вместе с проектом
+  - gradle wrapper --gradle-version 4.2 # Нужно, чтобы не хранить зависимости вместе с проектом
 
 jdk:
-- oraclejdk8
+  - oraclejdk8
 
 script:
-- "./gradlew build"
-- "./gradlew test"
-- "./gradlew jar"
+  - "./gradlew build"
+  - "./gradlew test"
+  - "./gradlew jar"
 
 cache:
   directories:
