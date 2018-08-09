@@ -1,0 +1,35 @@
+language: java
+sudo: false # Ускоряет тесты
+
+install:
+- gradle wrapper --gradle-version 4.2 # Нужно, чтобы не хранить зависимости вместе с проектом
+
+jdk:
+- oraclejdk8
+
+script:
+- "./gradlew build"
+- "./gradlew test"
+- "./gradlew jar"
+
+cache:
+  directories:
+    - "$HOME/.gradle"
+    - ".gradle"
+
+before_deploy:
+  # Назначаем тег коммиту, чтобы тот опубликовался в Releases
+  - git config --local user.name "askthunderpony"
+  - git config --local user.email "askthunderpony@users.noreply.github.com"
+  - git tag "v0.0.$TRAVIS_BUILD_NUMBER"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: 11T+vKSrw2t5Oz/J5GAnFmOKMiNQJOkof1FmUqYxWE06UJikd/11RLd4UMulJiCDxGdUszqeQFD4JQuuQXTN1sxPRx32bKs7cyFgFQhnvXcb3AAKFUVUFVYjbgMG4pEoq+8fPS54mz2LpVU87WGuPmqVY23hwxYh69gkg9Pghh44a0al7Lwi10ntfGdoFqQAUhKaOa94YQZ1s2WXD1u+c7PWdTx4GU6A7Z4z6i8s6fkcFjf3FNgxkGbX92lJ5Dqju8ag2KL8ZTuWKSnidpx5jjX4c8tspw4INYCI/ssCiiYXJFqBLyPOIZGPaw/4TZbV8PaLfws55bKNYmOCBf8AoJB2Cg7b+AK58FQQvksQZ15QFaQWYL/sTbS3kknsll2GTyWGDmrim4WOFDxWFWZjNsYQpJV89XlMcvN3KPCmGIGu1f9xxHvF0WJaZwCs8B9LfAwjYQTnRbtzPEz9F9Y19HLK7hbINymtmGfQ49mBS0srT/UaIuVI0mxSolyvSKLkbixT+E8v/Um7GafLf8pe3GQTxXbUkdz1b6JycSDsYgNo5y08Qv35U+8MLSmJtYhZYHiCWnDR6alESSTSfIt3TzMRJNUorOgj4unH1+mm4wVialuTYM5SpaC9MwJLarUc7lmeoKKxoYsrN56/9iG1XKs2Zw0kw+qxoRGNMoUd7Tg=
+  file: build/libs/*
+  name: "SavageWorldRP v0.0.1.$TRAVIS_BUILD_NUMBER"
+  body: "Дата $(date +'%d'.'%m'.'%Y')"
+  on:
+    repo: RareScrap/SavageWorldRP
+    branch: develop
