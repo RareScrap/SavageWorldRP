@@ -9,6 +9,7 @@ import rsstats.common.RSStats;
 import rsstats.utils.DescriptionCutter;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -35,5 +36,17 @@ public class OtherItems {
             String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(getUnlocalizedName() + ".lore"));
             infoLines.addAll(Arrays.asList(strs));
         }
+    }
+
+    /**
+     * Возвращает итемы в хранилище формата ИМЯ->ИТЕМ
+     */
+    public static LinkedHashMap<String, Item> getAll() {
+        LinkedHashMap<String, Item> items = new LinkedHashMap<String, Item>();
+        items.put(perksTabItem.getUnlocalizedName(), perksTabItem);
+        items.put(flawsTabItem.getUnlocalizedName(), flawsTabItem);
+        items.put(positiveEffectsTabItem.getUnlocalizedName(), positiveEffectsTabItem);
+        items.put(negativeEffectsTabItem.getUnlocalizedName(), negativeEffectsTabItem);
+        return items;
     }
 }

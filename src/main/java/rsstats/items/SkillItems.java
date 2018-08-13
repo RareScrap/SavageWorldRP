@@ -6,6 +6,7 @@ import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static rsstats.common.RSStats.MODID;
@@ -30,6 +31,7 @@ public class SkillItems {
         skillDices.add(new DiceRoll(null, null, 12));
     }
 
+    // TODO: Слишком много литералов. Легко сделать ошибку, которую трудно отследить
     public static final SkillItem equitationSkillItem = new SkillItem(skillDices, "EquitationSkillItem", MODID + ":skills/Equitation", "item.EquitationSkillItem", agilityStatItem);
     public static final SkillItem lockpickingSkillItem = new SkillItem(skillDices, "LockpickingSkillItem", MODID + ":skills/Lockpicking", "item.LockpickingSkillItem", agilityStatItem);
     public static final SkillItem drivingSkillItem = new SkillItem(skillDices, "DrivingSkillItem", MODID + ":skills/Driving", "item.DrivingSkillItem", agilityStatItem);
@@ -77,5 +79,35 @@ public class SkillItems {
         GameRegistry.registerItem(intimidationSkillItem, "IntimidationSkillItem");
         GameRegistry.registerItem(diplomacySkillItem, "DiplomacySkillItem");
         GameRegistry.registerItem(climbingSkillItem, "ClimbingSkillItem");
+    }
+
+    /**
+     * Возвращает скиллы в хранилище формата ИМЯ->СКИЛЛ
+     */
+    public static LinkedHashMap<String, SkillItem> getAll() {
+        LinkedHashMap<String, SkillItem> skills = new LinkedHashMap<String, SkillItem>();
+        skills.put("EquitationSkillItem", equitationSkillItem);
+        skills.put("LockpickingSkillItem", lockpickingSkillItem);
+        skills.put("DrivingSkillItem", drivingSkillItem);
+        skills.put("FightingSkillItem", fightingSkillItem);
+        skills.put("DisguiseSkillItem", disguiseSkillItem);
+        skills.put("ThrowingSkillItem", throwingSkillItem);
+        skills.put("PilotingSkillItem", pilotingSkillItem);
+        skills.put("SwimmingSkillItem", swimmingSkillItem);
+        skills.put("ShootingSkillItem", shootingSkillItem);
+        skills.put("ShippingSkillItem", shippingSkillItem);
+        skills.put("GamblingSkillItem", gamblingSkillItem);
+        skills.put("PerceptionSkillItem", perceptionSkillItem);
+        skills.put("SurvivalSkillItem", survivalSkillItem);
+        skills.put("TrackingSkillItem", trackingSkillItem);
+        skills.put("MedicineSkillItem", medicineSkillItem);
+        skills.put("ProvocationSkillItem", provocationSkillItem);
+        skills.put("InvestigationSkillItem", investigationSkillItem);
+        skills.put("RepearSkillItem", repearSkillItem);
+        skills.put("StreetFlairSkillItem", streetFlairSkillItem);
+        skills.put("IntimidationSkillItem", intimidationSkillItem);
+        skills.put("DiplomacySkillItem", diplomacySkillItem);
+        skills.put("ClimbingSkillItem", climbingSkillItem);
+        return skills;
     }
 }

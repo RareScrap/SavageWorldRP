@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import rsstats.utils.DiceRoll;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static rsstats.common.RSStats.MODID;
 
@@ -34,5 +35,19 @@ public class StatItems {
         GameRegistry.registerItem(intelligenceStatItem, "IntelligenceStatItem");
         GameRegistry.registerItem(enduranceStatItem, "EnduranceStatItem");
         GameRegistry.registerItem(characterStatItem, "CharacterStatItem");
+    }
+
+    // TODO: юзать Map или Enum?
+    /**
+     * Возвращает статы в хранилище формата ИМЯ->СТАТА
+     */
+    public static LinkedHashMap<String, StatItem> getAll() {
+        LinkedHashMap<String, StatItem> stats = new LinkedHashMap<String, StatItem>();
+        stats.put("StrengthStatItem", strenghtStatItem);
+        stats.put("AgilityStatItem", agilityStatItem);
+        stats.put("IntelligenceStatItem", intelligenceStatItem);
+        stats.put("EnduranceStatItem", enduranceStatItem);
+        stats.put("CharacterStatItem", characterStatItem);
+        return stats;
     }
 }
