@@ -25,6 +25,7 @@ import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
 import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.inventory.tabs_inventory.TabInventory;
+import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.Utils;
@@ -617,7 +618,7 @@ public class MainContainer extends Container {
      * @param refund Очки прокачки, которые будут возвращены игроку
      */
     public void doRefund(int refund) { // TODO: Unit-test this
-        ItemStack expStack = new ItemStack(CommonProxy.Items.expItem, refund);
+        ItemStack expStack = new ItemStack(MiscItems.expItem, refund);
         this.player.inventory.addItemStackToInventory(expStack);
         wastedPoints -= refund;
     }

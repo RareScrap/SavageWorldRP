@@ -25,6 +25,7 @@ import rsstats.inventory.WearableInventory;
 import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.ExpItem;
+import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.DiceRoll;
@@ -123,7 +124,7 @@ public class TestMainContainer {
         player.worldObj.isRemote = false; // Серверный режим включен
 
         // Начинаем с 20 очками прокачки
-        ItemStack points = new ItemStack(CommonProxy.Items.expItem, 20);
+        ItemStack points = new ItemStack(MiscItems.expItem, 20);
         inventoryPlayer.setInventorySlotContents(0, points); // TODO по непонятной причине addItemStackToInventory не работает
         mainContainer.getSkillsInventory().setSkillsFor("item.StrengthStatItem");
 

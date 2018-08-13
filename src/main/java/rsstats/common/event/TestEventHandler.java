@@ -13,8 +13,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import rsstats.common.CommonProxy;
 import rsstats.data.ExtendedPlayer;
+import rsstats.items.OtherItems;
 
 /**
  *
@@ -54,10 +54,10 @@ public class TestEventHandler {
 
             // Альтернативная начальная инициализация вкладок
             if (data.otherTabsHost.isEmpty()) {
-                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(CommonProxy.OtherItems.perksTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(CommonProxy.OtherItems.flawsTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(CommonProxy.OtherItems.positiveEffectsTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(CommonProxy.OtherItems.negativeEffectsTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(OtherItems.perksTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(OtherItems.flawsTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(OtherItems.positiveEffectsTabItem, 1));
+                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(OtherItems.negativeEffectsTabItem, 1));
 
             }
         }
