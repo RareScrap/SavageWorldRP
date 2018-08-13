@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="193de2a9-b401-4200-a4ca-5fdbf1340012" name="Default" comment="Коммит для слияния веток (ненавижу сраный гит)">
+    <list default="true" id="193de2a9-b401-4200-a4ca-5fdbf1340012" name="Default" comment="В отдельном пакете реализованы класс для поддержания системы вкладок. Пакет - кандидат для выделения в отдельную библиотеку и был спроектирован с учетом этого. С использованием этого пакета бл реализован инвентарь вкладок для эфектов и прочих вещей навроде перков, изъянов персонажа и т.д.&#10;&#10;* Для этого инвентаря написана альтернативная начальная инициализация, построенная на эвентах. Отличается от того костля, что использовался в StatInventory и SkilInventory&#10;* Для инвентарей вкладок создан отдельнй метод регистрации хандлера сообщений&#10;* Код расстановки слотов брони стал немного красивее">
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/java/rsstats/items/FlawItem.java" />
+      <change beforePath="$PROJECT_DIR$/SavageWorldRP.ipr" afterPath="$PROJECT_DIR$/SavageWorldRP.ipr" />
       <change beforePath="$PROJECT_DIR$/SavageWorldRP.iws" afterPath="$PROJECT_DIR$/SavageWorldRP.iws" />
+      <change beforePath="$PROJECT_DIR$/SavageWorldRP_main.iml" afterPath="$PROJECT_DIR$/SavageWorldRP_main.iml" />
+      <change beforePath="$PROJECT_DIR$/SavageWorldRP_test.iml" afterPath="$PROJECT_DIR$/SavageWorldRP_test.iml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/data/ExtendedPlayer.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/data/ExtendedPlayer.java" />
       <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabInventory.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabInventory.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabMessageHandler.java" afterPath="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabMessageHandler.java" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang" afterPath="$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/rsstats/obj/upgrade_station.obj" afterPath="$PROJECT_DIR$/src/main/resources/assets/rsstats/obj/upgrade_station.obj" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -20,6 +26,10 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/SavageWorldRP$Minecraft_Client.coverage" NAME="Minecraft Client Coverage Results" MODIFIED="1525078809448" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/SavageWorldRP$Minecraft_Server.coverage" NAME="Minecraft Server Coverage Results" MODIFIED="1525003367223" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -69,34 +79,130 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <projects_view />
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="SavageWorldRP" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="SavageWorldRP" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="SavageWorldRP" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="SavageWorldRP" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MainContainer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java">
+      <file leaf-file-name="ru_RU.lang" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+            <state relative-caret-position="1275">
+              <caret line="75" column="58" lean-forward="false" selection-start-line="75" selection-start-column="58" selection-end-line="75" selection-end-column="58" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TabInventory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabInventory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="30" column="4" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="31" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CommonProxy.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="80" column="67" lean-forward="false" selection-start-line="80" selection-start-column="67" selection-end-line="80" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Item.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/item/Item.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8585">
+              <caret line="604" column="25" lean-forward="false" selection-start-line="604" selection-start-column="18" selection-end-line="604" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExtendedPlayer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/data/ExtendedPlayer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="84" column="20" lean-forward="false" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SkillSlot.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/SkillSlot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="6" column="32" lean-forward="false" selection-start-line="6" selection-start-column="32" selection-end-line="6" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StatSlot.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/StatSlot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TabHostInventory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#14406#14407#0" expanded="true" />
-                <element signature="e#14444#14445#0" expanded="true" />
+                <element signature="e#1629#1630#0" expanded="true" />
+                <element signature="e#1690#1691#0" expanded="true" />
+                <element signature="e#3621#3622#0" expanded="true" />
+                <element signature="e#3669#3670#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RerollCoin.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java">
+      <file leaf-file-name="StatsInventory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/StatsInventory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="68" column="30" lean-forward="false" selection-start-line="68" selection-start-column="30" selection-end-line="68" selection-end-column="30" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="170">
+              <caret line="53" column="7" lean-forward="true" selection-start-line="53" selection-start-column="7" selection-end-line="53" selection-end-column="7" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -104,78 +210,8 @@
       <file leaf-file-name="StatItem.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4114">
-              <caret line="263" column="0" lean-forward="false" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DiceRoll.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="249" column="0" lean-forward="false" selection-start-line="249" selection-start-column="0" selection-end-line="249" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SSPPage.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/SSPPage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CommonProxy.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2295">
-              <caret line="161" column="67" lean-forward="false" selection-start-line="161" selection-start-column="67" selection-end-line="161" selection-end-column="67" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="en_US.lang" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/en_US.lang">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RollPacketToServer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1887">
-              <caret line="121" column="0" lean-forward="false" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StatsContainer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ru_RU.lang" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="521">
-              <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+            <state relative-caret-position="1581">
+              <caret line="114" column="8" lean-forward="false" selection-start-line="114" selection-start-column="8" selection-end-line="115" selection-end-column="41" />
               <folding />
             </state>
           </provider>
@@ -183,16 +219,53 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>LOCALE</find>
+      <find>metada</find>
+      <find>loc</find>
+      <find>getLoca</find>
+      <find>heal</find>
+      <find>findItem</find>
+      <find>openGui</find>
+      <find>getStackInSlot</find>
+      <find>slotClick</find>
+      <find>decrStackSize</find>
+      <find>p_70304_1_</find>
+      <find>getStackInSlotOnClosing</find>
+      <find>setInventorySlotContents</find>
+      <find>getInventoryName</find>
+      <find>1.6</find>
+      <find>1.7</find>
+      <find>sendToSer</find>
+      <find>sendT</find>
+      <find>GameRegistry.find</find>
+      <find>test_tab</find>
+      <find>System.out.</find>
+      <find>System.out.print</find>
+      <find>isMou</find>
+      <find>isMouseOverSlot</find>
+      <find>currentTab</find>
+      <find>caled</find>
+      <find>keepStats</find>
+      <find>getUnlo</find>
+      <find>Capa</find>
+      <find>Entity</find>
+      <find>capa</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="commands" />
+        <entry key="$PROJECT_DIR$" value="develop" />
       </map>
     </option>
   </component>
@@ -512,7 +585,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3025160330857" />
+        <entry key="$PROJECT_DIR$" value="3039056434863" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="1352366678" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -717,15 +791,55 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/rsstats/common/command/AddLevel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/RSStats.java" />
-        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java" />
-        <option value="$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/command/Card.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/en_US.lang" />
         <option value="$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/SkillsInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/StatsInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/command/ParamsPlayer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/StupPacket.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/StubPacket.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/StubPacket1.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/utils/SideOnlyMethods.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketSyncPlayer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketCommandReponse.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/RSStats.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/command/OpenWindow.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/UpgradeStationInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketOpenWindow.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/utils/DescriptionCutter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/Config.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketSyncGUI.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/utils/RollModifier.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/client/gui/UpgradeGUI.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationBlock.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/InventoryBase.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/UpgradeContainer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/EffectsInventory.java" />
+        <option value="$PROJECT_DIR$/SavageWorldRP.iws" />
+        <option value="$PROJECT_DIR$/SavageWorldRP_main.iml" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/utils/HashMapUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/TabHostInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/TabInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationTESR.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/client/gui/MainMenuGUI.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/client/ClientProxy.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/package-info.java" />
         <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/items/FlawItem.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabMessageHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java" />
         <option value="$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java" />
         <option value="$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang" />
-        <option value="$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/rsstats/data/ExtendedPlayer.java" />
       </list>
     </option>
   </component>
@@ -734,10 +848,10 @@
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="108" />
-    <option name="y" value="-14" />
-    <option name="width" value="1282" />
-    <option name="height" value="728" />
+    <option name="x" value="140" />
+    <option name="y" value="-17" />
+    <option name="width" value="1382" />
+    <option name="height" value="784" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -745,9 +859,6 @@
     </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
-  </component>
   <component name="ProjectView">
     <navigator currentView="PackagesPane" proportions="" version="1">
       <flattenPackages />
@@ -763,8 +874,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -781,7 +892,31 @@
               <item name="SavageWorldRP" type="b2602c69:ProjectViewProjectNode" />
               <item name="SavageWorldRP" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SavageWorldRP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SavageWorldRP" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SavageWorldRP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SavageWorldRP" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="rsstats" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SavageWorldRP" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SavageWorldRP" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="rsstats" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -792,82 +927,12 @@
           <expand>
             <path>
               <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
+              <item name="SavageWorldRP" type="eaaa3913:PackageViewModuleGroupNode" />
             </path>
             <path>
               <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
+              <item name="SavageWorldRP" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="assets.rarescrap.lang" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="assets.rsstats.textures" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.client" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.client.gui" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.common" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.common.command" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.common.event" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.common.network" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.data" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.inventory" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.inventory.container" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.inventory.slots" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.items" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.server" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="SavageWorldRP" type="58d84e3e:PackageViewProjectNode" />
-              <item name="SavageWorldRP_main" type="616d4139:PackageViewModuleNode" />
-              <item name="rsstats.utils" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
@@ -882,6 +947,18 @@
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://D:/Users/rares/Downloads/SavageWorldRP/src/main/java/rsstats/client/gui/MainMenuGUI.java" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="rsstats.inventory.container.rsstats.blocks" />
+      <recent name="rsstats.client.gui" />
+      <recent name="rsstats.inventory.container" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -933,13 +1010,13 @@
       <option name="MAIN_CLASS_NAME" value="GradleStartServer" />
       <option name="VM_PARAMETERS" value="-Xincgc -Dfml.ignoreInvalidMinecraftCertificates=true" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../SavageWorldRP\eclipse" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/eclipse" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="RSCore" />
+      <module name="SavageWorldRP_main" />
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
@@ -978,6 +1055,24 @@
         <option name="taskNames">
           <list>
             <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    </configuration>
+    <configuration name="SavageWorldRP [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -1040,21 +1135,28 @@
       <Host>localhost</Host>
       <Port>5050</Port>
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Application.Minecraft Client" />
       <item index="1" class="java.lang.String" itemvalue="Application.Minecraft Server" />
       <item index="2" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [jar]" />
       <item index="3" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [build]" />
+      <item index="4" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [clean]" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [build]" />
-        <item index="1" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [jar]" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [clean]" />
+        <item index="1" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [build]" />
+        <item index="2" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [jar]" />
+        <item index="3" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [clean]" />
+        <item index="4" class="java.lang.String" itemvalue="Gradle.SavageWorldRP [build]" />
       </list>
     </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR,SHOW_INHERITED,SHOW_PROPERTIES" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -1088,39 +1190,354 @@
       <option name="project" value="LOCAL" />
       <updated>1515431114194</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Реализован бросок дикого кубика с зажатым ctrl">
+      <created>1515493111793</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1515493111793</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Заработала фишка переброса">
+      <created>1515493144399</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1515493144399</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Реализована команда для выбора случайной карты">
+      <created>1515494346321</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1515494346321</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Фикс бага с кракозябрами в гуи&#10;+ отключено обновление экрана при помощи таймера (кажется, что больше в нем нет необходимости, если есть пакет для синхронизации клиента и сервера)&#10;+ Добавлены строковые ресурвы для предопределеннх навыков и шалон для критического провала">
+      <created>1517366749188</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1517366749188</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Изменено место регистрации синхронизируещего пакета">
+      <created>1517366892374</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1517366892374</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Реализована поддержка критического провала в бросках">
+      <created>1517367205511</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1517367205511</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Зажим CTRL для ролла предмета из руки без дикого кубика теперь работает.">
+      <created>1517368026884</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1517368026884</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Попытка исправить баг с русскими буквами в Modifier.description. Успехом не увенчалось, однако добавил больше инфы, чтобы победить этот баг в будущем. + отрефакторил toString() в Modifier, но не смог протестить из-за описанного выше бага">
+      <created>1518909314885</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1518909314885</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Выявлен баг с синхронизацией модификаторов">
+      <created>1518910156197</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1518910156226</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Локализована строка отсуствующего навыка">
+      <created>1519194228545</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1519194228545</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Устранена ошибка с русскими комментами при выполнение таска Gradlle Build">
+      <created>1519205627437</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1519205627437</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Локализован шаблон модификатора">
+      <created>1519626677340</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1519626677340</updated>
+    </task>
+    <task id="LOCAL-00016" summary="В сообщении о броске теперь передается локализованная строка-шаблон критического провала">
+      <created>1519627041832</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1519627041832</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Добавлены артефакты IDE В гитигнор">
+      <created>1519627849242</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1519627849242</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Фикс бага #9 (https://github.com/RareScrap/SavageWorldRP/issues/9).">
+      <created>1523958140587</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1523958140587</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Удалены коментарии и добавлены важные TODO">
+      <created>1524007784480</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1524007784480</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Команда Params теперь не выбрасвает сообщение в чат, в передает сообщения на клиент, где оно может быть переведено на язык клиента. Кроме того, исправлен важный баг с регистрацией пакетов и приложен 2 пути решения. См тему на форуме - https://forum.mcmodding.ru/threads/imessagehandler-вызывается-в-синглплеере-но-не-в-мультиплеере-packet-server-client.21040/">
+      <created>1524533064855</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1524533064855</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Отказ от отдельнх методов в пользу @SideOnly над onMessage">
+      <created>1524537754865</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1524537754865</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Рабочий набросок собственного блока верстака улучшений с кастомной моделью. Сделано по этому тутору - https://emxtutorials.wordpress.com/using-wavefront-obj-models-for-blocks/">
+      <created>1524666440228</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1524666440229</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Набросок консольной команды открытия GUI">
+      <created>1524759070113</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1524759070113</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Зарегистрирована консольная команда открытия GUI + немного изменен javadoc">
+      <created>1524759257025</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1524759257025</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Добавлен новый блок с кастомной моделью, служащий для улучшения вещей, через присваивание им модификаторов. Кроме того, GUI улучщения вещей можно открыть как консольной командой командой (/openw), так и блоком. Для обоих случаев предусматривается разная текстура GUI и различное поведение контейнера. + добавлен инкремент для дискриминатора при регистрации пакетов заместо magic number'ов. + пакет для открытия меню больше не используется и в ближайшее время может быть удален.&#10;&#10;C моделями ничего не понятно. Нужно почистить потом. Сейчас приложил все blend файлы + тестовый obj, который был экспортирован из одно из blend файлов">
+      <created>1524765192795</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1524765192795</updated>
+    </task>
+    <task id="LOCAL-00026" summary="В GUI меню улучшния добавлено текстовое поле, его активность/неактивность, синхронизация ввода с сервером, набросок крафта и расчета результата крафта">
+      <created>1525011231975</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1525011231975</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Добавлено рабочее поле значение модификатора на GUI + изменене позиционирование полей ввода, т.к. в режиме безрамочной отрисовки они съезжают. Сделал это на глаз. + Добавил дефольтные код форматирование положительнх и отрицательных модификаторов. При крафте реагенты теперь удаляются. Цвет модификаторов в тултипе теперь прибит гвоздями. Добавлена утил-функция для форматирования всех слов в строке за раз. + добавлена todo'шка для RollModofier'а.">
+      <created>1525077968740</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1525077968740</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Код форматирования заменен на вызов функции, дабы избежать двух кусково независимого кода, которые делают одно и то же">
+      <created>1525081794724</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1525081794724</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Теперь блок сохраняет направление в метадату, а его TESR - разворачивает блок при рендере в нужное направление&#10;Взято отсюда: http://www.minecraftforge.net/forum/topic/26757-1710make-block-face-player/">
+      <created>1525101573821</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1525101573821</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Добавлено позиционирование текстового поля и его текстур в окно консольной версии GUI">
+      <created>1525134812569</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1525134812569</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Фикс сдвинутого слота результата крафта">
+      <created>1525134847229</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1525134847229</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Добавлена ЧЕРНОВАЯ(!) рабочая реализация ItemRenderer'а. предмет блока теперь рендерится нормально, но не обошлось и без костылей - стати полем блока, которое пошло в регистрацию.">
+      <created>1525238604291</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1525238604291</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Верстак улучшений теперь сохраняет свое направление в NBT сущности. На форуме говорят, что это не оч - нужно юзать метадату&#10;http://www.minecraftforge.net/forum/topic/25239-solved1710-saving-block-direction-state/&#10;http://cazzar.net/tutorials/minecraft/Tile-Entity-Updates-The-Quick-and-Dirty-Method/">
+      <created>1525241967557</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1525241967557</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Добавлена локализация названия блока верстака улучшений">
+      <created>1525242786727</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1525242786727</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Закрыл TODO'шку">
+      <created>1525429989260</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1525429989260</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Отслеживание выбранного слота было перенесено из renderToolTip() в handleMouseInput() ради большей ясности, чистоты и гибкости кода. Цена - понижение производительности, т.к. перебор слотов вполняется еще раз в добавок к перебору слотов в родителе GUI. Мне кажется, что это снижение производительно некритично, но поддвердить это я не могу. + поставлен экшон на наведение на слот из TabHostInventory">
+      <created>1526460465031</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1526460465032</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Скрыт дебажный код">
+      <created>1526461031264</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1526461031264</updated>
+    </task>
+    <task id="LOCAL-00038" summary="В отдельном пакете реализованы класс для поддержания системы вкладок. Пакет - кандидат для выделения в отдельную библиотеку и был спроектирован с учетом этого. С использованием этого пакета бл реализован инвентарь вкладок для эфектов и прочих вещей навроде перков, изъянов персонажа и т.д.&#10;&#10;* Для этого инвентаря написана альтернативная начальная инициализация, построенная на эвентах. Отличается от того костля, что использовался в StatInventory и SkilInventory&#10;* Для инвентарей вкладок создан отдельнй метод регистрации хандлера сообщений&#10;* Код расстановки слотов брони стал немного красивее&#10;* Код пакета вкладок все еще нуждается в тщательной тестировании, документировании и рефакторинге">
+      <created>1526468760324</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1526468760324</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Добавлена TODO, т.к. не знаю как лучше поступить">
+      <created>1526471671464</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1526471671465</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="56" y="-8" width="1318" height="784" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.50317967" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.86882716" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9212963" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5154321" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26550078" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23290938" sideWeight="0.48765433" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Learn" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960254" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29332274" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298887" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39969134" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22893482" sideWeight="0.5123457" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4830247" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.49682036" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298887" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.50317967" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.49682036" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960254" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41975307" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5787037" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9212963" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2591415" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287037" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Learn" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11685215" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -1128,44 +1545,59 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Коммит для слияния веток (ненавижу сраный гит)" />
-    <MESSAGE value="Реализован новый gamerule, сохраняющий предметы в инвентарях мода после смерти" />
-    <MESSAGE value="Поставлен нужный предмет при лелел апе" />
-    <option name="LAST_COMMIT_MESSAGE" value="Поставлен нужный предмет при лелел апе" />
+    <MESSAGE value="Локализован шаблон модификатора" />
+    <MESSAGE value="В сообщении о броске теперь передается локализованная строка-шаблон критического провала" />
+    <MESSAGE value="Добавлены артефакты IDE В гитигнор" />
+    <MESSAGE value="Фикс бага #9 (https://github.com/RareScrap/SavageWorldRP/issues/9)." />
+    <MESSAGE value="Удалены коментарии и добавлены важные TODO" />
+    <MESSAGE value="Команда Params теперь не выбрасвает сообщение в чат, в передает сообщения на клиент, где оно может быть переведено на язык клиента. Кроме того, исправлен важный баг с регистрацией пакетов и приложен 2 пути решения. См тему на форуме - https://forum.mcmodding.ru/threads/imessagehandler-вызывается-в-синглплеере-но-не-в-мультиплеере-packet-server-client.21040/" />
+    <MESSAGE value="Отказ от отдельнх методов в пользу @SideOnly над onMessage" />
+    <MESSAGE value="Рабочий набросок собственного блока верстака улучшений с кастомной моделью. Сделано по этому тутору - https://emxtutorials.wordpress.com/using-wavefront-obj-models-for-blocks/" />
+    <MESSAGE value="Набросок консольной команды открытия GUI" />
+    <MESSAGE value="Зарегистрирована консольная команда открытия GUI + немного изменен javadoc" />
+    <MESSAGE value="Добавлен новый блок с кастомной моделью, служащий для улучшения вещей, через присваивание им модификаторов. Кроме того, GUI улучщения вещей можно открыть как консольной командой командой (/openw), так и блоком. Для обоих случаев предусматривается разная текстура GUI и различное поведение контейнера. + добавлен инкремент для дискриминатора при регистрации пакетов заместо magic number'ов. + пакет для открытия меню больше не используется и в ближайшее время может быть удален.&#10;&#10;C моделями ничего не понятно. Нужно почистить потом. Сейчас приложил все blend файлы + тестовый obj, который был экспортирован из одно из blend файлов" />
+    <MESSAGE value="В GUI меню улучшния добавлено текстовое поле, его активность/неактивность, синхронизация ввода с сервером, набросок крафта и расчета результата крафта" />
+    <MESSAGE value="Добавлено рабочее поле значение модификатора на GUI + изменене позиционирование полей ввода, т.к. в режиме безрамочной отрисовки они съезжают. Сделал это на глаз. + Добавил дефольтные код форматирование положительнх и отрицательных модификаторов. При крафте реагенты теперь удаляются. Цвет модификаторов в тултипе теперь прибит гвоздями. Добавлена утил-функция для форматирования всех слов в строке за раз. + добавлена todo'шка для RollModofier'а." />
+    <MESSAGE value="Код форматирования заменен на вызов функции, дабы избежать двух кусково независимого кода, которые делают одно и то же" />
+    <MESSAGE value="Теперь блок сохраняет направление в метадату, а его TESR - разворачивает блок при рендере в нужное направление&#10;Взято отсюда: http://www.minecraftforge.net/forum/topic/26757-1710make-block-face-player/" />
+    <MESSAGE value="Добавлено позиционирование текстового поля и его текстур в окно консольной версии GUI" />
+    <MESSAGE value="Фикс сдвинутого слота результата крафта" />
+    <MESSAGE value="Добавлена ЧЕРНОВАЯ(!) рабочая реализация ItemRenderer'а. предмет блока теперь рендерится нормально, но не обошлось и без костылей - стати полем блока, которое пошло в регистрацию." />
+    <MESSAGE value="Верстак улучшений теперь сохраняет свое направление в NBT сущности. На форуме говорят, что это не оч - нужно юзать метадату&#10;http://www.minecraftforge.net/forum/topic/25239-solved1710-saving-block-direction-state/&#10;http://cazzar.net/tutorials/minecraft/Tile-Entity-Updates-The-Quick-and-Dirty-Method/" />
+    <MESSAGE value="Добавлена локализация названия блока верстака улучшений" />
+    <MESSAGE value="Закрыл TODO'шку" />
+    <MESSAGE value="Отслеживание выбранного слота было перенесено из renderToolTip() в handleMouseInput() ради большей ясности, чистоты и гибкости кода. Цена - понижение производительности, т.к. перебор слотов вполняется еще раз в добавок к перебору слотов в родителе GUI. Мне кажется, что это снижение производительно некритично, но поддвердить это я не могу. + поставлен экшон на наведение на слот из TabHostInventory" />
+    <MESSAGE value="Скрыт дебажный код" />
+    <MESSAGE value="В отдельном пакете реализованы класс для поддержания системы вкладок. Пакет - кандидат для выделения в отдельную библиотеку и был спроектирован с учетом этого. С использованием этого пакета бл реализован инвентарь вкладок для эфектов и прочих вещей навроде перков, изъянов персонажа и т.д.&#10;&#10;* Для этого инвентаря написана альтернативная начальная инициализация, построенная на эвентах. Отличается от того костля, что использовался в StatInventory и SkilInventory&#10;* Для инвентарей вкладок создан отдельнй метод регистрации хандлера сообщений&#10;* Код расстановки слотов брони стал немного красивее&#10;* Код пакета вкладок все еще нуждается в тщательной тестировании, документировании и рефакторинге" />
+    <MESSAGE value="Добавлена TODO, т.к. не знаю как лучше поступить" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавлена TODO, т.к. не знаю как лучше поступить" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java</url>
+          <line>46</line>
+          <properties />
+          <option name="timeStamp" value="208" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java</url>
-          <line>160</line>
-          <properties class="rsstats.utils.DiceRoll" method="roll">
+          <url>file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java</url>
+          <line>45</line>
+          <properties class="rsstats.inventory.tabs_inventory.TabHostInventory">
             <option name="EMULATED" value="true" />
           </properties>
-          <option name="timeStamp" value="122" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java</url>
-          <line>279</line>
-          <properties />
-          <option name="timeStamp" value="123" />
+          <option name="timeStamp" value="209" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="124" />
+      <option name="time" value="210" />
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="Application">
-        <watch expression="((WearableInventory)this).extendedPlayer" custom="rsstats.inventory.WearableInventory" />
-        <watch expression="((WearableInventory)this).extendedPlayer" language="JAVA" custom="rsstats.inventory.WearableInventory" />
-        <watch expression="((ExtendedPlayer)((HashMap.Node)((HashMap)((EntityPlayerMP)((MainContainer)this).player).extendedProperties).entrySet().toArray()[0]).getValue()).modifierMap" custom="net.minecraft.entity.player.EntityPlayerMP,rsstats.data.ExtendedPlayer,java.util.HashMap.Node,rsstats.inventory.container.MainContainer,java.util.HashMap" />
-        <watch expression="((ExtendedPlayer)((HashMap.Node)((HashMap)((EntityPlayerMP)((MainContainer)this.this$0).player).extendedProperties).entrySet().toArray()[0]).getValue()).modifierMap" custom="rsstats.data.ExtendedPlayer,rsstats.inventory.container.MainContainer,java.util.HashMap,net.minecraft.inventory.Slot,java.util.HashMap.Node,net.minecraft.entity.player.EntityPlayerMP" />
-        <watch expression="((HashMap.Node)((HashMap)((ExtendedPlayer)((HashMap.Node)((HashMap)((EntityPlayerMP)((MainContainer)this.this$0).player).extendedProperties).entrySet().toArray()[0]).getValue()).modifierMap).entrySet().toArray()[0]).getValue()" custom="java.util.HashMap.Node,java.util.HashMap" />
-      </configuration>
-    </watches-manager>
+    <watches-manager />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="setValue">
@@ -1177,447 +1609,454 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/client/Minecraft.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4471">
-          <caret line="263" column="0" lean-forward="false" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="27744">
+          <caret line="1822" column="43" lean-forward="false" selection-start-line="1822" selection-start-column="43" selection-end-line="1822" selection-end-column="43" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/SSPPage.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/cpw/mods/fml/client/FMLClientHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
+        <state relative-caret-position="190">
+          <caret line="501" column="30" lean-forward="false" selection-start-line="501" selection-start-column="30" selection-end-line="501" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/client/LoadingScreenRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2737">
-          <caret line="161" column="67" lean-forward="false" selection-start-line="161" selection-start-column="67" selection-end-line="161" selection-end-column="67" />
-          <folding />
+        <state relative-caret-position="204">
+          <caret line="130" column="40" lean-forward="false" selection-start-line="130" selection-start-column="24" selection-end-line="130" selection-end-column="40" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/en_US.lang">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/client/gui/GuiScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="81">
+          <caret line="330" column="13" lean-forward="false" selection-start-line="330" selection-start-column="12" selection-end-line="330" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationTESR.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1887">
-          <caret line="121" column="0" lean-forward="true" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="201">
+          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/inventory/Slot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
+        <state relative-caret-position="197">
+          <caret line="155" column="0" lean-forward="false" selection-start-line="155" selection-start-column="0" selection-end-line="155" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/item/ItemArmor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1292">
-          <caret line="76" column="0" lean-forward="true" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="44">
+          <caret line="266" column="24" lean-forward="false" selection-start-line="266" selection-start-column="24" selection-end-line="266" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/client/gui/inventory/GuiContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="219" column="29" lean-forward="false" selection-start-line="219" selection-start-column="29" selection-end-line="219" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/MainMenuGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="218" column="16" lean-forward="false" selection-start-line="218" selection-start-column="16" selection-end-line="218" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/block/Block.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="54" column="13" lean-forward="false" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/block/BlockWood.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="12" column="33" lean-forward="false" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/utils/HashMapUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/forge-1.7.10-10.13.4.1558-1.7.10-changelog.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="2123" column="8" lean-forward="false" selection-start-line="2123" selection-start-column="8" selection-end-line="2123" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/client/multiplayer/WorldClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="40" column="35" lean-forward="false" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/world/World.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="72" column="23" lean-forward="false" selection-start-line="72" selection-start-column="23" selection-end-line="72" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/world/WorldServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="69" column="13" lean-forward="false" selection-start-line="69" selection-start-column="13" selection-end-line="69" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3264">
-          <caret line="192" column="27" lean-forward="true" selection-start-line="192" selection-start-column="27" selection-end-line="192" selection-end-column="27" />
-          <folding />
+        <state relative-caret-position="129">
+          <caret line="26" column="7" lean-forward="false" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/Config.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5321">
-          <caret line="342" column="64" lean-forward="false" selection-start-line="342" selection-start-column="64" selection-end-line="342" selection-end-column="64" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#14406#14407#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="31" lean-forward="false" selection-start-line="24" selection-start-column="31" selection-end-line="24" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/StatSlot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/SSPPage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2737">
-          <caret line="161" column="67" lean-forward="false" selection-start-line="161" selection-start-column="67" selection-end-line="161" selection-end-column="67" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1819">
-          <caret line="117" column="12" lean-forward="false" selection-start-line="117" selection-start-column="12" selection-end-line="117" selection-end-column="106" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1139">
-          <caret line="67" column="24" lean-forward="false" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4471">
-          <caret line="263" column="0" lean-forward="true" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5508">
-          <caret line="352" column="61" lean-forward="false" selection-start-line="352" selection-start-column="61" selection-end-line="352" selection-end-column="61" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#14406#14407#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="7" column="3" lean-forward="false" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/RSStats.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1377">
-          <caret line="81" column="42" lean-forward="false" selection-start-line="81" selection-start-column="42" selection-end-line="81" selection-end-column="42" />
+        <state relative-caret-position="697">
+          <caret line="63" column="7" lean-forward="false" selection-start-line="63" selection-start-column="7" selection-end-line="63" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/mcmod.info">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/command/AddLevel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="66" column="84" lean-forward="false" selection-start-line="66" selection-start-column="84" selection-end-line="66" selection-end-column="84" />
+        <state relative-caret-position="68">
+          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/SSPPage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="272">
+          <caret line="82" column="33" lean-forward="false" selection-start-line="82" selection-start-column="33" selection-end-line="82" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/StatsInventory.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationBlock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3553">
-          <caret line="232" column="5" lean-forward="false" selection-start-line="232" selection-start-column="5" selection-end-line="232" selection-end-column="5" />
-          <folding />
+        <state relative-caret-position="84">
+          <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/MainMenuGUI.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/package-info.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3145">
-          <caret line="185" column="5" lean-forward="false" selection-start-line="185" selection-start-column="5" selection-end-line="185" selection-end-column="5" />
-          <folding />
+        <state relative-caret-position="187">
+          <caret line="11" column="80" lean-forward="false" selection-start-line="11" selection-start-column="80" selection-end-line="11" selection-end-column="80" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/ExpItem.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabMessageHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="52" column="36" lean-forward="false" selection-start-line="52" selection-start-column="36" selection-end-line="52" selection-end-column="36" />
-          <folding />
+        <state relative-caret-position="136">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/ClientProxy.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/inventory/IInvBasic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="51" column="18" lean-forward="false" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
-          <folding />
+        <state relative-caret-position="34">
+          <caret line="2" column="17" lean-forward="false" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/WearableInventory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
+        <state relative-caret-position="68">
+          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/rsstats/blocks/UpgradeStationEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="13" column="52" lean-forward="false" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/entity/Entity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="2507" column="15" lean-forward="false" selection-start-line="2507" selection-start-column="15" selection-end-line="2507" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/UpgradeStationInventory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/cpw/mods/fml/common/registry/GameRegistry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="146" column="23" lean-forward="false" selection-start-line="146" selection-start-column="23" selection-end-line="146" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/FlawItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2578">
+          <caret line="184" column="9" lean-forward="false" selection-start-line="184" selection-start-column="9" selection-end-line="184" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-34">
+          <caret line="42" column="5" lean-forward="false" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/ClientProxy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="31" column="36" lean-forward="false" selection-start-line="31" selection-start-column="36" selection-end-line="31" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/SkillItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-315">
+          <caret line="31" column="14" lean-forward="false" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/SkillSlot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="6" column="32" lean-forward="false" selection-start-line="6" selection-start-column="32" selection-end-line="6" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/StatSlot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
           <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2652">
-          <caret line="182" column="9" lean-forward="false" selection-start-line="182" selection-start-column="9" selection-end-line="182" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/mcmod.info">
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketOpenRSStatsInventory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="13" column="23" lean-forward="false" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+        <state relative-caret-position="1581">
+          <caret line="114" column="8" lean-forward="false" selection-start-line="114" selection-start-column="8" selection-end-line="115" selection-end-column="41" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/mcmod.info">
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/item/Item.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="21" lean-forward="false" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+        <state relative-caret-position="8585">
+          <caret line="604" column="25" lean-forward="false" selection-start-line="604" selection-start-column="18" selection-end-line="604" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/PacketOpenRSStatsInventory.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="13" column="23" lean-forward="false" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
+        <state relative-caret-position="1275">
+          <caret line="75" column="58" lean-forward="false" selection-start-line="75" selection-start-column="58" selection-end-line="75" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/tileentity/TileEntityHopper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="515" column="90" lean-forward="false" selection-start-line="515" selection-start-column="79" selection-end-line="515" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/inventory/InventoryBasic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2227">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forgeSrc-1.7.10-10.13.4.1558-1.7.10-sources.jar!/net/minecraft/entity/player/EntityPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="139" column="25" lean-forward="false" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabInventory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="30" column="4" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="31" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/tabs_inventory/TabHostInventory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="e#1629#1630#0" expanded="true" />
+            <element signature="e#1690#1691#0" expanded="true" />
+            <element signature="e#3621#3622#0" expanded="true" />
+            <element signature="e#3669#3670#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/StatsInventory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="53" column="7" lean-forward="true" selection-start-line="53" selection-start-column="7" selection-end-line="53" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/data/ExtendedPlayer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3655">
-          <caret line="260" column="60" lean-forward="false" selection-start-line="260" selection-start-column="60" selection-end-line="260" selection-end-column="60" />
-          <folding>
-            <element signature="e#3215#3216#0" expanded="false" />
-            <element signature="e#3281#3282#0" expanded="false" />
-            <element signature="e#7168#7169#0" expanded="false" />
-            <element signature="e#7201#7202#0" expanded="false" />
-            <element signature="e#7229#7230#0" expanded="false" />
-            <element signature="e#7256#7257#0" expanded="false" />
-            <element signature="e#7291#7292#0" expanded="false" />
-            <element signature="e#7325#7326#0" expanded="false" />
-            <element signature="e#7357#7358#0" expanded="false" />
-            <element signature="e#7388#7389#0" expanded="false" />
-            <element signature="e#7415#7416#0" expanded="false" />
-            <element signature="e#7441#7442#0" expanded="false" />
-            <element signature="e#7468#7469#0" expanded="false" />
-            <element signature="e#7494#7495#0" expanded="false" />
-            <element signature="e#7527#7528#0" expanded="false" />
-            <element signature="e#7559#7560#0" expanded="false" />
-            <element signature="e#7597#7598#0" expanded="false" />
-            <element signature="e#7634#7635#0" expanded="false" />
-            <element signature="e#7679#7680#0" expanded="false" />
-            <element signature="e#7714#7715#0" expanded="false" />
-            <element signature="e#7782#7783#0" expanded="false" />
-            <element signature="e#7816#7817#0" expanded="false" />
-            <element signature="e#8594#8595#0" expanded="false" />
-            <element signature="e#8624#8625#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/StatsInventory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3553">
-          <caret line="232" column="5" lean-forward="false" selection-start-line="232" selection-start-column="5" selection-end-line="232" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/MainMenuGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2822">
-          <caret line="185" column="5" lean-forward="false" selection-start-line="185" selection-start-column="5" selection-end-line="185" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/ExpItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="52" column="36" lean-forward="false" selection-start-line="52" selection-start-column="36" selection-end-line="52" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/ClientProxy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="51" column="18" lean-forward="false" selection-start-line="51" selection-start-column="18" selection-end-line="51" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/WearableInventory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/command/AddLevel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1423">
-          <caret line="66" column="84" lean-forward="false" selection-start-line="66" selection-start-column="84" selection-end-line="66" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/RSStats.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="107" column="92" lean-forward="false" selection-start-line="107" selection-start-column="92" selection-end-line="107" selection-end-column="92" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/event/TestEventHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="46" column="57" lean-forward="false" selection-start-line="46" selection-start-column="57" selection-end-line="46" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/slots/StatSlot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/client/gui/SSPPage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/StatsContainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/en_US.lang">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="302">
+          <caret line="84" column="20" lean-forward="false" selection-start-line="84" selection-start-column="20" selection-end-line="84" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/CommonProxy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2295">
-          <caret line="161" column="67" lean-forward="false" selection-start-line="161" selection-start-column="67" selection-end-line="161" selection-end-column="67" />
+        <state relative-caret-position="323">
+          <caret line="80" column="67" lean-forward="false" selection-start-line="80" selection-start-column="67" selection-end-line="80" selection-end-column="67" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/common/network/RollPacketToServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1887">
-          <caret line="121" column="0" lean-forward="false" selection-start-line="121" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/inventory/container/MainContainer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="7" lean-forward="false" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#14406#14407#0" expanded="true" />
-            <element signature="e#14444#14445#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/StatItem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4114">
-          <caret line="263" column="0" lean-forward="false" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/utils/DiceRoll.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="249" column="0" lean-forward="false" selection-start-line="249" selection-start-column="0" selection-end-line="249" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/rsstats/items/RerollCoin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="68" column="30" lean-forward="false" selection-start-line="68" selection-start-column="30" selection-end-line="68" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/assets/rarescrap/lang/ru_RU.lang">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="521">
-          <caret line="76" column="0" lean-forward="false" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>SavageWorldRP_main|SavageWorldRP</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Gradle: com.google.code.findbugs:jsr305:1.3.9</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>
