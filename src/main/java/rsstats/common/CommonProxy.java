@@ -6,19 +6,18 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import rsstats.blocks.Blocks;
+import rsstats.blocks.UpgradeStationEntity;
 import rsstats.common.event.KeyHandler;
 import rsstats.common.network.*;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
-import rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock;
-import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
 import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.inventory.tabs_inventory.TabMessageHandler;
 import rsstats.items.*;
@@ -31,39 +30,6 @@ import static rsstats.common.RSStats.proxy;
  * @author RareScrap
  */
 public class CommonProxy implements IGuiHandler {
-    public enum Skills {
-        ClimbingSkillItem,
-        EquitationSkillItem,
-        LockpickingSkillItem,
-        DrivingSkillItem,
-        FightingSkillItem,
-        DisguiseSkillItem,
-        ThrowingSkillItem,
-        PilotingSkillItem,
-        SwimmingSkillItem,
-        ShootingSkillItem,
-        ShippingSkillItem,
-        GamblingSkillItem,
-        PerceptionSkillItem,
-        SurvivalSkillItem,
-        TrackingSkillItem,
-        MedicineSkillItem,
-        ProvocationSkillItem,
-        InvestigationSkillItem,
-        RepearSkillItem,
-        StreetFlairSkillItem,
-        IntimidationSkillItem,
-        DiplomacySkillItem,
-    }
-
-    public enum Stats {
-        StrengthStatItem,
-        AgilityStatItem,
-        IntelligenceStatItem,
-        EnduranceStatItem,
-        CharacterStatItem
-    }
-
     /** Обработчик нажатия кнопок, используемых для вызова GUI */
     protected KeyHandler keyHandler;
     /** Обертка для работы с сетью */
@@ -96,20 +62,8 @@ public class CommonProxy implements IGuiHandler {
         MiscItems.registerItems();
         DebugItems.registerDebugItems();
 
-        // Регистрация сущностей
-        GameRegistry.registerTileEntity(UpgradeStationEntity.class, "UpgradeStationEntity");
-
-        /// регистрация блоков
-        //UpgradeStationBlock b = new UpgradeStationBlock(); // TODO: Нужно найти способ снова использовать локальне переменные. Или хотя бы узнать, почему их не следует использовать
-
-        /* Нет смысла регистрировать Item для блока. Потому что они регаются автоматические
-         * при регистрации самого блока. Попытка сделать это еще раз привет к ошибке того,
-         * что регитсрационный слот под итем уже занят
-         */
-        //GameRegistry.registerItem(new ItemBlock(b), UpgradeStationBlock.item_name);
-
-        GameRegistry.registerBlock(b, UpgradeStationBlock.name);
-
+        // Регистрация блоков
+        Blocks.registerBlocks();
 
         // Это не срабатывает. Скорее всего, это решение предназначено для более поздних версий Forge
         /*UpgradeStationBlock block3DWeb = (Block3DWeb)(new Block3DWeb().setUnlocalizedName("mbe05_block_3d_web_unlocalised_name"));
@@ -121,8 +75,6 @@ public class CommonProxy implements IGuiHandler {
         itemBlock3DWeb.setRegistryName(block3DWeb.getRegistryName());
         ForgeRegistries.ITEMS.register(itemBlock3DWeb);*/
     }
-    // TODO: Это статик поле - полный пиздец как по мне, но без него не зарегать ItemRender в ClientProxy для этого блока
-    public static UpgradeStationBlock  b = new UpgradeStationBlock();
 
     public void init(FMLInitializationEvent event) {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);

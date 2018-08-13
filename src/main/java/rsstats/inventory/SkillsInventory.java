@@ -1,6 +1,5 @@
 package rsstats.inventory;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -8,9 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
-import rsstats.common.CommonProxy;
-import rsstats.common.RSStats;
 import rsstats.items.SkillItem;
+import rsstats.items.SkillItems;
 
 import java.util.ArrayList;
 
@@ -174,8 +172,8 @@ public class SkillsInventory extends StatsInventory {
     @Override
     public void initItems() {
         // Заполняем общее хранилище
-        for (CommonProxy.Skills skill : CommonProxy.Skills.values()) {
-            skills.add(new ItemStack(GameRegistry.findItem(RSStats.MODID, skill.toString())));
+        for (SkillItem skill : SkillItems.getAll().values()) {
+            skills.add(new ItemStack(skill));
         }
 
         // Заполняем хранилище отображения
