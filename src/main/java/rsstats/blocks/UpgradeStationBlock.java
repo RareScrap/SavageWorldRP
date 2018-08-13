@@ -1,4 +1,4 @@
-package rsstats.inventory.container.rsstats.blocks;
+package rsstats.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;

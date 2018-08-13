@@ -1,4 +1,4 @@
-package rsstats.inventory.container.rsstats.blocks;
+package rsstats.blocks;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;

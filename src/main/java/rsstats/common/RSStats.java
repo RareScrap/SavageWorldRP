@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
+import rsstats.blocks.UpgradeStationBlock;
 import rsstats.client.gui.SSPPage;
 import rsstats.common.command.AddLevel;
 import rsstats.common.command.Card;
@@ -42,7 +43,7 @@ public class RSStats {
     public static final int GUI = 0;
     /** ID интерфейса {@link SSPPage} */
     public static final int SSP_UI_CODE = 1;
-    /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI} от блока {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock} */
+    /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI} от блока {@link UpgradeStationBlock} */
     public static final int UPGRADE_UI_FROM_BLOCK_CODE = 2;
     /** ID интерфейса для {@link rsstats.client.gui.UpgradeGUI}, запускаемого из команды консоли ({@link OpenWindow}) */
     public static final int UPGRADE_UI_FROM_CMD_CODE = 3;

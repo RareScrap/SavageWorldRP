@@ -12,6 +12,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import rsstats.blocks.Blocks;
+import rsstats.blocks.UpgradeStationBlock;
+import rsstats.blocks.UpgradeStationEntity;
+import rsstats.blocks.UpgradeStationTESR;
 import rsstats.client.gui.MainMenuGUI;
 import rsstats.client.gui.SSPPage;
 import rsstats.client.gui.UpgradeGUI;
@@ -21,9 +25,6 @@ import rsstats.common.event.KeyHandler;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.UpgradeContainer;
-import rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock;
-import rsstats.inventory.container.rsstats.blocks.UpgradeStationEntity;
-import rsstats.inventory.container.rsstats.blocks.UpgradeStationTESR;
 
 /**
  * Прокси, исполняемый на стороне клиента
@@ -111,10 +112,10 @@ public class ClientProxy extends CommonProxy {
 
         // А тут я делаю то же самое, но теперь использую ту же переменную блока, которая прошла регистрацию в CommonProxy
         // Результат - все вызовы возвращают нормальнйы item
-        Item c1 = Item.getItemFromBlock(CommonProxy.b);
-        ItemBlock c = new ItemBlock(CommonProxy.b);
-        Item c12 = GameRegistry.findItem(RSStats.MODID, CommonProxy.b.getUnlocalizedName());
-        Item c13 = ItemBlock.getItemFromBlock(CommonProxy.b);
+        Item c1 = Item.getItemFromBlock(Blocks.upgradeStation);
+        ItemBlock c = new ItemBlock(Blocks.upgradeStation);
+        Item c12 = GameRegistry.findItem(RSStats.MODID, Blocks.upgradeStation.getUnlocalizedName());
+        Item c13 = ItemBlock.getItemFromBlock(Blocks.upgradeStation);
 
         // Это не срабатывает, т.к. итем либо null, либо создан явно через консруктор (это, к моему удивлению, не регистрирует ItemRenderer
         //UpgradeStationTESR.Renderer d2 =  new UpgradeStationTESR.Renderer(new UpgradeStationTESR(), new UpgradeStationEntity());

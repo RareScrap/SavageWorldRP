@@ -1,4 +1,4 @@
-package rsstats.inventory.container.rsstats.blocks;
+package rsstats.blocks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
