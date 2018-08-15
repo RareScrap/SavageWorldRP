@@ -264,8 +264,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
                     }
 
                 }
-
-
             }
         }
 
@@ -300,16 +298,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         } else {
             super.keyTyped(p_73869_1_, p_73869_2_);
         }
-    }
-
-    /**
-     * Called when the screen is unloaded. Used to disable keyboard repeat events.
-     */
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        //timer.cancel();
-        //timer.purge();
     }
 
     /**
