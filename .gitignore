@@ -6,4 +6,4 @@ out/
 eclipse/
 *.ipr/
 *.iws/
-src/main/java/gloomyfolken.hooklib/
+src/main/java/gloomyfolken/*

@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
+import rsstats.blocks.UpgradeStationBlock;
 import rsstats.common.Config;
 import rsstats.items.StatItem;
 
@@ -18,7 +19,7 @@ import rsstats.items.StatItem;
  */
 public class UpgradeContainer extends Container {
     private InventoryPlayer inventoryPlayer;
-    /** Инвентарь, встроенные в {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock}. Если null, то
+    /** Инвентарь, встроенные в {@link UpgradeStationBlock}. Если null, то
      * контейнер вызывается для GUI по приказу консольной команды {@link rsstats.common.command.OpenWindow}.*/
     private IInventory blockInventory;
     /** Инвентарь с одним единственным слотом, хранящий результат крафта */

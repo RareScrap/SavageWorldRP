@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import rsstats.blocks.UpgradeStationBlock;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncGUI;
@@ -19,7 +20,7 @@ import java.util.List;
 
 /**
  * GUI для апгрейда вещей, через присваивание им модификаторов. Имеет разные текстуры лдя консольной
- * (т.е. вызванной консольной командой) и блочной версии (через ПКМ по блоку {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock}).
+ * (т.е. вызванной консольной командой) и блочной версии (через ПКМ по блоку {@link UpgradeStationBlock}).
  */
 public class UpgradeGUI extends GuiContainer implements ICrafting {
     /*private static final ResourceLocation background =

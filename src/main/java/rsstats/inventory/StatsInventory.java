@@ -1,6 +1,5 @@
 package rsstats.inventory;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -9,10 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
-import rsstats.common.CommonProxy;
-import rsstats.common.RSStats;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.items.StatItems;
 
 /**
  * Инвентарь для статов игрока (сила, ловкость, выносливость и т.д.)
@@ -237,8 +235,9 @@ public class StatsInventory implements IInventory {
      * Инициализирует начальные статы
      */
     public void initItems() {
-        for (int i = 0; i < CommonProxy.Stats.values().length; i++) {
-            inventory[i] = new ItemStack(GameRegistry.findItem(RSStats.MODID, CommonProxy.Stats.values()[i].toString()));
+        Object[] stats = StatItems.getAll().values().toArray();
+        for (int i = 0; i < stats.length; i++) {
+            inventory[i] = new ItemStack((StatItem) stats[i]);
         }
 
         markDirty();

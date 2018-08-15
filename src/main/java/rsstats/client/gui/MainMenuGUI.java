@@ -174,13 +174,14 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     }
 
     /**
-     * Отрисовывает превью игрока
-     * @param x TODO
-     * @param y TODO
+     * Отрисовывает модель игрока
+     * @param x координаты точки начала отрисовки. Расположена посередине модели.
+     * @param y координаты точки начала отрисовки. Расположена в самом низу модели. (т.е. модель отрисовывается с
+     *          нижней серединной точки)
      * @param scale Маштаб модели
-     * @param yaw TODO
-     * @param pitch TODO
-     * @param playerdrawn TODO
+     * @param yaw наклон (взгял) игрока по оси X
+     * @param pitch наклон (взгял) игрока по оси Y
+     * @param playerdrawn Entity для отрисовки
      */
     private static void drawPlayerModel(int x, int y, int scale, float yaw, float pitch, EntityLivingBase playerdrawn) {
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
@@ -264,8 +265,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
                     }
 
                 }
-
-
             }
         }
 
@@ -300,16 +299,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
         } else {
             super.keyTyped(p_73869_1_, p_73869_2_);
         }
-    }
-
-    /**
-     * Called when the screen is unloaded. Used to disable keyboard repeat events.
-     */
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        //timer.cancel();
-        //timer.purge();
     }
 
     /**

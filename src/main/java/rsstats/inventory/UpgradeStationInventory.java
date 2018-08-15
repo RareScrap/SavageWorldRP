@@ -6,9 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import rsstats.blocks.UpgradeStationBlock;
 
 /**
- * Инвентарь, встроенные в блок {@link rsstats.inventory.container.rsstats.blocks.UpgradeStationBlock}
+ * Инвентарь, встроенные в блок {@link UpgradeStationBlock}
  */
 public class UpgradeStationInventory implements IInventory {
     private final String name = "UpgradeStation";
