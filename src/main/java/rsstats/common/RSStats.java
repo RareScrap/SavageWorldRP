@@ -20,7 +20,7 @@ import rsstats.common.command.AddLevel;
 import rsstats.common.command.Card;
 import rsstats.common.command.OpenWindow;
 import rsstats.common.command.ParamsPlayer;
-import rsstats.common.event.TestEventHandler;
+import rsstats.common.event.ModEventHandler;
 
 import java.io.File;
 
@@ -60,12 +60,8 @@ public class RSStats {
         }
     };
     
-    /**
-     * Хандлер для событий (хз каких)
-     * Думаю, он нужен для связывания своих NBT с игрой
-     * TODO: разобраться
-     */
-    public TestEventHandler testEventHandler; 
+    /** Обработчик игровых событий */
+    public ModEventHandler modEventHandler;
     
     /** Общий прокси */
     @SidedProxy(clientSide = "rsstats.client.ClientProxy", serverSide = "rsstats.common.CommonProxy")
@@ -87,8 +83,8 @@ public class RSStats {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        testEventHandler = new TestEventHandler();
-        MinecraftForge.EVENT_BUS.register(testEventHandler);
+        modEventHandler = new ModEventHandler();
+        MinecraftForge.EVENT_BUS.register(modEventHandler);
 
         // Обрабатываем конфиг
         config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));

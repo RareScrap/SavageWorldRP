@@ -20,7 +20,7 @@ import rsstats.items.OtherItems;
  *
  * @author rares
  */
-public class TestEventHandler {
+public class ModEventHandler {
     @SubscribeEvent
     public void onEntityConstructing(EntityConstructing event) {
     /* 
