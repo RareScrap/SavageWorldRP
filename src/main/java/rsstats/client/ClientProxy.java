@@ -11,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.MinecraftForge;
 import rsstats.blocks.Blocks;
 import rsstats.blocks.UpgradeStationBlock;
 import rsstats.blocks.UpgradeStationEntity;
@@ -83,7 +82,6 @@ public class ClientProxy extends CommonProxy {
     public void registerKeyBindings() {
         keyHandler = new KeyHandler();
         FMLCommonHandler.instance().bus().register(keyHandler);
-        MinecraftForge.EVENT_BUS.register(new MainMenuGUI(null, new MainContainer())); // TODO: Нужно ли?
     }
 
     @Override
