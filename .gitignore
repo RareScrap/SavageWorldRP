@@ -4,6 +4,7 @@
 .idea/
 out/
 eclipse/
-*.ipr/
-*.iws/
+*.ipr
+*.iws
+*.iml
 src/main/java/gloomyfolken/*
