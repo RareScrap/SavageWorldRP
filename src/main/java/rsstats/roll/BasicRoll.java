@@ -14,21 +14,31 @@ public class BasicRoll {
     /** Модификаторы, применяемые к броску */
     public List<RollModifier> modifiers = new ArrayList<RollModifier>();
 
-    public BasicRoll(int dice, RollModifier... modifiers) {
+    public boolean withWildDice = false;
+
+    public BasicRoll(int dice) {
         this.dice = dice;
-        this.modifiers.addAll(Arrays.asList(modifiers));
+    }
+
+    public BasicRoll(int dice, RollModifier... modifiers) {
+        this(dice, Arrays.asList(modifiers));
     }
 
     public BasicRoll(int dice, List<RollModifier> modifiers) {
         this.dice = dice;
-        this.modifiers.addAll(modifiers);
+        if (modifiers != null)
+            this.modifiers.addAll(modifiers);
+    }
+
+    public BasicRoll withWildDice(boolean flag) {
+        this.withWildDice = flag;
+        return this;
     }
 
     /**
      * Вычисляет бросок дайса
-     * @param withWildDice Столит ли вычислять дикий кубик?
      */
-    public Result roll(boolean withWildDice) {
+    public Result roll() {
         if (dice <= 0)
             throw new RuntimeException("dice <= 0");
 
