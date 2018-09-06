@@ -1,7 +1,8 @@
-package rsstats.utils;
+package rsstats.roll;
 
 import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
+import rsstats.utils.DescriptionCutter;
 
 /**
  * Модификатора броска
@@ -28,7 +29,7 @@ public class RollModifier {
      * @return Строкое представление модификатора
      */
     @Override
-    public String toString() {
+    public String toString() { // TODO: Рефакторить. Вызовов локализации на серве - это пиздец
         String formatCode;
         if (value > 0) {
             formatCode = RSStats.config.modifierColorPositive;
