@@ -9,6 +9,14 @@ import java.util.List;
  * @author RareScrap
  */
 public class Result {
+    /**
+     * Типы бросков
+     */
+    public enum RollType {
+        MAIN, // Основной бросок
+        WILD // Бросок дикого кубика
+    }
+
     /** Бросок основного навыка */
     public List<Integer> mainRoll = new ArrayList<Integer>();
     /** Бросок дикого кубика */
@@ -32,30 +40,26 @@ public class Result {
     }
 
     /**
+     * Получить результат броска с учетом взрывных бросков
+     * @param rollType Определяет для какого броска получить результат
      * @param withModifiers Учитывать ли модификаторы
-     * @return Сумма основного броска
+     * @return суммарное количество очков броска
      */
-    public int getMainTotal(boolean withModifiers) {
+    public int getTotal(RollType rollType, boolean withModifiers) {
         Integer total = 0;
-        for (Integer integer : mainRoll) {
-            total += integer;
-        }
-        if (withModifiers)
-            total += getModifiersSum();
-        return total;
-    }
 
-    /**
-     * @param withModifiers Учитывать ли модификаторы
-     * @return Сумма броска дикого кубика
-     */
-    public int getWildTotal(boolean withModifiers) {
-        Integer total = 0;
-        for (Integer integer : wildRoll) {
+        List<Integer> roll = null; // Определяем с каким броском работать
+        switch (rollType) {
+            case MAIN: roll = mainRoll; break;
+            case WILD: roll = wildRoll; break;
+        }
+
+        for (Integer integer : roll) {
             total += integer;
         }
-        if (withModifiers)
+        if (withModifiers) // Учет модификаторов
             total += getModifiersSum();
+
         return total;
     }
 
@@ -71,20 +75,15 @@ public class Result {
     }
 
     /**
-     * @return Количество взрывов основного броска
+     * Получить количество взрывов броска
+     * @param rollType Определяет для какого броска получить результат
+     * @return Число взрывов при броске
      */
-    public int getMainUps() {
-        return mainRoll.size() - 1;
-    }
-
-    /**
-     * @return Количество взрывов броска дикого кубика
-     */
-    public int getWildUps() {
-        if (withWildDice()) {
-            return wildRoll.size() - 1;
-        } else {
-            return 0;
+    public int getUps(RollType rollType) {
+        switch (rollType) {
+            case MAIN: return mainRoll.size() - 1;
+            case WILD: return wildRoll.size() - 1;
+            default: throw new RuntimeException("Stub");
         }
     }
 
@@ -96,32 +95,28 @@ public class Result {
     }
 
     /**
-     * Возвращает читаемый результат основного броска
+     * Возвращает читаемый результат броска
+     * @param rollType Определяет для какого броска получить результат
      * @return Строка вида "6+6+6+3=21"
      */
-    public String mainToString() {
+    public String toString(RollType rollType) {
         StringBuffer strBuf = new StringBuffer();
-        for (int i = 0; i < mainRoll.size(); i++) {
-            strBuf.append(mainRoll.get(i)).append("+");
+
+        List<Integer> roll = null;
+        switch (rollType) {
+            case MAIN: roll = mainRoll; break;
+            case WILD: roll = wildRoll; break;
+        }
+
+        for (int i = 0; i < roll.size(); i++) {
+            strBuf.append(roll.get(i)).append("+");
         }
         strBuf.deleteCharAt(strBuf.length()-1); // Удаляем последний плюс
-        strBuf.append("=").append(getMainTotal(false));
+        strBuf.append("=").append(getTotal(rollType, false));
+
         return strBuf.toString();
     }
 
-    /**
-     * Возвращает читаемый результат броска дикого кубика
-     * @return Строка вида "6+6+6+3=21"
-     */
-    public String wildToString() {
-        StringBuffer strBuf = new StringBuffer();
-        for (int i = 0; i < wildRoll.size(); i++) {
-            strBuf.append(wildRoll.get(i)).append("+");
-        }
-        strBuf.deleteCharAt(strBuf.length()-1); // Удаляем последний плюс
-        strBuf.append("=").append(getWildTotal(false));
-        return strBuf.toString();
-    }
 
     /**
      * Возвращает читаемыю строку модификаторов
@@ -134,5 +129,15 @@ public class Result {
         }
         strBuf.trimToSize();
         return strBuf.toString();
+    }
+
+    /**
+     * Возвращает бросок, который в наброл наибольшее количество очков в результате ролла.
+     * @return Тип броска (см. {@link RollType})
+     */
+    public RollType getMax() {
+        return getTotal(RollType.MAIN, false) > getTotal(RollType.WILD,false)
+                ? RollType.MAIN
+                : RollType.WILD;
     }
 }
