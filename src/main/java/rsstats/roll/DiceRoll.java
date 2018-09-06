@@ -1,7 +1,5 @@
 package rsstats.roll;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import rsstats.data.ExtendedPlayer;
@@ -11,7 +9,7 @@ import rsstats.items.StatItem;
  * Бросок дайсов с информацией о том, кто делал бросок и для какого навыка
  * @author RareScrap
  */
-@SideOnly(Side.SERVER)
+//@SideOnly(Side.SERVER) // TODO: Нужно юзать роллы только на сервере, но клиенту тоже зачем-то они нужны (крашится без них, хотя нигде на клиенте не юзается). Исправить.
 public class DiceRoll extends BasicRoll { // TODO: rename to PlayerRoll
     public final EntityPlayerMP player;
     public ItemStack rollStack;
