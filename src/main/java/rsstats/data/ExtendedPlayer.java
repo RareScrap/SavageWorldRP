@@ -19,10 +19,11 @@ import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.utils.RollModifier;
+import rsstats.roll.RollModifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,7 +94,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      * This method is for convenience only; it will make your code look nicer
      */
     public static final ExtendedPlayer get(EntityPlayer player) {
-       return (ExtendedPlayer) player.getExtendedProperties(EXTENDED_ENTITY_TAG);
+       return (ExtendedPlayer) player.getExtendedProperties(EXTENDED_ENTITY_TAG); // TODO: Добавить Exception, если null
     }
 
     public boolean isServerSide() {
@@ -310,5 +311,20 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
                 this.removeModifier(to, value, description);
             }
         }
+    }
+
+    /**
+     * Удобный метод для получения модификаторов
+     * @param entityPlayer Игрок, из которого получаюься модификаторы. Должен иметь {@link ExtendedPlayer}
+     *                     в качестве {@link IExtendedEntityProperties}
+     * @param modifierKey Ключ для нахождения модификаторов. Как правило, используется {@link StatItem#unlocalizedName}.
+     * @return Список модификаторов для данного ключа. Возвращает null, если модификаторы не найдены.
+     */
+    public static List<RollModifier> getModifiersFor(EntityPlayer entityPlayer, String modifierKey) { // TODO: Этот метод действительно должен быть тут?
+        ExtendedPlayer extendedPlayer = ExtendedPlayer.get(entityPlayer);
+        if (extendedPlayer == null) {
+            throw new IllegalArgumentException("Can't find IEEP for entityPlayer.");
+        }
+        return extendedPlayer.getModifierMap().get(modifierKey);
     }
 }
