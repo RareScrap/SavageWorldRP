@@ -286,7 +286,7 @@ public class StatItem extends Item {
     }*/
 
 
-    public int getRollLevel(ItemStack itemStack) {
+    public int getRollLevel(ItemStack itemStack) { // TODO: Отрефакторить, как в Utils#getBasicRollFrom()
         return basicRolls.get(getDamage(itemStack)).dice;
     }
 
