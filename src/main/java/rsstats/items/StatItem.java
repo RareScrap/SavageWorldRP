@@ -15,9 +15,9 @@ import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.data.ExtendedPlayer;
+import rsstats.roll.BasicRoll;
+import rsstats.roll.RollModifier;
 import rsstats.utils.DescriptionCutter;
-import rsstats.utils.DiceRoll;
-import rsstats.utils.RollModifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class StatItem extends Item {
     private IIcon[] icons = new IIcon[NUMBER_OF_LEVELS]; // хранилище иконок для всего семейства предмета
     /** Набор разных дайсов. Порядковый номер в списке обозачает уровень статы,
      * для которой будет использован дайс. */
-    protected ArrayList<DiceRoll> basicRolls;
+    protected ArrayList<BasicRoll> basicRolls;
     /** Префикс, используемый игрой для нахождеия текстур мода */
     protected final String registerIconPrefix; // "rarescrap:StrenghtIcon_" например
     /** Префикс, используемый игрой для нахождеия файлов локализации мода */
@@ -55,7 +55,7 @@ public class StatItem extends Item {
      * @param registerIconPrefix Префикс, который будет использоваться игрой для нахождения текстур данного предмета
      * @param localePrefix Префикс, который будет использоваться игрой для нахождения файлов локализации данного предмета
      */
-    public StatItem(ArrayList<DiceRoll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix) {
+    public StatItem(ArrayList<BasicRoll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix) {
         // TODO: Дайсы должны задаваться через серверный конфиг
         this.basicRolls = basicRolls;
         
@@ -96,7 +96,7 @@ public class StatItem extends Item {
         list.add(StatCollector.translateToLocalFormatted( generalPrefix + ".level", statLevel+damageMinLimit) );
         
         // Строка броска (пример: "Бросок: d6+1")
-        list.add(StatCollector.translateToLocal(generalPrefix + ".roll") + ": d" + basicRolls.get(statLevel).getDice());
+        list.add(StatCollector.translateToLocal(generalPrefix + ".roll") + ": d" + basicRolls.get(statLevel).dice);
         
         // Пустая строка-разделитель
         list.add(""); 
@@ -252,19 +252,21 @@ public class StatItem extends Item {
         ArrayList<RollModifier> modifiers = new ArrayList<RollModifier>();
         if (ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName()) != null)
             modifiers.addAll(ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName())); // Модификаторы игрока
-        if (basicRolls.get(lvl).getModificators() != null)
-            modifiers.addAll(basicRolls.get(lvl).getModificators()); // Модификаторы, зашитые в броски (например, отсуствующий навык)
+        if (basicRolls.get(lvl).modifiers != null)
+            modifiers.addAll(basicRolls.get(lvl).modifiers); // Модификаторы, зашитые в броски (например, отсуствующий навык)
 
-        DiceRoll roll = new DiceRoll(
+        //DiceRoll roll = new DiceRoll(basicRolls.get(lvl), );
+
+        /*DiceRoll roll = new DiceRoll(
                 basicRolls.get(lvl),
                 entityplayer.getDisplayName(),
                 statName,
                 modifiers
-        );
+        );*/
 
         //entityplayer.addChatComponentMessage(new ChatComponentText(basicRolls.get(lvl).dice + " " + statName));
 
-        RollPacketToServer packet = new RollPacketToServer(roll, withWildDice);
+        RollPacketToServer packet = new RollPacketToServer(entityplayer.getDisplayName(), itemStack.getUnlocalizedName(), withWildDice);
         CommonProxy.INSTANCE.sendToServer(packet); // "123" // itemstack.getIconIndex(
 
         //}
@@ -284,8 +286,8 @@ public class StatItem extends Item {
     }*/
 
 
-    public int getRollLevel(ItemStack itemStack) {
-        return basicRolls.get(getDamage(itemStack)).getDice();
+    public int getRollLevel(ItemStack itemStack) { // TODO: Отрефакторить, как в Utils#getBasicRollFrom()
+        return basicRolls.get(getDamage(itemStack)).dice;
     }
 
 }

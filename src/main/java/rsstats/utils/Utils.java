@@ -3,23 +3,41 @@ package rsstats.utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import rsstats.items.SkillItem;
+import rsstats.items.SkillItems;
+import rsstats.items.StatItem;
+import rsstats.items.StatItems;
+import rsstats.roll.BasicRoll;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
     /**
-     * Проверяет базовый инвентарь игрока на наличи какого-либо предмета. Если нашел - возвращает стак этого предмета.
+     * Обертка для поиска предметов в ванильном инвентаре игрока.
      * @param entityPlayer Целевой игрок
-     * @param itemUnlocalizedName Имя предмета
-     * @return Первый попавшийся стак, соответсвующий запросу
+     * @param itemUnlocalizedName Уникальное имя предмета
+     * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
+     * @see #findIn(IInventory, String)
      */
     public static ItemStack isPlayerHave(EntityPlayer entityPlayer, String itemUnlocalizedName) {
-        for (ItemStack stack : entityPlayer.inventory.mainInventory) {
+        return findIn(entityPlayer.inventory, itemUnlocalizedName);
+    }
+
+    /**
+     * Проверяет инвентарь на наличи какого-либо предмета. Если нашел - возвращает стак этого предмета.
+     * @param inventory Целевой инвентарь
+     * @param itemUnlocalizedName Уникальное имя предмета
+     * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
+     */
+    public static ItemStack findIn(IInventory inventory, String itemUnlocalizedName) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
             if (stack != null && stack.getItem().getUnlocalizedName().equals(itemUnlocalizedName)) {
                 return stack;
             }
         }
+
         return null;
     }
 
@@ -60,5 +78,20 @@ public class Utils {
         }
 
         throw new RuntimeException("Unplanned case. This is probably our bug.");
+    }
+
+    /**
+     * Пытается получить базовый ролл для итема в стаке по метадате итема
+     * @param itemStack Стак с {@link StatItem}'ом. Метадата стака должна обозначать уровень навыка.
+     * @throws ClassCastException Если itemStack не содержит {@link StatItem}.
+     */
+    public static BasicRoll getBasicRollFrom(ItemStack itemStack) {
+        StatItem statItem = (StatItem) itemStack.getItem();
+
+        if (statItem instanceof SkillItem) {
+            return SkillItems.basicRolls.get(itemStack.getItemDamage());
+        } else {
+            return StatItems.basicRolls.get(itemStack.getItemDamage());
+        }
     }
 }

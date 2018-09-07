@@ -28,11 +28,10 @@ import rsstats.items.ExpItem;
 import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.utils.DiceRoll;
-import rsstats.utils.RollModifier;
+import rsstats.roll.BasicRoll;
+import rsstats.roll.RollModifier;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -170,52 +169,52 @@ public class TestMainContainer {
         statsInventory = new StatsInventory(player);
         skillsInventory = new SkillsInventory(player);
 
-        ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
-        statDices.add(new DiceRoll(null, null, 4));
-        statDices.add(new DiceRoll(null, null, 6));
-        statDices.add(new DiceRoll(null, null, 8));
-        statDices.add(new DiceRoll(null, null, 10));
-        statDices.add(new DiceRoll(null, null, 12));
+        ArrayList<BasicRoll> statBasicRolls = new ArrayList<BasicRoll>();
+        statBasicRolls.add(new BasicRoll(4));
+        statBasicRolls.add(new BasicRoll(6));
+        statBasicRolls.add(new BasicRoll(8));
+        statBasicRolls.add(new BasicRoll(10));
+        statBasicRolls.add(new BasicRoll(12));
         int i = 0;
-        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statDices, "StrengthStatItem", "rsstats:strenght", "item.StrengthStatItem")));
-        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statDices, "AgilityStatItem", "rsstats:agility", "item.AgilityStatItem")));
-        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statDices, "IntelligenceStatItem", "rsstats:intelligence", "item.IntelligenceStatItem")));
-        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statDices, "EnduranceStatItem", "rsstats:endurance", "item.EnduranceStatItem")));
-        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statDices, "CharacterStatItem", "rsstats:character", "item.CharacterStatItem")));
+        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "StrengthStatItem", "rsstats:strenght", "item.StrengthStatItem")));
+        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "AgilityStatItem", "rsstats:agility", "item.AgilityStatItem")));
+        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "IntelligenceStatItem", "rsstats:intelligence", "item.IntelligenceStatItem")));
+        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "EnduranceStatItem", "rsstats:endurance", "item.EnduranceStatItem")));
+        statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "CharacterStatItem", "rsstats:character", "item.CharacterStatItem")));
 
 
-        List<RollModifier> modificators = new ArrayList<RollModifier>();
-        modificators.add(new RollModifier(-2,"modifiers.MissingSkill"));
-        ArrayList<DiceRoll> skillDices = new ArrayList<DiceRoll>();
-        skillDices.add(new DiceRoll(null, null, 4, modificators)); // Создание дополнительного броска для нулевого уровня скиллов
-        skillDices.add(new DiceRoll(null, null, 4));
-        skillDices.add(new DiceRoll(null, null, 6));
-        skillDices.add(new DiceRoll(null, null, 8));
-        skillDices.add(new DiceRoll(null, null, 10));
-        skillDices.add(new DiceRoll(null, null, 12));
+        RollModifier level_zero = new RollModifier(-2,"modifiers.MissingSkill");
+
+        ArrayList<BasicRoll> skillBasicRolls = new ArrayList<BasicRoll>();
+        skillBasicRolls.add(new BasicRoll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
+        skillBasicRolls.add(new BasicRoll(4));
+        skillBasicRolls.add(new BasicRoll(6));
+        skillBasicRolls.add(new BasicRoll(8));
+        skillBasicRolls.add(new BasicRoll(10));
+        skillBasicRolls.add(new BasicRoll(12));
         i = 0;
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "EquitationSkillItem", "rsstats:skills/Equitation", "item.EquitationSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "LockpickingSkillItem", "rsstats:skills/Lockpicking", "item.LockpickingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "DrivingSkillItem", "rsstats:skills/Driving", "item.DrivingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "FightingSkillItem", "rsstats:skills/Fighting", "item.FightingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "DisguiseSkillItem", "rsstats:skills/Disguise", "item.DisguiseSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ThrowingSkillItem", "rsstats:skills/Throwing", "item.ThrowingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "PilotingSkillItem", "rsstats:skills/Piloting", "item.PilotingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "SwimmingSkillItem", "rsstats:skills/Swimming", "item.SwimmingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ShootingSkillItem", "rsstats:skills/Shooting", "item.ShootingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ShippingSkillItem", "rsstats:skills/Shipping", "item.ShippingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "GamblingSkillItem", "rsstats:skills/Gambling", "item.GamblingSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "PerceptionSkillItem", "rsstats:skills/Perception", "item.PerceptionSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "SurvivalSkillItem", "rsstats:skills/Survival", "item.SurvivalSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "TrackingSkillItem", "rsstats:skills/Tracking", "item.TrackingSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "MedicineSkillItem", "rsstats:skills/Medicine", "item.MedicineSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ProvocationSkillItem", "rsstats:skills/Provocation", "item.ProvocationSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "InvestigationSkillItem", "rsstats:skills/Investigation", "item.InvestigationSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "RepearSkillItem", "rsstats:skills/Repear", "item.RepearSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "StreetFlairSkillItem", "rsstats:skills/StreetFlair", "item.StreetFlairSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "IntimidationSkillItem", "rsstats:skills/Intimidation", "item.IntimidationSkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "DiplomacySkillItem", "rsstats:skills/Diplomacy", "item.DiplomacySkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
-        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ClimbingSkillItem", "rsstats:skills/Climbing", "item.ClimbingSkillItem", (StatItem) statsInventory.getStackInSlot(0).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "EquitationSkillItem", "rsstats:skills/Equitation", "item.EquitationSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "LockpickingSkillItem", "rsstats:skills/Lockpicking", "item.LockpickingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "DrivingSkillItem", "rsstats:skills/Driving", "item.DrivingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "FightingSkillItem", "rsstats:skills/Fighting", "item.FightingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "DisguiseSkillItem", "rsstats:skills/Disguise", "item.DisguiseSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "ThrowingSkillItem", "rsstats:skills/Throwing", "item.ThrowingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "PilotingSkillItem", "rsstats:skills/Piloting", "item.PilotingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "SwimmingSkillItem", "rsstats:skills/Swimming", "item.SwimmingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "ShootingSkillItem", "rsstats:skills/Shooting", "item.ShootingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "ShippingSkillItem", "rsstats:skills/Shipping", "item.ShippingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "GamblingSkillItem", "rsstats:skills/Gambling", "item.GamblingSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "PerceptionSkillItem", "rsstats:skills/Perception", "item.PerceptionSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "SurvivalSkillItem", "rsstats:skills/Survival", "item.SurvivalSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "TrackingSkillItem", "rsstats:skills/Tracking", "item.TrackingSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "MedicineSkillItem", "rsstats:skills/Medicine", "item.MedicineSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "ProvocationSkillItem", "rsstats:skills/Provocation", "item.ProvocationSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "InvestigationSkillItem", "rsstats:skills/Investigation", "item.InvestigationSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "RepearSkillItem", "rsstats:skills/Repear", "item.RepearSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "StreetFlairSkillItem", "rsstats:skills/StreetFlair", "item.StreetFlairSkillItem", (StatItem) statsInventory.getStackInSlot(2).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "IntimidationSkillItem", "rsstats:skills/Intimidation", "item.IntimidationSkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "DiplomacySkillItem", "rsstats:skills/Diplomacy", "item.DiplomacySkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
+        skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "ClimbingSkillItem", "rsstats:skills/Climbing", "item.ClimbingSkillItem", (StatItem) statsInventory.getStackInSlot(0).getItem())));
         skillsInventory.setSkillsFor("item.StrengthStatItem");
     }
 }

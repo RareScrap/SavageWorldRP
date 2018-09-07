@@ -1,7 +1,7 @@
 package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import rsstats.utils.DiceRoll;
+import rsstats.roll.BasicRoll;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,21 +13,21 @@ import static rsstats.common.RSStats.MODID;
  * @author RareScrap
  */
 public class StatItems {
-    private static ArrayList<DiceRoll> statDices;
-    static {
-        statDices = new ArrayList<DiceRoll>();
-        statDices.add(new DiceRoll(null, null, 4));
-        statDices.add(new DiceRoll(null, null, 6));
-        statDices.add(new DiceRoll(null, null, 8));
-        statDices.add(new DiceRoll(null, null, 10));
-        statDices.add(new DiceRoll(null, null, 12));
+    public static ArrayList<BasicRoll> basicRolls;
+    static { // TODO: Они же должны быть только на сервере
+        basicRolls = new ArrayList<BasicRoll>();
+        basicRolls.add(new BasicRoll(4));
+        basicRolls.add(new BasicRoll(6));
+        basicRolls.add(new BasicRoll(8));
+        basicRolls.add(new BasicRoll(10));
+        basicRolls.add(new BasicRoll(12));
     }
 
-    public static final StatItem strenghtStatItem = new StatItem(statDices, "StrengthStatItem", MODID + ":strenght", "item.StrengthStatItem"); // 3 - rarescrap:StrenghtIcon_
-    public static final StatItem agilityStatItem = new StatItem(statDices, "AgilityStatItem", MODID + ":agility", "item.AgilityStatItem");
-    public static final StatItem intelligenceStatItem = new StatItem(statDices, "IntelligenceStatItem", MODID + ":intelligence", "item.IntelligenceStatItem");
-    public static final StatItem enduranceStatItem = new StatItem(statDices, "EnduranceStatItem", MODID + ":endurance", "item.EnduranceStatItem");
-    public static final StatItem characterStatItem = new StatItem(statDices, "CharacterStatItem", MODID + ":character", "item.CharacterStatItem");
+    public static final StatItem strenghtStatItem = new StatItem(basicRolls, "StrengthStatItem", MODID + ":strenght", "item.StrengthStatItem"); // 3 - rarescrap:StrenghtIcon_
+    public static final StatItem agilityStatItem = new StatItem(basicRolls, "AgilityStatItem", MODID + ":agility", "item.AgilityStatItem");
+    public static final StatItem intelligenceStatItem = new StatItem(basicRolls, "IntelligenceStatItem", MODID + ":intelligence", "item.IntelligenceStatItem");
+    public static final StatItem enduranceStatItem = new StatItem(basicRolls, "EnduranceStatItem", MODID + ":endurance", "item.EnduranceStatItem");
+    public static final StatItem characterStatItem = new StatItem(basicRolls, "CharacterStatItem", MODID + ":character", "item.CharacterStatItem");
 
     public static void registerItems() {
         GameRegistry.registerItem(strenghtStatItem, "StrengthStatItem");
