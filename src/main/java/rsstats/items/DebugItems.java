@@ -2,11 +2,10 @@ package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.util.StatCollector;
-import rsstats.utils.DiceRoll;
-import rsstats.utils.RollModifier;
+import rsstats.roll.BasicRoll;
+import rsstats.roll.RollModifier;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static rsstats.items.StatItems.*;
 
@@ -23,16 +22,15 @@ public class DebugItems {
     public static final SkillItem[][] ii = new SkillItem[][] {skillItems_Strength, skillItems_Agility, skillItems_Intelligence, skillItems_Endurance, skillItems_Character};
 
     static {
-        // TODO: Проверять на то, поставляется ли dices уже с модификаторами
-        List<RollModifier> modifiers = new ArrayList<RollModifier>();
-        modifiers.add(new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill"))); // TODO: Разобраться почему это работает на сервере
-        ArrayList<DiceRoll> skillDices = new ArrayList<DiceRoll>();
-        skillDices.add(new DiceRoll(null, null, 4, modifiers)); // Создание дополнительного броска для нулевого уровня скиллов
-        skillDices.add(new DiceRoll(null, null, 4));
-        skillDices.add(new DiceRoll(null, null, 6));
-        skillDices.add(new DiceRoll(null, null, 8));
-        skillDices.add(new DiceRoll(null, null, 10));
-        skillDices.add(new DiceRoll(null, null, 12));
+        RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")); // TODO: Починить локализацию с учетом клиент-серверной архитектурой
+
+        ArrayList<BasicRoll> skillDices = new ArrayList<BasicRoll>();
+        skillDices.add(new BasicRoll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
+        skillDices.add(new BasicRoll(4));
+        skillDices.add(new BasicRoll(6));
+        skillDices.add(new BasicRoll(8));
+        skillDices.add(new BasicRoll(10));
+        skillDices.add(new BasicRoll(12));
 
         StatItem[] parents = new StatItem[] {strenghtStatItem, agilityStatItem, intelligenceStatItem, enduranceStatItem, characterStatItem};
         for (int i1 = 0; i1 < ii.length; i1++) {
