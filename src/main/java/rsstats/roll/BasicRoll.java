@@ -30,6 +30,10 @@ public class BasicRoll {
             this.modifiers.addAll(modifiers);
     }
 
+    public BasicRoll(BasicRoll basicRoll) {
+        this(basicRoll.dice, basicRoll.modifiers); // TODO: Сделит Deep-copy? А зачем?
+    }
+
     public BasicRoll withWildDice(boolean flag) {
         this.withWildDice = flag;
         return this;
