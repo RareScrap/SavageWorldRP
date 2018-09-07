@@ -10,6 +10,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -71,6 +76,62 @@ public class ModEventHandler {
             NBTTagCompound compound = new NBTTagCompound();
             ExtendedPlayer.get(e.original).saveNBTData(compound);
             ExtendedPlayer.get(e.entityPlayer).loadNBTData(compound);
+        }
+    }
+
+    @SubscribeEvent
+    public void onChat(ClientChatReceivedEvent event) {
+        processRollChatPacket(event);
+    }
+
+    /**
+     * Пробует обработать {@link ClientChatReceivedEvent#message} как сообщение о броске кости.
+     * @param event События с сообщением, полученное с сервера из
+     *              {@link rsstats.common.network.RollPacketToServer.MessageHandler}
+     * @return True, если операция прошла успешно. Иначе - false.
+     */
+    private static boolean processRollChatPacket(ClientChatReceivedEvent event) {
+        try { // TODO: Стоит ли создавать свой ChatComponent (или ChatComponentTranslation)?
+            // Пытаем кастануть сообщение
+            ChatComponentTranslation chatComp = (ChatComponentTranslation) event.message;
+
+            // Извлекаем сообщение модификаторов, чтобы применить к ним клиентский конфиг игрока
+            ChatComponentText modifiersComp;
+
+            Object[] formatArgs = chatComp.getFormatArgs();
+            for (int i = 0; i < formatArgs.length; i++) {
+                Object part = formatArgs[i];
+
+                // Находим компонент с модификаторами броска
+                if (part instanceof ChatComponentText
+                        && ((ChatComponentText) part).getChatComponentText_TextValue().equals("<MODIFIERS>")) {
+
+                    // Формируем новый компонент, на основе старого...
+                    modifiersComp = new ChatComponentText("");
+                    for (Object o : ((ChatComponentText) part).getSiblings()) {
+                        ChatComponentText modifier = (ChatComponentText) o;
+                        if (modifier.getFormattedText().contains("(+")) { // ... но применяем пользовательские настройки цвета
+                            modifier.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)); // TODO: Юзать конфиг
+                        } else { // contains("(-")
+                            modifier.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
+                        }
+                        modifiersComp.appendSibling(modifier);
+                    }
+
+                    // Заменяем старый компонен на новый
+                    formatArgs[i] = modifiersComp;
+
+                    // Повторно локализуем компонент
+                    event.message = chatComp.createCopy(); // Думаю, это решение вполне совместимо с другими модами
+                    break;
+                }
+            }
+
+            return true;
+
+        } catch (ClassCastException e) {
+            //e.printStackTrace();
+            return false;
         }
     }
 }
