@@ -61,7 +61,8 @@ item.StatItem.cleanRoll=Зажмите Ctrl, чтобы рольнуть нав�
 item.StatItem.relevantSkillsTip=Нажмите "%1$s" для отображения соответствующих навыков
 item.StatItem.roll=Бросок
 item.StatItem.CritFail=§r§n§l§4КРИТИЧЕСКИЙ§r§n§l §r§n§l§4ПРОВАЛ!§r§f
-item.StatItem.rollChatMessage=§%6$s%1$s §%6$sроллит §%6$sнавык §%6$s"%2$s"(d%3$d): %4$s §%6$s§nИТОГО: §%6$s§n%5$d
+item.StatItem.rollChatMessage=%1$s роллит навык "%2$s"(d%3$d): %4$s %5$s§nИТОГО: §n%6$d
+item.StatItem.rollChatMessage_withWildDice=%1$s роллит навык "%2$s"(d%3$d): %4$s ДК: %5$s %6$s§nИТОГО: §n%7$d
 item.StatItem.level=%1$d Уровень
 
 item.ExpItem.name=Очки прокачки
@@ -100,3 +101,6 @@ gui.MainMenu.CloseDialog.cancel=Отменить изменения
 modifiers.MissingSkill=Отсуствующий навык
 
 tile.block.upgrade_station.name=Верстак улучшений
+
+user_not_found=Игрок "%1$s" не найден
+stat_not_found=Стата/навык "%1$s" не найдена у игрока "%2$s"
