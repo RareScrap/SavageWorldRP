@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -23,12 +22,13 @@ import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.Utils;
+import ru.rarescrap.tabinventory.TabContainer;
+import ru.rarescrap.tabinventory.TabHostInventory;
+import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @author rares
  */
-public class MainContainer extends Container {
+public class MainContainer extends TabContainer {
     private final EntityPlayer player;
     private final InventoryPlayer inventoryPlayer;
     private final StatsInventory statsInventory;
@@ -72,8 +72,17 @@ public class MainContainer extends Container {
         this.statsInventory = statsInventory;
         this.skillsInventory = skillsInventory;
         this.wearableInventory = wearableInventory;
+
         this.otherTabsHost = otherTabsHost;
         this.otherTabsInventory = otherTabsInventory;
+
+        // Добавляем вкладочный инвентарь к контейнеру
+        tabInventories.put(otherTabsInventory.getInventoryName(), otherTabsInventory);
+        // Добавляем его к движку синхронизации (СЕРВЕР->КЛИЕНТ)
+        if (!player.worldObj.isRemote) {
+            getSync().addSync(otherTabsInventory);
+        }
+
         addSlots();
     }
 

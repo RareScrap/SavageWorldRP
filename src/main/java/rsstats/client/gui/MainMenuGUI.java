@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -24,15 +25,19 @@ import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
 import rsstats.items.SkillItem;
+import ru.rarescrap.tabinventory.SupportTabs;
+import ru.rarescrap.tabinventory.network.syns.TabInventorySync;
+import ru.rarescrap.tabinventory.utils.Utils;
 
 /**
- * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
+ * GUI для основного окна мода. Содержит информацию о персонаже (имя, уровень, здоровье, защита, харизма,
  * стойкость), панель предметов и панели статов, навыков и перков.
  * @author RareScrap
  */
-public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
+public class MainMenuGUI extends AdvanceInventoryEffectRenderer
+    implements SupportTabs.Gui {
+
     /** Расположение фона GUI */
     private static final ResourceLocation background =
             new ResourceLocation(RSStats.MODID,"textures/gui/StatsAndInvTab_FIT.png");
@@ -56,7 +61,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
 
-    public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
+    public <T extends Container & SupportTabs.Container> MainMenuGUI(ExtendedPlayer player, T mainContainer) {
         super(mainContainer);
         this.allowUserInput = true;
         this.player = player;
@@ -253,25 +258,25 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
                     }
 
                 }
-
-                // Действия, если курсор наведен на прочие вкладки
-                if (slot.inventory instanceof TabHostInventory) {
-                    try {
-                        Item item = slot.getStack().getItem();
-                        ((TabHostInventory) slot.inventory).setTab(item.getUnlocalizedName());
-
-                    } catch (NullPointerException e) {
-                        System.err.println("Не удалось определить запрос вкладки.");
-                    }
-
-                }
             }
         }
+
+        // Отслеживаем переключение вкладок для TabHostInventory'рей
+        Utils.handleMouseInput(this, this.guiLeft, this.guiTop);
 
         if (isPlayerTryExitWhileEditStats) {
             exitDialog.handleMouseInput(); // Обрабатываем нажатие на GUI диалога
         }
         super.handleMouseInput(); // Обрабатываем нажатие на GUI-родителе
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, int type) {
+        // Обрабатываем клики по слотам TabInventory'ей
+        if (! Utils.handleMouseClick(slotIn, slotId, mouseButton, type, this)) {
+            // Если Utils.handleMouseClick() вернет false, значит нужно задействовать стандартную обработку кликов
+            super.handleMouseClick(slotIn, slotId, mouseButton, type);
+        }
     }
 
     /**
@@ -329,5 +334,10 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
          * уже по-дефолту вызывает initGui() без пересоздания объекта MainGUI */
         shouldDrawDefaultBackground(!isPlayerTryExitWhileEditStats);
         super.initGui();
+    }
+
+    @Override
+    public TabInventorySync getSync() {
+        return ((SupportTabs.Container) inventorySlots).getSync();
     }
 }

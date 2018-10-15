@@ -15,11 +15,11 @@ import rsstats.common.network.PacketSyncPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.RollModifier;
+import ru.rarescrap.tabinventory.TabHostInventory;
+import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,8 +75,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         skillsInventory = new SkillsInventory(player);
         wearableInventory = new WearableInventory(this);
 
-        otherTabsInventory = new TabInventory("effects", 36, entityPlayer);
-        otherTabsHost = new TabHostInventory("effects_host", 4, otherTabsInventory);
+        otherTabsHost = new TabHostInventory("effects_host", 4);
+        otherTabsInventory = new TabInventory("effects", 36, entityPlayer, otherTabsHost);
     }
     
     /**

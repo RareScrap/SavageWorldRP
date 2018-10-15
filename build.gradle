@@ -16,6 +16,12 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        url = "https://dl.bintray.com/rarescrap/minecraft"
+    }
+}
+
 apply plugin: 'java' // TODO: Зачем? Можно ли тестить без этого?
 apply plugin: 'forge'
 
@@ -43,6 +49,8 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4:2.0.0-beta.5'
     testCompile 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
     //testCompile 'org.powermock:powermock:1.6.5' // TODO: Нужно ли?
+
+    compile 'ru.rarescrap.tabinventory:minecraft-tab-inventory-lib:0.3.0_1.7.10'
 
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
