@@ -43,7 +43,6 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenWindow.MessageHandler.class, PacketOpenWindow.class, discriminator++, Side.SERVER);
-        INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketSyncGUI.MessageHandler.class, PacketSyncGUI.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketDialogAction.MessageHandler.class, PacketDialogAction.class, discriminator++, Side.SERVER);
 
