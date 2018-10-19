@@ -77,9 +77,11 @@ public class MainContainer extends TabContainer {
         this.otherTabsInventory = otherTabsInventory;
 
         // Добавляем вкладочный инвентарь к контейнеру
+        tabInventories.put(skillsInventory.getInventoryName(), skillsInventory);
         tabInventories.put(otherTabsInventory.getInventoryName(), otherTabsInventory);
         // Добавляем его к движку синхронизации (СЕРВЕР->КЛИЕНТ)
         if (!player.worldObj.isRemote) {
+            getSync().addSync(skillsInventory);
             getSync().addSync(otherTabsInventory);
         }
 
@@ -420,6 +422,21 @@ public class MainContainer extends TabContainer {
         return -1;
     }
 
+    @Override
+    public void detectAndSendChanges() {
+        /* Т.к. по логике данного контейнера slotClick(...) может не работать на клиенте и сервере одинакого,
+         * то для поддержания работоспособности синхронизации нам нужно выставить isChangingQuantityOnly = false
+         * см. NetHandlerPlayServer#processClickWindow().
+         *
+         * Кейс: Если этого не сделать, то при прокачке статы на клиент не будет высылаться пакет об уменьшении
+         * количества очков прокачки. По логике данного контейнера, проверку на возможность прокачки навыка/статы
+         * осуществляет сервер. Именно поэтому slotClick(...) работает по разному на клиенте и сервере.
+         */
+        // https://rarescrap.blogspot.com/2018/10/minecraft-1_18.html?zx=7ca4a4ed658beb3
+        ((EntityPlayerMP) player).isChangingQuantityOnly = false;
+        super.detectAndSendChanges();
+    }
+
     // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
     @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
@@ -436,11 +453,21 @@ public class MainContainer extends TabContainer {
             return super.slotClick(slotId, clickedButton, mode, playerIn);
         }
 
-        if (clickedButton == 1 && itemInSlot instanceof StatItem) // ПКМ
-            return processStatRightClick(slot, mode, playerIn);
+        if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
+            ItemStack temp = slot.getStack().copy();
+            processStatRightClick(slot, mode, playerIn);
+
+            /* Не следует возвращать прокачанный ItemStack, т.к. тогда
+             * NetHandlerPlayServer#processClickWindow() обнаружит что стак, по которому кликнул игрок
+             * не равен стаку в серверном инвентаре по такой же позиции. Это приведет к тому, что
+             * ВСЕ содержимое окна перешлется на клиент, что не очень эффективно. */
+            return temp;
+        }
 
         if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
-            return processStatMiddleClick(slot, mode, playerIn);
+            ItemStack temp = slot.getStack().copy();
+            processStatMiddleClick(slot, mode, playerIn);
+            return temp;
         }
 
         if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
