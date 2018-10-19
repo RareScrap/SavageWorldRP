@@ -1,112 +1,30 @@
 package rsstats.inventory;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.items.StatItems;
+import ru.rarescrap.tabinventory.TabHostInventory;
 
 /**
  * Инвентарь для статов игрока (сила, ловкость, выносливость и т.д.)
  * @author RareScrap
  */
-public class StatsInventory implements IInventory {
-    /** The key used to store and retrieve the inventory from NBT */
-    private static final String NBT_TAG = "stats";
-
-    /** Define the inventory size here for easy reference */
+public class StatsInventory extends TabHostInventory {
     /* This is also the place to define which slot is which if you have different types,
      * for example SLOT_SHIELD = 0, SLOT_AMULET = 1; */
-    public static final int INV_SIZE = 9;
-    /** Масимальный размер стака для предметов в инвенторе {@link #inventory} */
-    private static final int STACK_LIMIT = 1;
-
-    /** Структура, хранящая предметы инвентаря в стаках.
-     * Inventory's size must be same as number of slots you add to the Container class. */
-    private ItemStack[] inventory = new ItemStack[INV_SIZE];
-    /** Игрок, к которому привязан инвентарь */
-    private EntityPlayer entityPlayer;
 
     /**
-     * Необходимый публичный контсруктор
+     * Конструктор
+     * @param inventoryName Имя инвентаря-хоста вкладок
+     * @param inventorySize Размер инвентаря-хоста
      */
-    public StatsInventory(EntityPlayer entityPlayer) {
-        this.entityPlayer = entityPlayer;
-    }
-    
-    /**
-     * Геттер для {@link #inventory}
-     * @return Размер массива {@link #inventory}
-     */
-    @Override
-    public int getSizeInventory() {
-        return inventory.length;
-    }
-
-    /**
-     * Геттер для получения элементов из инвентаря {@link #inventory}
-     * @param slotIndex Индекс слота в инвенторе, из которого нужно получить предмет
-     * @return Стак предметов под индексом slotIndex в инвенторе
-     */
-    @Override
-    public ItemStack getStackInSlot(int slotIndex) {
-        return inventory[slotIndex];
-    }
-
-    /**
-     * Удаляет предмет из слота инвентаря до определенного количества элементов и возвращает их в новый стак.
-     * @param slotIndex Слот в инвенторе, где лежит предмет, стак которого нужно уменьшить
-     * @param amount До скольки нужно уменьший стак
-     * @return Предмет с уменьшенным стаком
-     */
-    @Override
-    public ItemStack decrStackSize(int slotIndex, int amount) {
-        ItemStack stack = getStackInSlot(slotIndex);
-        if (stack != null) {
-            if (stack.stackSize > amount) {
-                stack = stack.splitStack(amount);
-                markDirty(); // Аналог onInventoryChanged()
-            } else {
-                setInventorySlotContents(slotIndex, null);
-            }
-        }
-        return stack;
-    }
-
-    /**
-     * Clears a slot and returns it's previous content. Аналог removeStackFromSlot() в более новых версиях.
-     * @param slotIndex
-     * @return
-     */
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slotIndex) {
-        ItemStack stack = getStackInSlot(slotIndex);
-        setInventorySlotContents(slotIndex, null);
-        return stack;
-    }
-
-    @Override
-    public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
-        this.inventory[slotIndex] = itemStack;
-        if (itemStack != null && itemStack.stackSize > this.getInventoryStackLimit()) {
-            itemStack.stackSize = this.getInventoryStackLimit();
-        }
-        markDirty();
-    }
-
-    /**
-     * Возвращает локализованное имя инвентаря
-     * @return Имя инвентаря
-     */
-    @Override
-    public String getInventoryName() {
-        return StatCollector.translateToLocal("inventory." + NBT_TAG);
+    public StatsInventory(String inventoryName, int inventorySize) {
+        super(inventoryName, inventorySize);
     }
     
     /*
@@ -116,31 +34,12 @@ public class StatsInventory implements IInventory {
         return name.length() > 0;
     }*/
 
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
-    }
-
     /**
-     * Возвращает масимальный размер стака для предметов в этом инвенторе
-     * @return {@link #STACK_LIMIT}
+     * @return Масимальный размер стака для предметов в этом инвенторе
      */
     @Override
     public int getInventoryStackLimit() {
-        return STACK_LIMIT;
-    }
-
-    @Override
-    public void markDirty() {
-        // ТОDO: ХЗ что это мы делаем. Удаляем мусор? Гарантированно очищаем слоты?
-        for (int i = 0; i < getSizeInventory(); ++i) {
-            if (getStackInSlot(i) != null && getStackInSlot(i).stackSize == 0) {
-                inventory[i] = null;
-            }
-        }
-
-        // TODO: Проверить при помощи NBTEdit как мод ведет себя без этой строки
-        writeToNBT(entityPlayer.getEntityData());
+        return 1;
     }
 
     /**
@@ -167,7 +66,7 @@ public class StatsInventory implements IInventory {
     public void closeInventory() {}
 
     /**
-     * Проверяет, можно ли поместить предмет в данный слот инвентаря {@link #inventory}
+     * Проверяет, можно ли поместить предмет в данный слот инвентаря
      * 
      * This method doesn't seem to do what it claims to do, as
      * items can still be left-clicked and placed in the inventory
@@ -204,7 +103,7 @@ public class StatsInventory implements IInventory {
 
         // We're storing our items in a custom tag list using our 'NBT_TAG' from above
         // to prevent potential conflicts
-        compound.setTag(NBT_TAG, items);
+        compound.setTag(getInventoryName(), items);
     }
 
     /**
@@ -212,7 +111,7 @@ public class StatsInventory implements IInventory {
      * @param compound TODO
      */
     public void readFromNBT(NBTTagCompound compound) {
-        NBTTagList items = compound.getTagList(NBT_TAG, Constants.NBT.TAG_COMPOUND);
+        NBTTagList items = compound.getTagList(getInventoryName(), Constants.NBT.TAG_COMPOUND);
 
         /* Если инвентарь статов пустой или не содержвится в пришедшем compound'е (а он скорее всего содержится, см init())
          * - добавляем стандартный набор статов */
@@ -226,7 +125,7 @@ public class StatsInventory implements IInventory {
             NBTTagCompound item = items.getCompoundTagAt(i);
             byte slot = item.getByte("Slot");
             if (slot >= 0 && slot < getSizeInventory()) {
-                inventory[slot] = ItemStack.loadItemStackFromNBT(item);
+                setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(item));
             }
         }
     }
@@ -237,54 +136,47 @@ public class StatsInventory implements IInventory {
     public void initItems() {
         Object[] stats = StatItems.getAll().values().toArray();
         for (int i = 0; i < stats.length; i++) {
-            inventory[i] = new ItemStack((StatItem) stats[i]);
+            setInventorySlotContents(i, new ItemStack((StatItem) stats[i]));
         }
 
         markDirty();
     }
 
+    // TODO: В утилиты
     /**
-     * Получаем стак из {@link #inventory} по указанному UnlocalizedName
-     * @param unlocalizedSkillName UnlocalizedName нужного стака скилла
-     * @return Стак {@link StatItem}'а
+     * Получаем первый попавшийся стак из по указанному UnlocalizedName
+     * @param unlocalizedSkillName UnlocalizedName нужного стака
+     * @return Первый попавшийся полходящий стак. Если ничего не найдено - null.
      */
     public ItemStack getStat(String unlocalizedSkillName) {
-        for (ItemStack stat : inventory) {
-            if (stat.getUnlocalizedName().equals(unlocalizedSkillName)) {
-                return stat;
+        for (int i = 0; i < getSizeInventory(); i++) {
+            ItemStack stack = getStackInSlot(i);
+            if (stack != null && stack.getUnlocalizedName().equals(unlocalizedSkillName)) {
+                return stack;
             }
         }
+
         return null;
     }
 
     /**
-     * Очищает все имеющиеся хранилища {@link ItemStack}'ов
+     * Очищает инвентарь
      */
     public void totalClear() {
         for (int i = 0; i < getSizeInventory(); ++i) {
-            inventory[i] = null;
+            setInventorySlotContents(i, null);
         }
     }
 
+    // TODO: В утилиты
     /**
-     * Устанавливает новое содержимое для хранилища статов ({@link #inventory})
-     * @param stats Обновленное хранилие статов
-     */
-    public void setNewStats(ItemStack[] stats) {
-        this.inventory = stats;
-
-        // Если выведено GUI - обновим его на всякий случай
-        if (Minecraft.getMinecraft().currentScreen != null) {
-            Minecraft.getMinecraft().currentScreen.updateScreen();
-        }
-    }
-
-    // TODO: Заменить на getAll и преопределять в потомках
-    /**
-     * Геттер для {@link #inventory}.
-     * @return Массив стаков, представляющих собой инвентарь статов
+     * @return Возвращает все содержимое инвентаря в порядке расположения
      */
     public ItemStack[] getStats() {
-        return inventory;
+        ItemStack[] stacks = new ItemStack[getSizeInventory()];
+        for (int i = 0; i < getSizeInventory(); i++) {
+            stacks[i] = getStackInSlot(i);
+        }
+        return stacks;
     }
 }
