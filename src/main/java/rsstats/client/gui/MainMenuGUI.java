@@ -1,7 +1,5 @@
 package rsstats.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -9,10 +7,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import rsstats.client.gui.advanced.AdvanceInventoryEffectRenderer;
@@ -20,12 +16,8 @@ import rsstats.client.gui.advanced.Dialog;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketDialogAction;
-import rsstats.common.network.PacketShowSkillsByStat;
 import rsstats.data.ExtendedPlayer;
-import rsstats.inventory.SkillsInventory;
-import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
-import rsstats.items.SkillItem;
 import ru.rarescrap.tabinventory.SupportTabs;
 import ru.rarescrap.tabinventory.network.syns.TabInventorySync;
 import ru.rarescrap.tabinventory.utils.Utils;
@@ -226,41 +218,6 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
 
     @Override
     public void handleMouseInput() {
-
-        // GUI уже имеет дступ к этому полю. Не смсла взвать его так, когда можно взвать напрямую
-        //MainContainer container = (MainContainer) player.getEntityPlayer().openContainer;
-
-        // Mouse.getEventX() и Mouse.getEventY() возвращают сырой ввод мыши, так что нам нужно обработать его
-        ScaledResolution scaledresolution = new ScaledResolution(this.mc, this.mc.displayWidth, this.mc.displayHeight);
-        int width = scaledresolution.getScaledWidth();
-        int height = scaledresolution.getScaledHeight();
-        int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
-        int mouseZ = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
-
-        // Проходим по всем слотам в поисках того, на который мы навели курсок
-        for (Object inventorySlot : inventorySlots.inventorySlots) {
-            Slot slot = (Slot) inventorySlot;
-
-            if (isMouseOverSlot(slot, mouseX, mouseZ)) {
-
-                // Действия, если курсор наведен на статы
-                if (slot.inventory instanceof StatsInventory && !(slot.inventory instanceof SkillsInventory)) { // TODO: Найти способ делать проверку только на класс без учета наследования
-                    try {
-                        Item item = slot.getStack().getItem();
-
-                        if (!item.getUnlocalizedName().equals(currentStat) && !(item instanceof SkillItem)) {
-                            PacketShowSkillsByStat packet = new PacketShowSkillsByStat(item.getUnlocalizedName());
-                            CommonProxy.INSTANCE.sendToServer(packet);
-                            currentStat = item.getUnlocalizedName();
-                        }
-                    } catch (NullPointerException e) {
-                        System.err.println("Не удалось определить запрос вкладки.");
-                    }
-
-                }
-            }
-        }
-
         // Отслеживаем переключение вкладок для TabHostInventory'рей
         Utils.handleMouseInput(this, this.guiLeft, this.guiTop);
 
