@@ -71,9 +71,10 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     private ExtendedPlayer(EntityPlayer player) {
         this.entityPlayer = player;
-        statsInventory = new StatsInventory(player);
-        skillsInventory = new SkillsInventory(player);
         wearableInventory = new WearableInventory(this);
+
+        statsInventory = new StatsInventory("stats_inv", 9);
+        skillsInventory = new SkillsInventory("skills_inv", 36, entityPlayer, statsInventory);
 
         otherTabsHost = new TabHostInventory("effects_host", 4);
         otherTabsInventory = new TabInventory("effects", 36, entityPlayer, otherTabsHost);
