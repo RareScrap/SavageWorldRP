@@ -119,7 +119,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     @Override
     public void loadNBTData(NBTTagCompound properties) {
         this.statsInventory.totalClear();
-        this.skillsInventory.totalClear();
+        this.skillsInventory.totalClear(); // TODO: Может ли воникнуть ситуация, когда инвентари не пустые?
 
         exp = properties.getInteger("exp");
         lvl = properties.getInteger("lvl");
