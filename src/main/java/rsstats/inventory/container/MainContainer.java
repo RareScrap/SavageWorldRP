@@ -13,9 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
-import rsstats.common.network.PacketSyncPlayer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
@@ -500,6 +498,15 @@ public class MainContainer extends TabContainer {
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
+    // Пересчет при закрытии контейнера нужен, когда в диалоге нажимается "Отменить изменения"
+    @Override
+    public void onContainerClosed(EntityPlayer p_75134_1_) {
+        // Пересчитываем параметры и синхронизируем их с клиентом
+        ExtendedPlayer.get(player).updateParams();
+        ExtendedPlayer.get(player).sync();
+        super.onContainerClosed(p_75134_1_);
+    }
+
     public SkillsInventory getSkillsInventory() {
         return skillsInventory;
     }
@@ -694,7 +701,7 @@ public class MainContainer extends TabContainer {
                 // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
                 ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
                 extendedPlayer.updateParams();
-                CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), extendedPlayer.getLvl()), (EntityPlayerMP) playerIn); // TODO: Отсылать ВЕСЬ инвентарь - это пиздец. Оптимизировать
+                extendedPlayer.sync();
             }
         }
 
@@ -720,7 +727,7 @@ public class MainContainer extends TabContainer {
             // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
             extendedPlayer.updateParams();
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), extendedPlayer.getLvl()), (EntityPlayerMP) playerIn); // TODO Double code
+            extendedPlayer.sync();
         }
         return slot.getStack();
     }

@@ -214,6 +214,14 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         return tirednessLimit;
     }
 
+    public void setProtection(int protection) {
+        this.protection = protection;
+    }
+
+    public void setPersistence(int persistence) {
+        this.persistence = persistence;
+    }
+
     public EntityPlayer getEntityPlayer() {
         return entityPlayer;
     }
@@ -273,7 +281,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      */
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
         }
     }
 
