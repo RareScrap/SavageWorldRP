@@ -1,17 +1,14 @@
 package rsstats.client.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import rsstats.client.gui.advanced.AdvanceInventoryEffectRenderer;
@@ -19,20 +16,20 @@ import rsstats.client.gui.advanced.Dialog;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketDialogAction;
-import rsstats.common.network.PacketShowSkillsByStat;
 import rsstats.data.ExtendedPlayer;
-import rsstats.inventory.SkillsInventory;
-import rsstats.inventory.StatsInventory;
 import rsstats.inventory.container.MainContainer;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.items.SkillItem;
+import ru.rarescrap.tabinventory.SupportTabs;
+import ru.rarescrap.tabinventory.network.syns.TabInventorySync;
+import ru.rarescrap.tabinventory.utils.Utils;
 
 /**
- * GUI для основного окна мода, содержащее информацию о персонаже (имя, уровень, здоровье, защита, харизма,
+ * GUI для основного окна мода. Содержит информацию о персонаже (имя, уровень, здоровье, защита, харизма,
  * стойкость), панель предметов и панели статов, навыков и перков.
  * @author RareScrap
  */
-public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
+public class MainMenuGUI extends AdvanceInventoryEffectRenderer
+    implements SupportTabs.Gui {
+
     /** Расположение фона GUI */
     private static final ResourceLocation background =
             new ResourceLocation(RSStats.MODID,"textures/gui/StatsAndInvTab_FIT.png");
@@ -56,7 +53,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
     // Нужно для запроса кастомного имени инвентаря для отрисоки названия инвентаря
     //private final StatsInventory statsInventory;
 
-    public MainMenuGUI(ExtendedPlayer player, MainContainer mainContainer) {
+    public <T extends Container & SupportTabs.Container> MainMenuGUI(ExtendedPlayer player, T mainContainer) {
         super(mainContainer);
         this.allowUserInput = true;
         this.player = player;
@@ -221,57 +218,22 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
 
     @Override
     public void handleMouseInput() {
-
-        // GUI уже имеет дступ к этому полю. Не смсла взвать его так, когда можно взвать напрямую
-        //MainContainer container = (MainContainer) player.getEntityPlayer().openContainer;
-
-        // Mouse.getEventX() и Mouse.getEventY() возвращают сырой ввод мыши, так что нам нужно обработать его
-        ScaledResolution scaledresolution = new ScaledResolution(this.mc, this.mc.displayWidth, this.mc.displayHeight);
-        int width = scaledresolution.getScaledWidth();
-        int height = scaledresolution.getScaledHeight();
-        int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
-        int mouseZ = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
-
-        // Проходим по всем слотам в поисках того, на который мы навели курсок
-        for (Object inventorySlot : inventorySlots.inventorySlots) {
-            Slot slot = (Slot) inventorySlot;
-
-            if (isMouseOverSlot(slot, mouseX, mouseZ)) {
-
-                // Действия, если курсор наведен на статы
-                if (slot.inventory instanceof StatsInventory && !(slot.inventory instanceof SkillsInventory)) { // TODO: Найти способ делать проверку только на класс без учета наследования
-                    try {
-                        Item item = slot.getStack().getItem();
-
-                        if (!item.getUnlocalizedName().equals(currentStat) && !(item instanceof SkillItem)) {
-                            PacketShowSkillsByStat packet = new PacketShowSkillsByStat(item.getUnlocalizedName());
-                            CommonProxy.INSTANCE.sendToServer(packet);
-                            currentStat = item.getUnlocalizedName();
-                        }
-                    } catch (NullPointerException e) {
-                        System.err.println("Не удалось определить запрос вкладки.");
-                    }
-
-                }
-
-                // Действия, если курсор наведен на прочие вкладки
-                if (slot.inventory instanceof TabHostInventory) {
-                    try {
-                        Item item = slot.getStack().getItem();
-                        ((TabHostInventory) slot.inventory).setTab(item.getUnlocalizedName());
-
-                    } catch (NullPointerException e) {
-                        System.err.println("Не удалось определить запрос вкладки.");
-                    }
-
-                }
-            }
-        }
+        // Отслеживаем переключение вкладок для TabHostInventory'рей
+        Utils.handleMouseInput(this, this.guiLeft, this.guiTop);
 
         if (isPlayerTryExitWhileEditStats) {
             exitDialog.handleMouseInput(); // Обрабатываем нажатие на GUI диалога
         }
         super.handleMouseInput(); // Обрабатываем нажатие на GUI-родителе
+    }
+
+    @Override
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, int type) {
+        // Обрабатываем клики по слотам TabInventory'ей
+        if (! Utils.handleMouseClick(slotIn, slotId, mouseButton, type, this)) {
+            // Если Utils.handleMouseClick() вернет false, значит нужно задействовать стандартную обработку кликов
+            super.handleMouseClick(slotIn, slotId, mouseButton, type);
+        }
     }
 
     /**
@@ -317,9 +279,12 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
             @Override
             public void cancelActionPerformed() {
                 // Отбрасываем прокачку
-                CommonProxy.INSTANCE.sendToServer(new PacketDialogAction(PacketDialogAction.ActionType.CANCEL));
 
-                super.cancelActionPerformed();
+                // Сначала мы шлем месседж на сервер, что кликнута кнопка отмены ...
+                CommonProxy.INSTANCE.sendToServer(new PacketDialogAction(PacketDialogAction.ActionType.CANCEL));
+                /* И только потом закрывает gui на клиенте, посылая на сервер C0DPacketCloseWindow, который
+                 * вызывает на серверном контейнере onContainerClosed(). */
+                super.cancelActionPerformed(); // TODO: Действительно ли гарантируется именно такой порядок отсылки и обработки сообщений?
             }
         };
 
@@ -329,5 +294,10 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer {
          * уже по-дефолту вызывает initGui() без пересоздания объекта MainGUI */
         shouldDrawDefaultBackground(!isPlayerTryExitWhileEditStats);
         super.initGui();
+    }
+
+    @Override
+    public TabInventorySync getSync() {
+        return ((SupportTabs.Container) inventorySlots).getSync();
     }
 }

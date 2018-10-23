@@ -179,7 +179,7 @@ public class Dialog extends GuiScreen {
      */
     public void positiveActionPerformed() {
         // Закрываем GUI
-        Minecraft.getMinecraft().displayGuiScreen(null);
+        Minecraft.getMinecraft().thePlayer.closeScreen();
     }
 
     /**
@@ -195,6 +195,6 @@ public class Dialog extends GuiScreen {
      */
     public void cancelActionPerformed() {
         // Закрываем GUI
-        Minecraft.getMinecraft().displayGuiScreen(null);
+        Minecraft.getMinecraft().thePlayer.closeScreen();
     }
 }

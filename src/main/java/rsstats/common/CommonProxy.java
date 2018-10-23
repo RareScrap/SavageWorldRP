@@ -18,9 +18,8 @@ import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabMessageHandler;
 import rsstats.items.*;
+import ru.rarescrap.tabinventory.network.NetworkUtils;
 
 import static rsstats.common.RSStats.instance;
 import static rsstats.common.RSStats.proxy;
@@ -44,16 +43,14 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketOpenRSStatsInventory.MessageHandler.class, PacketOpenRSStatsInventory.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenSSPPage.MessageHandler.class, PacketOpenSSPPage.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketOpenWindow.MessageHandler.class, PacketOpenWindow.class, discriminator++, Side.SERVER);
-        INSTANCE.registerMessage(PacketShowSkillsByStat.MessageHandler.class, PacketShowSkillsByStat.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketSyncGUI.MessageHandler.class, PacketSyncGUI.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketDialogAction.MessageHandler.class, PacketDialogAction.class, discriminator++, Side.SERVER);
 
         INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
 
-        TabHostInventory.registerHandler(TabMessageHandler.class, discriminator++);
-        // Класические спосб регистрации для дебага
-        //CommonProxy.INSTANCE.registerMessage(TabMessageHandler.class, TabHostInventory.SetCurrentTabPacket.class, discriminator++, Side.SERVER);
+        // Регистрируем сообщения для библиотеки MinecraftTabInventory
+        NetworkUtils.registerMessages(INSTANCE, discriminator);
 
         // Регистрация предметов
         StatItems.registerItems();

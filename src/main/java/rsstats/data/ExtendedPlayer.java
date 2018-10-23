@@ -15,11 +15,11 @@ import rsstats.common.network.PacketSyncPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.RollModifier;
+import ru.rarescrap.tabinventory.TabHostInventory;
+import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,12 +71,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     private ExtendedPlayer(EntityPlayer player) {
         this.entityPlayer = player;
-        statsInventory = new StatsInventory(player);
-        skillsInventory = new SkillsInventory(player);
         wearableInventory = new WearableInventory(this);
 
-        otherTabsInventory = new TabInventory("effects", 36, entityPlayer);
-        otherTabsHost = new TabHostInventory("effects_host", 4, otherTabsInventory);
+        statsInventory = new StatsInventory("stats_inv", 9);
+        skillsInventory = new SkillsInventory("skills_inv", 36, entityPlayer, statsInventory);
+
+        otherTabsHost = new TabHostInventory("effects_host", 4);
+        otherTabsInventory = new TabInventory("effects", 36, entityPlayer, otherTabsHost);
     }
     
     /**
@@ -118,7 +119,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     @Override
     public void loadNBTData(NBTTagCompound properties) {
         this.statsInventory.totalClear();
-        this.skillsInventory.totalClear();
+        this.skillsInventory.totalClear(); // TODO: Может ли воникнуть ситуация, когда инвентари не пустые?
 
         exp = properties.getInteger("exp");
         lvl = properties.getInteger("lvl");
@@ -213,6 +214,14 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         return tirednessLimit;
     }
 
+    public void setProtection(int protection) {
+        this.protection = protection;
+    }
+
+    public void setPersistence(int persistence) {
+        this.persistence = persistence;
+    }
+
     public EntityPlayer getEntityPlayer() {
         return entityPlayer;
     }
@@ -272,7 +281,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      */
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), lvl), (EntityPlayerMP)entityPlayer);
+            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
         }
     }
 
