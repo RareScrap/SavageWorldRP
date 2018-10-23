@@ -7,28 +7,26 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
-import rsstats.common.network.PacketSyncPlayer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.Utils;
+import ru.rarescrap.tabinventory.TabContainer;
+import ru.rarescrap.tabinventory.TabHostInventory;
+import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +37,7 @@ import java.util.Map;
  *
  * @author rares
  */
-public class MainContainer extends Container {
+public class MainContainer extends TabContainer {
     private final EntityPlayer player;
     private final InventoryPlayer inventoryPlayer;
     private final StatsInventory statsInventory;
@@ -72,8 +70,19 @@ public class MainContainer extends Container {
         this.statsInventory = statsInventory;
         this.skillsInventory = skillsInventory;
         this.wearableInventory = wearableInventory;
+
         this.otherTabsHost = otherTabsHost;
         this.otherTabsInventory = otherTabsInventory;
+
+        // Добавляем вкладочный инвентарь к контейнеру
+        tabInventories.put(skillsInventory.getInventoryName(), skillsInventory);
+        tabInventories.put(otherTabsInventory.getInventoryName(), otherTabsInventory);
+        // Добавляем его к движку синхронизации (СЕРВЕР->КЛИЕНТ)
+        if (!player.worldObj.isRemote) {
+            getSync().addSync(skillsInventory);
+            getSync().addSync(otherTabsInventory);
+        }
+
         addSlots();
     }
 
@@ -411,6 +420,21 @@ public class MainContainer extends Container {
         return -1;
     }
 
+    @Override
+    public void detectAndSendChanges() {
+        /* Т.к. по логике данного контейнера slotClick(...) может не работать на клиенте и сервере одинакого,
+         * то для поддержания работоспособности синхронизации нам нужно выставить isChangingQuantityOnly = false
+         * см. NetHandlerPlayServer#processClickWindow().
+         *
+         * Кейс: Если этого не сделать, то при прокачке статы на клиент не будет высылаться пакет об уменьшении
+         * количества очков прокачки. По логике данного контейнера, проверку на возможность прокачки навыка/статы
+         * осуществляет сервер. Именно поэтому slotClick(...) работает по разному на клиенте и сервере.
+         */
+        // https://rarescrap.blogspot.com/2018/10/minecraft-1_18.html?zx=7ca4a4ed658beb3
+        ((EntityPlayerMP) player).isChangingQuantityOnly = false;
+        super.detectAndSendChanges();
+    }
+
     // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
     @Override
     public ItemStack slotClick(int slotId, int clickedButton, int mode, EntityPlayer playerIn) {
@@ -427,11 +451,21 @@ public class MainContainer extends Container {
             return super.slotClick(slotId, clickedButton, mode, playerIn);
         }
 
-        if (clickedButton == 1 && itemInSlot instanceof StatItem) // ПКМ
-            return processStatRightClick(slot, mode, playerIn);
+        if (clickedButton == 1 && itemInSlot instanceof StatItem) { // ПКМ
+            ItemStack temp = slot.getStack().copy();
+            processStatRightClick(slot, mode, playerIn);
+
+            /* Не следует возвращать прокачанный ItemStack, т.к. тогда
+             * NetHandlerPlayServer#processClickWindow() обнаружит что стак, по которому кликнул игрок
+             * не равен стаку в серверном инвентаре по такой же позиции. Это приведет к тому, что
+             * ВСЕ содержимое окна перешлется на клиент, что не очень эффективно. */
+            return temp;
+        }
 
         if (clickedButton == 2 && itemInSlot instanceof StatItem) { // СКМ
-            return processStatMiddleClick(slot, mode, playerIn);
+            ItemStack temp = slot.getStack().copy();
+            processStatMiddleClick(slot, mode, playerIn);
+            return temp;
         }
 
         if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
@@ -462,6 +496,15 @@ public class MainContainer extends Container {
         }
 
         return super.slotClick(slotId, clickedButton, mode, playerIn);
+    }
+
+    // Пересчет при закрытии контейнера нужен, когда в диалоге нажимается "Отменить изменения"
+    @Override
+    public void onContainerClosed(EntityPlayer p_75134_1_) {
+        // Пересчитываем параметры и синхронизируем их с клиентом
+        ExtendedPlayer.get(player).updateParams();
+        ExtendedPlayer.get(player).sync();
+        super.onContainerClosed(p_75134_1_);
     }
 
     public SkillsInventory getSkillsInventory() {
@@ -658,7 +701,7 @@ public class MainContainer extends Container {
                 // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
                 ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
                 extendedPlayer.updateParams();
-                CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), extendedPlayer.getLvl()), (EntityPlayerMP) playerIn); // TODO: Отсылать ВЕСЬ инвентарь - это пиздец. Оптимизировать
+                extendedPlayer.sync();
             }
         }
 
@@ -684,7 +727,7 @@ public class MainContainer extends Container {
             // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
             extendedPlayer.updateParams();
-            CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(statsInventory.getStats(), skillsInventory.getSkills(), extendedPlayer.getLvl()), (EntityPlayerMP) playerIn); // TODO Double code
+            extendedPlayer.sync();
         }
         return slot.getStack();
     }
