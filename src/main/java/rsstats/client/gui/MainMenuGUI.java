@@ -279,9 +279,12 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
             @Override
             public void cancelActionPerformed() {
                 // Отбрасываем прокачку
-                CommonProxy.INSTANCE.sendToServer(new PacketDialogAction(PacketDialogAction.ActionType.CANCEL));
 
-                super.cancelActionPerformed();
+                // Сначала мы шлем месседж на сервер, что кликнута кнопка отмены ...
+                CommonProxy.INSTANCE.sendToServer(new PacketDialogAction(PacketDialogAction.ActionType.CANCEL));
+                /* И только потом закрывает gui на клиенте, посылая на сервер C0DPacketCloseWindow, который
+                 * вызывает на серверном контейнере onContainerClosed(). */
+                super.cancelActionPerformed(); // TODO: Действительно ли гарантируется именно такой порядок отсылки и обработки сообщений?
             }
         };
 
