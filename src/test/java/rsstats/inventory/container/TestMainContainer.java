@@ -22,14 +22,14 @@ import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
-import rsstats.inventory.tabs_inventory.TabHostInventory;
-import rsstats.inventory.tabs_inventory.TabInventory;
 import rsstats.items.ExpItem;
 import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.utils.DiceRoll;
 import rsstats.utils.RollModifier;
+import ru.rarescrap.tabinventory.TabHostInventory;
+import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,8 +69,8 @@ public class TestMainContainer {
 
         initStatsAndSkills();
 
-        TabInventory tabInventory = new TabInventory("TabInventory", 27, player);
-        TabHostInventory tabHostInventory = new TabHostInventory("TabHostInventor", 9, tabInventory);
+        TabHostInventory tabHostInventory = new TabHostInventory("TabHostInventor", 9);
+        TabInventory tabInventory = new TabInventory("TabInventory", 27, player, tabHostInventory);
         mainContainer = new MainContainer(
                 player,
                 inventoryPlayer,
@@ -126,7 +126,7 @@ public class TestMainContainer {
         // Начинаем с 20 очками прокачки
         ItemStack points = new ItemStack(MiscItems.expItem, 20);
         inventoryPlayer.setInventorySlotContents(0, points); // TODO по непонятной причине addItemStackToInventory не работает
-        mainContainer.getSkillsInventory().setSkillsFor("item.StrengthStatItem");
+        mainContainer.getSkillsInventory().setCurrentTab("item.StrengthStatItem");
 
         mainContainer.slotClick(9, 1, 0, player); // Прокачиваем стату
         mainContainer.slotClick(9, 1, 0, player);
@@ -167,8 +167,8 @@ public class TestMainContainer {
      * Выставляет стандартный начальный билд
      */
     public void initStatsAndSkills() {
-        statsInventory = new StatsInventory(player);
-        skillsInventory = new SkillsInventory(player);
+        statsInventory = new StatsInventory("stats", 9);
+        skillsInventory = new SkillsInventory("skills", 27, player, statsInventory);
 
         ArrayList<DiceRoll> statDices = new ArrayList<DiceRoll>();
         statDices.add(new DiceRoll(null, null, 4));
@@ -216,6 +216,6 @@ public class TestMainContainer {
         skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "IntimidationSkillItem", "rsstats:skills/Intimidation", "item.IntimidationSkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
         skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "DiplomacySkillItem", "rsstats:skills/Diplomacy", "item.DiplomacySkillItem", (StatItem) statsInventory.getStackInSlot(4).getItem())));
         skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillDices, "ClimbingSkillItem", "rsstats:skills/Climbing", "item.ClimbingSkillItem", (StatItem) statsInventory.getStackInSlot(0).getItem())));
-        skillsInventory.setSkillsFor("item.StrengthStatItem");
+        skillsInventory.setCurrentTab("item.StrengthStatItem");
     }
 }
