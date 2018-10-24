@@ -431,8 +431,9 @@ public class MainContainer extends TabContainer {
          * осуществляет сервер. Именно поэтому slotClick(...) работает по разному на клиенте и сервере.
          */
         // https://rarescrap.blogspot.com/2018/10/minecraft-1_18.html?zx=7ca4a4ed658beb3
-        ((EntityPlayerMP) player).isChangingQuantityOnly = false;
-        super.detectAndSendChanges();
+        if (player instanceof EntityPlayerMP)
+            ((EntityPlayerMP) player).isChangingQuantityOnly = false;
+        super.detectAndSendChanges(); // Вызов на клиенте ни к чему не приведет, т.к. список crafters будет пустым
     }
 
     // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
