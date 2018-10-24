@@ -86,11 +86,17 @@ command.addLevel.success=Уровень %1$s теперь %2$d!
 command.addLevel.error=Невозможно повысить уровень
 command.paramsPlayer=Параметры %1$s: Шаг: %2$d, Защита %3$d, Стойкость: %4$d, Харизма:%5$d (броня: голова %6$d, торс %7$d, ноги %8$d, ступни %9$d)
 
+rank.novice=Новичок
+rank.tempered=Закаленный
+rank.veteran=Ветеран
+rank.hero=Герой
+rank.legend=Легенда
+
 gui.step=Шаг: %1$d
 gui.protection=Защита: %1$d
 gui.persistence=Стойкость: %1$d
 gui.charisma=Харизма: %1$d
-gui.level=Уровень: %1$d
+gui.rank=Уровень: %1$s
 gui.ExpPoints=Очки опыта: %1$d
 gui.tiredness=Усталость: %1$d
 gui.MainMenu.CloseDialog=Подтвердить улучшение навыков?

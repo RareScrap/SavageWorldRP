@@ -1,11 +1,14 @@
 package rsstats.data;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.Constants;
@@ -31,6 +34,28 @@ import java.util.Map;
  * @author rares
  */
 public class ExtendedPlayer implements IExtendedEntityProperties {
+
+    public enum Rank {
+        NOVICE,
+        TEMPERED,
+        VETERAN,
+        HERO,
+        LEGEND;
+
+        public int toInt() {
+            return this.ordinal();
+        }
+
+        public static Rank fromInt(int lvl) {
+            return Rank.values()[lvl];
+        }
+
+        @SideOnly(Side.CLIENT)
+        public String getTranslatedName() {
+            return StatCollector.translateToLocal("rank." + this.name().toLowerCase());
+        }
+    }
+
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
     private static final String EXTENDED_ENTITY_TAG = RSStats.MODID;
 
@@ -46,7 +71,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     private int charisma = 0;
 
     private int exp = 0;
-    private int lvl = 0;
+    private Rank rank;
     private int tiredness = 0;
     private int tirednessLimit = 25;
     
@@ -105,7 +130,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     @Override
     public void saveNBTData(NBTTagCompound properties) {
         properties.setInteger("exp", exp);
-        properties.setInteger("lvl", lvl);
+        properties.setInteger("rank", rank.toInt());
         properties.setInteger("tiredness", tiredness);
         properties.setInteger("tirednessLimit", tirednessLimit);
 
@@ -123,7 +148,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.skillsInventory.totalClear(); // TODO: Может ли воникнуть ситуация, когда инвентари не пустые?
 
         exp = properties.getInteger("exp");
-        lvl = properties.getInteger("lvl");
+        rank = Rank.fromInt(properties.getInteger("rank"));
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
 
@@ -169,6 +194,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         ExtendedPlayer.get((EntityPlayer) entity).statsInventory.initItems();
         ExtendedPlayer.get((EntityPlayer) entity).skillsInventory.initItems();
 
+        ExtendedPlayer.get((EntityPlayer) entity).rank = Rank.NOVICE;
+
         // Инициализируем основные параметры
         //loadNBTData(entity.getEntityData());
         try { // КОСТЫЛЬ
@@ -203,8 +230,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         return exp;
     }
 
-    public int getLvl() {
-        return lvl;
+    public Rank getRank() {
+        return rank;
     }
 
     public int getTiredness() {
@@ -255,6 +282,10 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     public void setLvl(int lvl) {
         this.lvl = lvl;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 
     /**

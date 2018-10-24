@@ -142,7 +142,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         int textY = 123;
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.step", player.getStep()), 8, textY, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.level", player.getLvl()), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.rank", player.getRank().getTranslatedName()), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.protection", player.getProtection()), 8, textY+=10, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.getExp()), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.persistence", player.getPersistence()), 8, textY+=10, 0x444444, false);

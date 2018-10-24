@@ -10,6 +10,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import rsstats.data.ExtendedPlayer;
 
+import static rsstats.data.ExtendedPlayer.Rank;
+
 /**
  * Пакет, синхронизирующий некоторый поля {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
  */
@@ -20,8 +22,8 @@ public class PacketSyncPlayer implements IMessage {
     private int protection;
     /** Основной параметр игрока - Стойкость */
     private int persistence;
-    /** Объект, хранящий распакованный уровень игрока */
-    private int lvl;
+    /** Ранг игрока */
+    private Rank rank;
 
     /**
      * Необходимый пустой публичный конструктор
@@ -29,7 +31,7 @@ public class PacketSyncPlayer implements IMessage {
     public PacketSyncPlayer() {}
 
     public PacketSyncPlayer(ExtendedPlayer player) {
-        this.lvl = player.getLvl();
+        this.rank = player.getRank();
         this.protection = player.getProtection();
         this.persistence = player.getPersistence();
     }
@@ -41,7 +43,7 @@ public class PacketSyncPlayer implements IMessage {
      */
     @Override
     public void fromBytes(ByteBuf buf) {
-        lvl = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
+        rank = Rank.fromInt(ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE));
         protection = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         persistence = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
     }
@@ -53,7 +55,7 @@ public class PacketSyncPlayer implements IMessage {
      */
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeVarInt(buf, lvl, BUFFER_INT_SIZE);
+        ByteBufUtils.writeVarInt(buf, rank.toInt(), BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, protection, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, persistence, BUFFER_INT_SIZE);
     }
@@ -66,7 +68,7 @@ public class PacketSyncPlayer implements IMessage {
         @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
-            extendedPlayer.setLvl(message.lvl);
+            extendedPlayer.setRank(message.rank);
             extendedPlayer.setPersistence(message.persistence);
             extendedPlayer.setProtection(message.protection);
             //extendedPlayer.updateParams();
