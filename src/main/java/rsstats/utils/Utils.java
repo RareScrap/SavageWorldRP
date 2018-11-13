@@ -1,7 +1,9 @@
 package rsstats.utils;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import rsstats.items.SkillItem;
 import rsstats.items.SkillItems;
@@ -16,29 +18,37 @@ public class Utils {
     /**
      * Обертка для поиска предметов в ванильном инвентаре игрока.
      * @param entityPlayer Целевой игрок
-     * @param itemUnlocalizedName Уникальное имя предмета
+     * @param itemRegistryName Уникальное имя предмета
      * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
      * @see #findIn(IInventory, String)
      */
-    public static ItemStack isPlayerHave(EntityPlayer entityPlayer, String itemUnlocalizedName) {
-        return findIn(entityPlayer.inventory, itemUnlocalizedName);
+    public static ItemStack isPlayerHave(EntityPlayer entityPlayer, String itemRegistryName) {
+        return findIn(entityPlayer.inventory, itemRegistryName);
     }
 
     /**
      * Проверяет инвентарь на наличи какого-либо предмета. Если нашел - возвращает стак этого предмета.
      * @param inventory Целевой инвентарь
-     * @param itemUnlocalizedName Уникальное имя предмета
+     * @param itemRegistryName Уникальное имя предмета
      * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
      */
-    public static ItemStack findIn(IInventory inventory, String itemUnlocalizedName) {
+    public static ItemStack findIn(IInventory inventory, String itemRegistryName) {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null && stack.getItem().getUnlocalizedName().equals(itemUnlocalizedName)) {
-                return stack;
-            }
+            if (stack == null) continue;
+
+            String stackItemName = getRegistryName(stack.getItem());
+            if (stackItemName.equals(itemRegistryName)) return stack;
         }
 
         return null;
+    }
+
+    /**
+     * Метод-обертка, возвраюащее уникальное имя предмета, которое было дано ему при регистрации
+     */
+    public static String getRegistryName(Item item) {
+        return GameRegistry.findUniqueIdentifierFor(item).name;
     }
 
     /**
