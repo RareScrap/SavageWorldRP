@@ -5,29 +5,31 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.registry.GameRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
+import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.items.StatItem;
+import rsstats.items.SkillItem;
 import rsstats.roll.DiceRoll;
 import rsstats.roll.Result;
 import rsstats.roll.RollModifier;
 import rsstats.utils.Utils;
-       
+
 /**
- * Этот пакет отсылается сервера
+ * Пакет, побуждающий сервер произвести проброс статы/скилла
  * @author RareScrap
  */
 public class RollPacketToServer implements IMessage {
     /** Имя игрока, делающий бросок */
-    private String playerName;
-    /** UnlocalizedName пробрасываемой статы
-     * @see StatItem#unlocalizedName */
+    private String playerName; // TODO: Зачем оно нужно, ведь можно получить его из ctx?
+    /** Уникальное имя пробрасываемой статы
+     * @see cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier#name */
     private String rollName;
-    /** Определяет стоит ли включить в результаты броска Дикий Кубик */
+    /** Стоит ли включить в результаты броска Дикий Кубик */
     private boolean withWildDice;
 
     /**
@@ -68,81 +70,119 @@ public class RollPacketToServer implements IMessage {
         public MessageHandler() {} // TODO: Зачем?
 
         @Override
-        public IMessage onMessage(RollPacketToServer message, MessageContext ctx) {
+        public IMessage onMessage(RollPacketToServer m, MessageContext ctx) {
             // Находим целевого игрока
             EntityPlayerMP entityPlayerMP = ctx.getServerHandler().playerEntity; // This is the player the packet was sent to the server from
-            if (!entityPlayerMP.getDisplayName().equals(message.playerName)) { // TODO: Не знаю, сработает ли это когда-нибудь
-                entityPlayerMP = (EntityPlayerMP) entityPlayerMP.worldObj.getPlayerEntityByName(message.playerName); // TODO: Можно ли обойтись без каста?
+            if (!entityPlayerMP.getDisplayName().equals(m.playerName)) { // TODO: Не знаю, сработает ли это когда-нибудь
+                entityPlayerMP = (EntityPlayerMP) entityPlayerMP.worldObj.getPlayerEntityByName(m.playerName); // TODO: Можно ли обойтись без каста?
                 if (entityPlayerMP == null) {
                     // Отсылаем на клиент сообщение об ошибке, которое там же локализируется
-                    entityPlayerMP.addChatMessage(new ChatComponentTranslation("user_not_found", message.playerName));
+                    entityPlayerMP.addChatMessage(new ChatComponentTranslation("user_not_found", m.playerName));
                     return null;
                 }
+                throw new RuntimeException("ТЫ НЕ ПОВЕРИШЬ, НО ЭТА СИТУАЦИЯ ВОЗМОЖНА!");
             }
 
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(entityPlayerMP);
 
             // Ищем у него стак с указанным итемом
-            ItemStack statStack = Utils.findIn(extendedPlayer.statsInventory, message.rollName);
+            ItemStack statStack = findRollStack(extendedPlayer, m.rollName);
             if (statStack == null) {
-                statStack = Utils.findIn(extendedPlayer.skillsInventory, message.rollName);
-                if (statStack == null) {
-                    entityPlayerMP.addChatMessage(new ChatComponentTranslation("stat_not_found", message.rollName, message.playerName));
-                    return null;
-                }
+                entityPlayerMP.addChatMessage(new ChatComponentTranslation(
+                        "stat_not_found",
+                        m.rollName,
+                        m.playerName));
+                return null;
             }
 
             // Формируем бросок
-            DiceRoll diceRoll = (DiceRoll) new DiceRoll(entityPlayerMP, statStack).withWildDice(message.withWildDice);
-
-            // Пробрасываем бросок
-            Result result = diceRoll.roll();
-
-            // Компонент с модификаторами
-            ChatComponentText modifiersComp = new ChatComponentText("<MODIFIERS>");
-            for (RollModifier modifier : result.modifiers) {
-                modifiersComp.appendSibling(new ChatComponentText(
-                        String.format("(%+d: %2$s) ", // TODO: Не нравитсямне добавление пробела в конце
-                                modifier.getValue(),
-                                modifier.getDescription())
-                ));
-            }
-
+            DiceRoll diceRoll = (DiceRoll) new DiceRoll(entityPlayerMP, statStack).withWildDice(m.withWildDice);
+            Result result = diceRoll.roll(); // Пробрасываем бросок
+            // Формируем компонент с модификаторами
+            ChatComponentText modifiersComp = createModifierComponent(result);
             // Формируем финальный компонент
-            ChatComponentTranslation resultStr;
-            if (message.withWildDice) {
-                resultStr = new ChatComponentTranslation(
-                        "item.StatItem.rollChatMessage_withWildDice",
-                        message.playerName,
-                        new ChatComponentTranslation(message.rollName+".name"),
-                        Utils.getBasicRollFrom(statStack).dice,
-                        result.toString(Result.RollType.MAIN),
-                        result.toString(Result.RollType.WILD),
-                        modifiersComp,
-                        result.getTotal(result.getMax(),true)
-                );
-            } else {
-                resultStr = new ChatComponentTranslation(
-                        "item.StatItem.rollChatMessage",
-                        message.playerName,
-                        new ChatComponentTranslation(message.rollName+".name"),
-                        Utils.getBasicRollFrom(statStack).dice,
-                        result.toString(Result.RollType.MAIN),
-                        modifiersComp,
-                        result.getTotal(result.getMax(),true)
-                );
-            }
-
-            // Отправить сообщение в чат на все клиенты игроков
-            FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(resultStr);
-
-            // Для дебага: вывести сторону в пользовательский канал
-            //serverPlayer.addChatComponentMessage(new ChatComponentText(FMLCommonHandler.instance().getEffectiveSide().name()));
-
-            // вывести сторону в серверный канал
-            //FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(new ChatComponentText(FMLCommonHandler.instance().getEffectiveSide().name()));
+            ChatComponentTranslation finaleComp = createFinaleComponent(m, statStack, result, modifiersComp);
+            // И отправляем его в чат на все клиенты игроков
+            FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(finaleComp);
 
             return null; // TODO: Скорее всего, стоит отправлять результат ролла на клиент
+        }
+
+        /**
+         * Находит стак по имени статы/навыка
+         * @param player Игрок, в инвентаре которого произвойдет поиск
+         * @param rollName Уникальное имя статы/навыка
+         * @return Стак с итемом статы/навыка. Null, если ничего не найдено.
+         */
+        private ItemStack findRollStack(ExtendedPlayer player, String rollName) {
+            // Ищем среди статов
+            ItemStack statStack = Utils.findIn(player.statsInventory, rollName);
+            if (statStack != null) return statStack;
+
+            // Если не нашли - среди скиллов
+
+            // Чтоб не перебирать все вкладки инвентаря, находим итем скилла по указанному имени ... // TODO: Замерить производительность при переборе и сравнить с текущим решением
+            SkillItem rollItem = (SkillItem) GameRegistry.findItem(RSStats.MODID, rollName);
+            // А потом из итема достаем стату-родитель и получаем ее имя, которое используется как ключ вкладки
+            String parentStatName = GameRegistry.findUniqueIdentifierFor(rollItem.parentStat).name;
+
+            statStack = ru.rarescrap.tabinventory.utils.Utils.findIn(
+                    player.skillsInventory,
+                    rollName,
+                    "item."+parentStatName); // TODO: Ебанный костыль
+
+            return statStack;
+        }
+
+        /**
+         * Создает компонент чата, содержащий в себе модификаторы результата ролла
+         */
+        private ChatComponentText createModifierComponent(Result rollResult) {
+            // Если модификаторов нет, вернем "пустой" компонент который не оторазится в чате
+            if (rollResult.modifiers.isEmpty()) return new ChatComponentText("");
+
+            ChatComponentText modifiersComp = new ChatComponentText("<MODIFIERS>"); // Маркируем компонент, чтобы клиент мог его найти
+            for (RollModifier modifier : rollResult.modifiers) {
+
+                // Добавляем модификаторы к компоненту
+                modifiersComp.appendSibling(new ChatComponentText(
+                        String.format("(%+d: %2$s) ", // TODO: Не нравитсямне добавление пробела в конце и почему шаблон берется не из файлов локализации?
+                        modifier.getValue(),
+                        modifier.getDescription())
+                ));
+
+            }
+
+            return modifiersComp;
+        }
+
+        /**
+         * Создает итоговый компонент чата, которй будет показан игрокам
+         * @param statStack Стак с итемом скилла/статы
+         */
+        private ChatComponentTranslation createFinaleComponent(RollPacketToServer m, ItemStack statStack, Result rollResult, ChatComponentText modifiersComp) {
+            if (m.withWildDice) {
+                return new ChatComponentTranslation(
+                        "item.StatItem.rollChatMessage_withWildDice",
+                        m.playerName,
+                        new ChatComponentTranslation(statStack.getUnlocalizedName()+".name"),
+                        Utils.getBasicRollFrom(statStack).dice,
+                        rollResult.toString(Result.RollType.MAIN),
+                        rollResult.toString(Result.RollType.WILD),
+                        modifiersComp,
+                        rollResult.getTotal(rollResult.getMax(),true)
+                );
+            } else {
+                return new ChatComponentTranslation(
+                        "item.StatItem.rollChatMessage",
+                        m.playerName,
+                        new ChatComponentTranslation(statStack.getUnlocalizedName()+".name"),
+                        Utils.getBasicRollFrom(statStack).dice,
+                        rollResult.toString(Result.RollType.MAIN),
+                        modifiersComp,
+                        rollResult.getTotal(rollResult.getMax(),true)
+                );
+            }
         }
     }
 
