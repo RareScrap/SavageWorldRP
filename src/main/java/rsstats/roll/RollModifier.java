@@ -19,7 +19,7 @@ public class RollModifier {
      * @param value Значение модификатора
      * @param description Описание модификатора
      */
-    public RollModifier(int value, String description) {
+    public RollModifier(int value, String description) { // TODO: Как-то добавить возможость задать i18n модификаторам
         this.value = value;
         this.description = description;
     }
