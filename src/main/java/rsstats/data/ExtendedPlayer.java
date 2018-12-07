@@ -57,7 +57,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /**
      * Ключи статичных параметров игрока
      */
-    public enum ParamKeys implements IModifierDependent {
+    public enum ParamKeys implements IModifierDependent { // TODO: Упростить get и set методы ExtendedPlayer'а, использая в качестве параметра константы из енума Rank
         STEP,
         PROTECTION,
         PERSISTENCE,
@@ -207,7 +207,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         // Инициализируем основные параметры
         //loadNBTData(entity.getEntityData());
-        try { // КОСТЫЛЬ
+        try { // TODO: КОСТЫЛЬ
             ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
             if (itemStack.getItem().getDamage(itemStack) == 0) {
                 this.protection = 2;
