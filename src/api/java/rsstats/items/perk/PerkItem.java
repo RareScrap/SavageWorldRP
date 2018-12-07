@@ -70,28 +70,24 @@ public abstract class PerkItem extends Item {
         //return;
 
         // TODO: Перк все равно добавится, даже если его добавть в другую вкладку.  Т.е. нет проверки на имя вкладки
-        /* Если использовать instanceof PerkItem, то onAdd сработает для ВСЕХ перков. Т.е. нельзя использовать
-         * instanceof this, то я испольльзую вот этот хак: */
-        if (e.currentStack != null && e.currentStack.getItem().getClass() == this.getClass())
+        /* Если использовать instanceof PerkItem, то onAdd сработает для ВСЕХ перков-наследников. Т.е. нельзя
+         * использовать instanceof this, то я испольльзую вот этот хак: */
+        if (e.change.actualItemStack != null && e.change.actualItemStack.getItem().getClass() == this.getClass())
             onAdd(e);
 
-        if (e.previouStack != null && e.previouStack.getItem().getClass() == this.getClass())
+        if (e.change.currentItemStack != null && e.change.currentItemStack.getItem().getClass() == this.getClass())
             onRemove(e);
     }
 
     public void onAdd(StackAddToTabEvent e) {
-        if (e.isLivingEntity()) {
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get((EntityPlayer) e.getLivingEntity());
-            extendedPlayer.modifierManager.addModifiers(getModifiers());
-            extendedPlayer.updateParams();
-        }
+        ExtendedPlayer extendedPlayer = ExtendedPlayer.get(e.entityPlayer);
+        extendedPlayer.modifierManager.addModifiers(getModifiers());
+        extendedPlayer.updateParams();
     }
 
     public void onRemove(StackAddToTabEvent e) {
-        if (e.isLivingEntity()) {
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get((EntityPlayer) e.getLivingEntity());
-            extendedPlayer.modifierManager.removeModifiers(getModifiers());
-            extendedPlayer.updateParams();
-        }
+        ExtendedPlayer extendedPlayer = ExtendedPlayer.get(e.entityPlayer);
+        extendedPlayer.modifierManager.removeModifiers(getModifiers());
+        extendedPlayer.updateParams();
     }
 }
