@@ -92,12 +92,12 @@ public class WearableInventory implements IInventory {
     public void setInventorySlotContents(int slotIndex, ItemStack itemStack) {
         // Работаем с модификаторами предмета
         if (itemStack != null) { // извлекаем и сохраняем модификаторы
-            extendedPlayer.extractModifiersFromItemStack(itemStack);
+            extendedPlayer.modifierManager.addModifiersFrom(itemStack);
         }
 
         // Если до этого в слоте находился другой предмет - удаляем его модификаторы
         if (getStackInSlot(slotIndex) != null) {
-            extendedPlayer.removeModifiersFromItemStack(getStackInSlot(slotIndex));
+            extendedPlayer.modifierManager.removeModifiersFrom(getStackInSlot(slotIndex));
         }
 
         // Непосредственно помещаем сам стак в слот

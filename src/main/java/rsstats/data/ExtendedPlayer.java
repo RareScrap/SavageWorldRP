@@ -94,8 +94,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Инвентарь с вкладками для прочей информации вроде перков, изъянов и т.д. */
     public TabInventory otherTabsInventory;
 
-//    /** Хранилище модификаторов, преминимых с броскам данного игрока */
-//    private Map<String, ArrayList<RollModifier>> modifierMap = new HashMap<String, ArrayList<RollModifier>>();
+    /** Хранилище модификаторов броска игрока */
     public ModifierManager modifierManager = new ModifierManager();
 
     /*

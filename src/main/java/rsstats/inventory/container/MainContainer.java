@@ -148,7 +148,7 @@ public class MainContainer extends TabContainer {
                 @Override
                 public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack itemStack) {
                     super.onPickupFromSlot(p_82870_1_, itemStack);
-                    ExtendedPlayer.get(player).removeModifiersFromItemStack(itemStack); // Удаляем модификаторы от прошлой брони
+                    ExtendedPlayer.get(player).modifierManager.removeModifiersFrom(itemStack); // Удаляем модификаторы от прошлой брони
                 }
 
                 /**
@@ -163,10 +163,10 @@ public class MainContainer extends TabContainer {
                     if (/*!*/player.worldObj.isRemote) {
                         // Если в слоте уже был предмет - удаляем его модификаторы
                         if (this.getStack() != null) {
-                            ExtendedPlayer.get(player).removeModifiersFromItemStack(this.getStack());
+                            ExtendedPlayer.get(player).modifierManager.removeModifiersFrom(this.getStack());
                         }
                         // Извлекаем и сохраняем модификаторы из стака, который кладется в слот
-                        ExtendedPlayer.get(player).extractModifiersFromItemStack(itemStack);
+                        ExtendedPlayer.get(player).modifierManager.addModifiersFrom(itemStack);
                     }
                     super.putStack(itemStack);
 

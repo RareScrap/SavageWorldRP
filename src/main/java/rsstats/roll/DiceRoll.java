@@ -21,7 +21,8 @@ public class DiceRoll extends BasicRoll { // TODO: rename to PlayerRoll
         super(getBasicRollFrom(rollStack));
 
         // Добавляем релефантные модификаторы, которыми обладает игрок
-        List<RollModifier> modifiers = getModifiersFor(player, rollStack.getUnlocalizedName());
+        ExtendedPlayer extendedPlayer = ExtendedPlayer.get(player);
+        List<RollModifier> modifiers = extendedPlayer.modifierManager.getModifiers((StatItem) rollStack.getItem()); // TODO: Как-то сцыкотно.
         if (modifiers != null)
             this.modifiers.addAll(modifiers);
 
