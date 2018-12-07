@@ -35,7 +35,7 @@ public abstract class Requirement {
 
         @Override
         public boolean isSuitableFor(ExtendedPlayer player) {
-            return player.getRank().compare(minRank) >= 0;
+            return player.getRank().compareTo(minRank) >= 0;
         }
 
         @Override
