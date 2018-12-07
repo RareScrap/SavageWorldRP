@@ -134,4 +134,11 @@ public class ModifierManager { // TODO: UNIT-TEST ALL!
     public void removeModifiersFrom(ItemStack itemStack) {
         removeModifiers(extractModifiersFrom(itemStack));
     }
+
+    /**
+     * Полностью очищает список модификаторов
+     */
+    public void clear() {
+        modifiers.clear();
+    }
 }

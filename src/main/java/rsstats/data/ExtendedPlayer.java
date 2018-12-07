@@ -178,6 +178,15 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         }
 
+        // Выгружаем модификаторы перков из NBT-сохранения
+        TabInventory.Tab a = otherTabsInventory.items.get(OtherItems.perksTabItem.getUnlocalizedName());
+        for (ItemStack stack : a.stacks) {
+            if (stack != null) {
+                PerkItem perkItem = (PerkItem) stack.getItem();
+                modifierManager.addModifiers(perkItem.getModifiers());
+            }
+        }
+
         updateParams();
     }
 

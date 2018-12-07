@@ -54,8 +54,6 @@ public class ModEventHandler {
     public void entityJoinWorld(EntityJoinWorldEvent e) {
         if (e.entity instanceof EntityPlayer) {
             ExtendedPlayer data = ExtendedPlayer.get((EntityPlayer) e.entity);
-            if (data != null)
-                data.sync();
 
             // Альтернативная начальная инициализация вкладок
             if (data.otherTabsHost.isEmpty()) {
@@ -65,6 +63,9 @@ public class ModEventHandler {
                 data.otherTabsHost.setInventorySlotContents(3, new ItemStack(OtherItems.negativeEffectsTabItem, 1));
 
             }
+
+            if (data != null)
+                data.sync();
         }
     }
 
