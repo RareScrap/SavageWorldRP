@@ -2,10 +2,11 @@ package rsstats.roll;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import rsstats.data.ExtendedPlayer;
+import rsstats.items.StatItem;
 
 import java.util.List;
 
-import static rsstats.data.ExtendedPlayer.getModifiersFor;
 import static rsstats.utils.Utils.getBasicRollFrom;
 
 /**
