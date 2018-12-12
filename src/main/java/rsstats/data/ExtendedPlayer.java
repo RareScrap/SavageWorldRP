@@ -152,14 +152,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
     @Override
     public void loadNBTData(NBTTagCompound properties) {
-        this.statsInventory.totalClear();
-        this.skillsInventory.totalClear(); // TODO: Может ли воникнуть ситуация, когда инвентари не пустые?
-
         exp = properties.getInteger("exp");
         rank = Rank.fromInt(properties.getInteger("rank"));
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
 
+        /* Нет нужды очищать инвентари перед применением сохранения, т.к.
+         * readFromNBT() перезаписывает ВСЕ слоты инвентаря */
         this.statsInventory.readFromNBT(properties);
         this.skillsInventory.readFromNBT(properties);
         this.wearableInventory.readFromNBT(properties);
