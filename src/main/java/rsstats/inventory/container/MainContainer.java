@@ -474,7 +474,7 @@ public class MainContainer extends TabContainer {
 
             // Защита от дублирующихся сообщений в чате + ролл посылается в клиента, где определен класс GuiScreen
             if (playerIn.worldObj.isRemote) {
-                ( (StatItem) itemStack.getItem() ).roll(itemStack, playerIn, !GuiScreen.isCtrlKeyDown());
+                ( (StatItem) itemStack.getItem() ).sendRollPacket(itemStack, playerIn, !GuiScreen.isCtrlKeyDown());
             }
             return slot.getStack();
         }

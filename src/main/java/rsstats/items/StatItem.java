@@ -16,8 +16,8 @@ import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.roll.BasicRoll;
-import rsstats.roll.RollModifier;
 import rsstats.utils.DescriptionCutter;
+import rsstats.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,7 +190,7 @@ public class StatItem extends Item {
 
         // Сообщение о ролле посылается с клиента, где определен класс GuiScreen
         if(world.isRemote) {
-            roll(itemstack, entityplayer, !GuiScreen.isCtrlKeyDown());
+            sendRollPacket(itemstack, entityplayer, !GuiScreen.isCtrlKeyDown()); // TODO: Если взять интелект5, в то время как в statInventory игрока лежит интеллект1, то ролнется интеллект1
         }
 
 
@@ -237,43 +237,12 @@ public class StatItem extends Item {
 
     // TODO: Переопределить такие методы iRepearable и isDamagable, чтобы сделать поведение предмета более конкретным
 
-    public void roll(ItemStack itemStack, EntityPlayer entityplayer, boolean withWildDice) {
-        // If нужен, чтобы броить бросок только один раз
-        //if (world.isRemote) { // TODO: На какой стороне вычисляется бросок?
-        //String num = String.valueOf( basicRolls[ Integer.parseInt(itemstack.getIconIndex().toString()) ].dice );
-        String statName = StatCollector.translateToLocalFormatted( localePrefix + ".name");
-        int lvl = itemStack.getItemDamage();
-
-        // TODO ХЗ зачем
-        //String str = itemstack.getIconIndex().getIconName();
-        //str = str.replaceAll("[^\\d.]", "");
-
-        // Получаем модификаторы
-        ArrayList<RollModifier> modifiers = new ArrayList<RollModifier>();
-        if (ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName()) != null)
-            modifiers.addAll(ExtendedPlayer.get(entityplayer).getModifierMap().get(getUnlocalizedName())); // Модификаторы игрока
-        if (basicRolls.get(lvl).modifiers != null)
-            modifiers.addAll(basicRolls.get(lvl).modifiers); // Модификаторы, зашитые в броски (например, отсуствующий навык)
-
-        //DiceRoll roll = new DiceRoll(basicRolls.get(lvl), );
-
-        /*DiceRoll roll = new DiceRoll(
-                basicRolls.get(lvl),
+    public void sendRollPacket(ItemStack itemStack, EntityPlayer entityplayer, boolean withWildDice) {
+        RollPacketToServer packet = new RollPacketToServer(
                 entityplayer.getDisplayName(),
-                statName,
-                modifiers
-        );*/
-
-        //entityplayer.addChatComponentMessage(new ChatComponentText(basicRolls.get(lvl).dice + " " + statName));
-
-        RollPacketToServer packet = new RollPacketToServer(entityplayer.getDisplayName(), itemStack.getUnlocalizedName(), withWildDice);
-        CommonProxy.INSTANCE.sendToServer(packet); // "123" // itemstack.getIconIndex(
-
-        //}
-        //entityplayer.addChatComponentMessage(new ChatComponentText(this.roll()));
-
-        //return itemstack;
-        //return super.onItemRightClick(itemstack, world, entityplayer); //To change body of generated methods, choose Tools | Templates.
+                Utils.getRegistryName(itemStack.getItem()),
+                withWildDice);
+        CommonProxy.INSTANCE.sendToServer(packet);
     }
 
     
