@@ -10,7 +10,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import rsstats.data.ExtendedPlayer;
-import rsstats.items.OtherItems;
 import rsstats.items.perk.PerkItem;
 
 import java.util.ArrayList;
@@ -27,11 +26,10 @@ public class PacketSyncPlayer implements IMessage {
     private int protection;
     /** Основной параметр игрока - Стойкость */
     private int persistence;
+    /** Основной параметр игрока - Харизма */
+    private int charisma;
     /** Ранг игрока */
     private Rank rank;
-    /** Черты игрока, из которых на клиенте буду извлечены модификаторы.
-     * @see MessageHandler#setPerkModifiers(ExtendedPlayer, ArrayList)  */
-    private ArrayList<ItemStack> perkItems = new ArrayList<ItemStack>();
 
     /**
      * Необходимый пустой публичный конструктор
@@ -42,18 +40,8 @@ public class PacketSyncPlayer implements IMessage {
         this.rank = player.getRank();
         this.protection = player.getProtection();
         this.persistence = player.getPersistence();
+        this.charisma = player.getCharisma();
 
-        // Получаем итемы перков (в них возможны null-элементы)
-        /* Намеренно не делаю проверку на наличие OtherItems.perksTabItem в items, т.к.
-         * не знаю возможно ли такой кейс. Хочу это проверить. */
-        ItemStack[] withNulls = player.otherTabsInventory.items.get(OtherItems.perksTabItem.getUnlocalizedName()).stacks;
-
-        // Формируем список без null-элементов (чтобы не пересылать null-итемы)
-        for (ItemStack stack : withNulls) {
-            if (stack != null) perkItems.add(stack);
-            /* При маленьких списках простой перебор показывает лучшую производительности
-             * см. https://gist.github.com/RareScrap/527b3bc531811600dd7bd65a44e62cd1 */
-        }
     }
 
     /**
@@ -66,12 +54,7 @@ public class PacketSyncPlayer implements IMessage {
         rank = Rank.fromInt(ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE));
         protection = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         persistence = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
-
-        // Десериализуем итемы перков
-        int size = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
-        for (int i = 0; i < size; i++) {
-            perkItems.add(ByteBufUtils.readItemStack(buf));
-        }
+        charisma = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
     }
 
     /**
@@ -84,12 +67,8 @@ public class PacketSyncPlayer implements IMessage {
         ByteBufUtils.writeVarInt(buf, rank.toInt(), BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, protection, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, persistence, BUFFER_INT_SIZE);
+        ByteBufUtils.writeVarInt(buf, charisma, BUFFER_INT_SIZE);
 
-        // Сериализуем итемы перков
-        ByteBufUtils.writeVarInt(buf, perkItems.size(), BUFFER_INT_SIZE);
-        for (ItemStack perkItem : perkItems) {
-            ByteBufUtils.writeItemStack(buf, perkItem);
-        }
     }
 
     /**
@@ -100,14 +79,15 @@ public class PacketSyncPlayer implements IMessage {
         @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
         public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
-            extendedPlayer.setRank(message.rank);
-            extendedPlayer.setPersistence(message.persistence);
             extendedPlayer.setProtection(message.protection);
-            setPerkModifiers(extendedPlayer, message.perkItems);
-            extendedPlayer.updateParams();
+            extendedPlayer.setPersistence(message.persistence);
+            extendedPlayer.setCharisma(message.charisma);
+            extendedPlayer.setRank(message.rank);
+
             return null;
         }
 
+        // Оставлен т.к. понадобится, если вдруг придется синхронизировать модификаторы
         /**
          * Извлекает из стаков с PerkItem'ами модификаторы и копирует их в modifierManager клиента. Сами стаки
          * ни в какой нинветарь не помещаются.
