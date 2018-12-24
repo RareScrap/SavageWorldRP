@@ -1,7 +1,6 @@
 package rsstats.utils;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,17 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
-    /**
-     * Обертка для поиска предметов в ванильном инвентаре игрока.
-     * @param entityPlayer Целевой игрок
-     * @param itemRegistryName Уникальное имя предмета
-     * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
-     * @see #findIn(IInventory, String)
-     */
-    public static ItemStack isPlayerHave(EntityPlayer entityPlayer, String itemRegistryName) {
-        return findIn(entityPlayer.inventory, itemRegistryName);
-    }
-
     /**
      * Проверяет инвентарь на наличи какого-либо предмета. Если нашел - возвращает стак этого предмета.
      * @param inventory Целевой инвентарь

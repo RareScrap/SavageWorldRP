@@ -676,7 +676,7 @@ public class MainContainer extends TabContainer {
      */
     protected ItemStack processStatRightClick(Slot slot, int mode, EntityPlayer playerIn) {
         // Если у игрока есть очки прокачки и он не в режиме редактирования ...
-        if (Utils.isPlayerHave(playerIn, "item.ExpItem") != null & !isEditMode) { // TODO: Magic string
+        if (playerIn.inventory.hasItem(MiscItems.expItem) && !isEditMode) {
             // ... тогда инициализируем режим прокачки и сохраняем текущий билд игрока
             isEditMode = true;
             if (!playerIn.worldObj.isRemote) {
