@@ -501,11 +501,13 @@ public class MainContainer extends TabContainer {
 
     // Пересчет при закрытии контейнера нужен, когда в диалоге нажимается "Отменить изменения"
     @Override
-    public void onContainerClosed(EntityPlayer p_75134_1_) {
+    public void onContainerClosed(EntityPlayer entityPlayer) {
         // Пересчитываем параметры и синхронизируем их с клиентом
-        ExtendedPlayer.get(player).updateParams();
-        ExtendedPlayer.get(player).sync();
-        super.onContainerClosed(p_75134_1_);
+        if (!entityPlayer.worldObj.isRemote) {
+            ExtendedPlayer.get(player).updateParams();
+            ExtendedPlayer.get(player).sync();
+        }
+        super.onContainerClosed(entityPlayer);
     }
 
     public SkillsInventory getSkillsInventory() {
