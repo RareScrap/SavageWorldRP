@@ -7,7 +7,8 @@ import rsstats.items.StatItem;
 
 import java.util.List;
 
-import static rsstats.utils.Utils.getBasicRollFrom;
+import static rsstats.items.StatItem.getRoll;
+
 
 /**
  * Бросок дайсов с информацией о том, кто делал бросок и для какого навыка
@@ -19,7 +20,7 @@ public class DiceRoll extends BasicRoll { // TODO: rename to PlayerRoll
     public ItemStack rollStack;
 
     public DiceRoll(EntityPlayerMP player, ItemStack rollStack) {
-        super(getBasicRollFrom(rollStack));
+        super(getRoll(rollStack));
 
         // Добавляем релефантные модификаторы, которыми обладает игрок
         ExtendedPlayer extendedPlayer = ExtendedPlayer.get(player);

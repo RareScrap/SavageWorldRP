@@ -18,10 +18,14 @@ import rsstats.common.network.PacketSyncPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
-import rsstats.items.SkillItem;
+import rsstats.items.OtherItems;
+import rsstats.items.SkillItems;
 import rsstats.items.StatItem;
+import rsstats.items.StatItems;
 import rsstats.items.perk.IModifierDependent;
+import rsstats.items.perk.PerkItem;
 import rsstats.roll.RollModifier;
+import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabHostInventory;
 import ru.rarescrap.tabinventory.TabInventory;
 
@@ -213,17 +217,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         ExtendedPlayer.get((EntityPlayer) entity).rank = Rank.NOVICE;
 
         // Инициализируем основные параметры
-        //loadNBTData(entity.getEntityData());
-        try { // TODO: КОСТЫЛЬ
-            ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
-            if (itemStack.getItem().getDamage(itemStack) == 0) {
-                this.protection = 2;
-            } else {
-                this.protection = 2 + ((SkillItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
-            }
-            itemStack = statsInventory.getStat("item.EnduranceStatItem");
-            this.persistence = 2 + ((StatItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
-        } catch (Exception e) {}
+        updateParams();
     }
 
     public int getProtection() {
@@ -278,18 +272,32 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      * Перерасчитывает параметры игрока (такие, как например, {@link #protection})
      */
     public void updateParams() {
-        ItemStack itemStack = skillsInventory.getSkill("item.FightingSkillItem");
+        // Расчитываем параметр "Защита"
+        ItemStack itemStack = ru.rarescrap.tabinventory.utils.Utils.findIn(
+                skillsInventory,
+                Utils.getRegistryName(SkillItems.fightingSkillItem),
+                StatItems.agilityStatItem.getUnlocalizedName()); // TODO: UnlocalizedName используется в качестве ключа вкладки!
+
         if (itemStack != null) {
             if (itemStack.getItem().getDamage(itemStack) == 0) {
                 this.protection = 2;
             } else {
-                this.protection = 2 + ((SkillItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
+                this.protection = 2 + StatItem.getRoll(itemStack).dice / 2;
             }
         }
 
-        itemStack = statsInventory.getStat("item.EnduranceStatItem");
-        if (itemStack != null) {
-            this.persistence = 2 + ((StatItem) itemStack.getItem()).getRollLevel(itemStack) / 2;
+        // Рассчитываем параметр "Стойкость"
+        itemStack = Utils.findIn(statsInventory, Utils.getRegistryName(StatItems.enduranceStatItem));
+        if (itemStack != null)
+            this.persistence = 2 + StatItem.getRoll(itemStack).dice / 2;
+
+        // Расчитываем параметр "Харизма"
+        charisma = 0;
+        List<RollModifier> modifiers = modifierManager.getModifiers(ExtendedPlayer.ParamKeys.CHARISMA);
+        if (modifiers != null) {
+            for (RollModifier rollModifier : modifiers) {
+                charisma += rollModifier.getValue();
+            }
         }
     }
 

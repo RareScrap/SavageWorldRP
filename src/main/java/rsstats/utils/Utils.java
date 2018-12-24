@@ -4,11 +4,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import rsstats.items.SkillItem;
-import rsstats.items.SkillItems;
-import rsstats.items.StatItem;
-import rsstats.items.StatItems;
-import rsstats.roll.BasicRoll;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,20 +71,5 @@ public class Utils {
         }
 
         throw new RuntimeException("Unplanned case. This is probably our bug.");
-    }
-
-    /**
-     * Пытается получить базовый ролл для итема в стаке по метадате итема
-     * @param itemStack Стак с {@link StatItem}'ом. Метадата стака должна обозначать уровень навыка.
-     * @throws ClassCastException Если itemStack не содержит {@link StatItem}.
-     */
-    public static BasicRoll getBasicRollFrom(ItemStack itemStack) {
-        StatItem statItem = (StatItem) itemStack.getItem();
-
-        if (statItem instanceof SkillItem) {
-            return SkillItems.basicRolls.get(itemStack.getItemDamage());
-        } else {
-            return StatItems.basicRolls.get(itemStack.getItemDamage());
-        }
     }
 }

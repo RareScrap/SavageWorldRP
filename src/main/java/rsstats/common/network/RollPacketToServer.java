@@ -14,6 +14,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.SkillItem;
+import rsstats.items.StatItem;
 import rsstats.roll.DiceRoll;
 import rsstats.roll.Result;
 import rsstats.roll.RollModifier;
@@ -166,7 +167,7 @@ public class RollPacketToServer implements IMessage {
                         "item.StatItem.rollChatMessage_withWildDice",
                         m.playerName,
                         new ChatComponentTranslation(statStack.getUnlocalizedName()+".name"),
-                        Utils.getBasicRollFrom(statStack).dice,
+                        StatItem.getRoll(statStack).dice,
                         rollResult.toString(Result.RollType.MAIN),
                         rollResult.toString(Result.RollType.WILD),
                         modifiersComp,
@@ -177,7 +178,7 @@ public class RollPacketToServer implements IMessage {
                         "item.StatItem.rollChatMessage",
                         m.playerName,
                         new ChatComponentTranslation(statStack.getUnlocalizedName()+".name"),
-                        Utils.getBasicRollFrom(statStack).dice,
+                        StatItem.getRoll(statStack).dice,
                         rollResult.toString(Result.RollType.MAIN),
                         modifiersComp,
                         rollResult.getTotal(rollResult.getMax(),true)

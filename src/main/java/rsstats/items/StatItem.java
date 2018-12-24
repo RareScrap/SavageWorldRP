@@ -255,8 +255,20 @@ public class StatItem extends Item {
     }*/
 
 
-    public int getRollLevel(ItemStack itemStack) { // TODO: Отрефакторить, как в Utils#getBasicRollFrom()
-        return basicRolls.get(getDamage(itemStack)).dice;
+    /**
+     * Получает ролл из стака, если возможно
+     * @param itemStack Стак с предметом для броска. Должен содержать {@link StatItem} или его наследника.
+     * @return Базовый ролл для данного стака
+     *
+     * @throws IllegalArgumentException если itemStack содержит недопустимый итем
+     */
+    public static BasicRoll getRoll(ItemStack itemStack) {
+        if (itemStack == null || !(itemStack.getItem() instanceof StatItem) )
+            throw new IllegalArgumentException("ItemStack must contain a SkillItem. Now ItemStack contain "
+                    + (itemStack == null ? "null" : itemStack.getItem().getClass()));
+
+        StatItem statItem = (StatItem) itemStack.getItem();
+        return statItem.basicRolls.get(itemStack.getItemDamage());
     }
 
 }
