@@ -21,8 +21,10 @@ import rsstats.inventory.WearableInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
 import rsstats.items.MiscItems;
+import rsstats.items.OtherItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
+import rsstats.items.perk.PerkItem;
 import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabContainer;
 import ru.rarescrap.tabinventory.TabHostInventory;
@@ -218,8 +220,24 @@ public class MainContainer extends TabContainer {
             for (int x = 0; x < 9; ++x) {
                 this.addSlotToContainer(new Slot(otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 134) {
                     @Override
-                    public boolean isItemValid(ItemStack p_75214_1_) {
-                        return otherTabsHost.isUseableByPlayer(player);
+                    public boolean isItemValid(ItemStack itemStack) {
+                        // Получаем имя вкладки с перками
+                        String perkTabName = OtherItems.perksTabItem.getUnlocalizedName();
+
+                        // Проверяем в какую вкладку игрок хочет поместить стак (пока проверяем только очет ли он поместить ее в вкладку перков)
+                        if (itemStack != null && itemStack.getItem() instanceof PerkItem && otherTabsInventory.getCurrentTab().equals(perkTabName)) {
+                            // Проверяем, может ли игрок использовать целевой инвентарь и удовлетворяет ли игрок требованиям перка
+                            PerkItem perkItem = (PerkItem) itemStack.getItem();
+                            return otherTabsHost.isUseableByPlayer(player) && perkItem.isSuitableFor(ExtendedPlayer.get(player));
+                        }
+
+                        return false;
+
+                        /* Небользая заметка: раз этот метод исполняется на клиенте, то результат работы этого метода
+                         * должен бть одинаков на обоих сторонах. Возможно, это первый звоночек к тому, что придется
+                         * держать постоянную (т.е. не в рамках срока жизни одного контейнера) ВСЕЙ инфы ExtendedPlayer'а
+                         * с клиентом. Сделать это можно так же как ванильный код поддерживает синхронизацию
+                         * EntityPlayer#inventoryContainer. */
                     }
                 });
             }
