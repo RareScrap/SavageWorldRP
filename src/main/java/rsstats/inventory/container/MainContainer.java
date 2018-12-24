@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -421,21 +420,6 @@ public class MainContainer extends TabContainer {
 //        } else { // Стата уже спущена до минимального предела - выходим
 //            return;
 //        }
-    }
-
-    /**
-     * Находит и возвращает тот порядковы номер слота, который не содержит в себе {@link ItemStack}'а
-     * @param inventory Ивентарь, в котором производится поиск
-     * @return Индекс свободной ячейки инвентаря. Если свободных ичеет нет, метод вернет -1.
-     */
-    private int findFreeSpaceInInventory(IInventory inventory) {
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack itemStack = inventory.getStackInSlot(i);
-            if (itemStack == null) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
