@@ -2,13 +2,14 @@ package rsstats.roll;
 
 import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
+import rsstats.i18n.IClientTranslatable;
 import rsstats.utils.DescriptionCutter;
 
 /**
  * Модификатора броска
  * @author RareScrap
  */
-public class RollModifier {
+public class RollModifier implements IClientTranslatable {
     /* Object#equals(Object) не должен быть зависимым от mutable-полей, т.к. это приводит к плохим пследствиям:
      * https://www.artima.com/lejava/articles/equality.html Pitfall #3
      * Именно поэтому эти поля final. */
@@ -37,7 +38,12 @@ public class RollModifier {
      * @return Строкое представление модификатора
      */
     @Override
-    public String toString() { // TODO: Рефакторить. Вызовов локализации на серве - это пиздец
+    public String toString() {
+        return "(" + (value > 0 ? "+"+value : value) + ": " + description + ")";
+    }
+
+    @Override
+    public String getTranslatedString() {
         String formatCode;
         if (value > 0) {
             formatCode = RSStats.config.modifierColorPositive;
@@ -46,7 +52,6 @@ public class RollModifier {
         }
 
         // TODO: Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово. Все работает норм, но при юзании отладчика - можно увидеть как сюда приходит пустое слово. В игре такое не разу не замечено
-        // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку на § в этой функции
         String cut_descr = DescriptionCutter.formatEveryWord(description, "\u00A7" + formatCode); // Символ §
 
         // Форматируем выходную строку
