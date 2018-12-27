@@ -9,10 +9,13 @@ import rsstats.utils.DescriptionCutter;
  * @author RareScrap
  */
 public class RollModifier {
+    /* Object#equals(Object) не должен быть зависимым от mutable-полей, т.к. это приводит к плохим пследствиям:
+     * https://www.artima.com/lejava/articles/equality.html Pitfall #3
+     * Именно поэтому эти поля final. */
     /** Значение модификатора */
-    private int value;
+    public final int value;
     /** Описание модификатора */
-    private String description;
+    public final String description;
 
     /**
      * Конструктор инициализирующий свои поля
@@ -21,7 +24,12 @@ public class RollModifier {
      */
     public RollModifier(int value, String description) { // TODO: Как-то добавить возможость задать i18n модификаторам
         this.value = value;
-        this.description = description;
+
+        // Мне не нужен null в description
+        if (description != null) // Из-за language level 6 я не могу использовать @NutNull, так что пусть будет так.
+            this.description = description;
+        else
+            this.description = "";
     }
 
     /**
@@ -39,25 +47,29 @@ public class RollModifier {
 
         // TODO: Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово. Все работает норм, но при юзании отладчика - можно увидеть как сюда приходит пустое слово. В игре такое не разу не замечено
         // TODO: Костыль. Стоит разобратся что за дичь творится с description, если убрать эту проверку на § в этой функции
-        description = DescriptionCutter.formatEveryWord(description, "\u00A7" + formatCode); // Символ §
+        String cut_descr = DescriptionCutter.formatEveryWord(description, "\u00A7" + formatCode); // Символ §
 
         // Форматируем выходную строку
-        return StatCollector.translateToLocalFormatted("modifier.string", value > 0 ? "+"+value : String.valueOf(value), description, formatCode);
+        return StatCollector.translateToLocalFormatted("modifier.string", value > 0 ? "+"+value : String.valueOf(value), cut_descr, formatCode);
     }
 
-    /**
-     * Геттер для {@link #value}
-     * @return Значение модификатора
-     */
-    public int getValue() {
-        return value;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof RollModifier) {
+            RollModifier modifier = (RollModifier) obj;
+            return value == modifier.value && description.equals(modifier.description);
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Геттер для {@link #description}
-     * @return Описание модификатора
-     */
-    public String getDescription() {
-        return description;
+    @Override
+    public int hashCode() {
+        // Гугл говорит, что стандартный способ оверрайда хэша на java6 и меньше
+        // TODO: Разобраться
+        int result = 17; // Я точно не знаю зачем это нужно, но гугл говорит что из книги "Effective Java"
+        result = 31 * result + value;
+        result = 31 * result + description.hashCode();
+        return result;
     }
 }

@@ -69,7 +69,7 @@ public class Result {
     public int getModifiersSum() {
         int modifiersSum = 0;
         for (RollModifier modifier : this.modifiers) {
-            modifiersSum += modifier.getValue();
+            modifiersSum += modifier.value;
         }
         return modifiersSum;
     }

@@ -148,8 +148,8 @@ public class RollPacketToServer implements IMessage {
                 // Добавляем модификаторы к компоненту
                 modifiersComp.appendSibling(new ChatComponentText(
                         String.format("(%+d: %2$s) ", // TODO: Не нравитсямне добавление пробела в конце и почему шаблон берется не из файлов локализации?
-                        modifier.getValue(),
-                        modifier.getDescription())
+                        modifier.value,
+                        modifier.description)
                 ));
 
             }

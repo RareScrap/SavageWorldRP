@@ -296,7 +296,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         List<RollModifier> modifiers = modifierManager.getModifiers(ExtendedPlayer.ParamKeys.CHARISMA);
         if (modifiers != null) {
             for (RollModifier rollModifier : modifiers) {
-                charisma += rollModifier.getValue();
+                charisma += rollModifier.value;
             }
         }
     }

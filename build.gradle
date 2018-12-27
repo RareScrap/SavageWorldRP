@@ -50,6 +50,9 @@ dependencies {
     testCompile 'org.powermock:powermock-api-mockito2:2.0.0-beta.5'
     //testCompile 'org.powermock:powermock:1.6.5' // TODO: Нужно ли?
 
+    // Для удобного тестирования equals() и hashCode()
+    testCompile 'nl.jqno.equalsverifier:equalsverifier:1.+'
+
     compile 'ru.rarescrap.tabinventory:minecraft-tab-inventory-lib:0.3.8_1.7.10'
 
     // for more info...
