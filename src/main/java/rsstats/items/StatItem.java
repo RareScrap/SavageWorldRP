@@ -37,7 +37,7 @@ public class StatItem extends Item {
     private IIcon[] icons = new IIcon[NUMBER_OF_LEVELS]; // хранилище иконок для всего семейства предмета
     /** Набор разных дайсов. Порядковый номер в списке обозачает уровень статы,
      * для которой будет использован дайс. */
-    protected ArrayList<BasicRoll> basicRolls;
+    protected ArrayList<Roll> basicRolls;
     /** Префикс, используемый игрой для нахождеия текстур мода */
     protected final String registerIconPrefix; // "rarescrap:StrenghtIcon_" например
     /** Префикс, используемый игрой для нахождеия файлов локализации мода */
@@ -55,7 +55,7 @@ public class StatItem extends Item {
      * @param registerIconPrefix Префикс, который будет использоваться игрой для нахождения текстур данного предмета
      * @param localePrefix Префикс, который будет использоваться игрой для нахождения файлов локализации данного предмета
      */
-    public StatItem(ArrayList<BasicRoll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix) {
+    public StatItem(ArrayList<Roll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix) {
         // TODO: Дайсы должны задаваться через серверный конфиг
         this.basicRolls = basicRolls;
         
@@ -262,7 +262,7 @@ public class StatItem extends Item {
      *
      * @throws IllegalArgumentException если itemStack содержит недопустимый итем
      */
-    public static BasicRoll getRoll(ItemStack itemStack) {
+    public static Roll getRoll(ItemStack itemStack) {
         if (itemStack == null || !(itemStack.getItem() instanceof StatItem) )
             throw new IllegalArgumentException("ItemStack must contain a SkillItem. Now ItemStack contain "
                     + (itemStack == null ? "null" : itemStack.getItem().getClass()));

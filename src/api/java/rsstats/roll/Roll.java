@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * Базовый бросок дайсов
  */
-public class BasicRoll {
+public class Roll {
     /** Количество граней на кубике */
     public final int dice;
     /** Модификаторы, применяемые к броску */
@@ -16,25 +16,25 @@ public class BasicRoll {
 
     public boolean withWildDice = false;
 
-    public BasicRoll(int dice) {
+    public Roll(int dice) {
         this.dice = dice;
     }
 
-    public BasicRoll(int dice, RollModifier... modifiers) {
+    public Roll(int dice, RollModifier... modifiers) {
         this(dice, Arrays.asList(modifiers));
     }
 
-    public BasicRoll(int dice, List<RollModifier> modifiers) {
+    public Roll(int dice, List<RollModifier> modifiers) {
         this.dice = dice;
         if (modifiers != null)
             this.modifiers.addAll(modifiers);
     }
 
-    public BasicRoll(BasicRoll basicRoll) {
-        this(basicRoll.dice, basicRoll.modifiers); // TODO: Сделит Deep-copy? А зачем?
+    public Roll(Roll roll) {
+        this(roll.dice, roll.modifiers); // TODO: Сделит Deep-copy? А зачем?
     }
 
-    public BasicRoll withWildDice(boolean flag) {
+    public Roll withWildDice(boolean flag) {
         this.withWildDice = flag;
         return this;
     }

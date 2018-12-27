@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import rsstats.roll.BasicRoll;
+import rsstats.roll.Roll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class SkillItem extends StatItem {
     public StatItem parentStat;
 
     
-    public SkillItem(ArrayList<BasicRoll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix, StatItem parentStat) {
+    public SkillItem(ArrayList<Roll> basicRolls, String unlocalizedName, String registerIconPrefix, String localePrefix, StatItem parentStat) {
         super(basicRolls, unlocalizedName, registerIconPrefix, localePrefix);
         this.parentStat = parentStat;
         this.damageMinLimit = 0;

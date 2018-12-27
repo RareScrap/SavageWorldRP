@@ -2,7 +2,7 @@ package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.util.StatCollector;
-import rsstats.roll.BasicRoll;
+import rsstats.roll.Roll;
 import rsstats.roll.RollModifier;
 
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ public class DebugItems {
     static {
         RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")); // TODO: Починить локализацию с учетом клиент-серверной архитектурой
 
-        ArrayList<BasicRoll> skillDices = new ArrayList<BasicRoll>();
-        skillDices.add(new BasicRoll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
-        skillDices.add(new BasicRoll(4));
-        skillDices.add(new BasicRoll(6));
-        skillDices.add(new BasicRoll(8));
-        skillDices.add(new BasicRoll(10));
-        skillDices.add(new BasicRoll(12));
+        ArrayList<Roll> skillDices = new ArrayList<Roll>();
+        skillDices.add(new Roll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
+        skillDices.add(new Roll(4));
+        skillDices.add(new Roll(6));
+        skillDices.add(new Roll(8));
+        skillDices.add(new Roll(10));
+        skillDices.add(new Roll(12));
 
         StatItem[] parents = new StatItem[] {strenghtStatItem, agilityStatItem, intelligenceStatItem, enduranceStatItem, characterStatItem};
         for (int i1 = 0; i1 < ii.length; i1++) {

@@ -26,7 +26,7 @@ import rsstats.items.ExpItem;
 import rsstats.items.MiscItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.roll.BasicRoll;
+import rsstats.roll.Roll;
 import rsstats.roll.RollModifier;
 import ru.rarescrap.tabinventory.TabHostInventory;
 import ru.rarescrap.tabinventory.TabInventory;
@@ -169,12 +169,12 @@ public class TestMainContainer {
         statsInventory = new StatsInventory("stats", 9);
         skillsInventory = new SkillsInventory("skills", 27, player, statsInventory);
 
-        ArrayList<BasicRoll> statBasicRolls = new ArrayList<BasicRoll>();
-        statBasicRolls.add(new BasicRoll(4));
-        statBasicRolls.add(new BasicRoll(6));
-        statBasicRolls.add(new BasicRoll(8));
-        statBasicRolls.add(new BasicRoll(10));
-        statBasicRolls.add(new BasicRoll(12));
+        ArrayList<Roll> statBasicRolls = new ArrayList<Roll>();
+        statBasicRolls.add(new Roll(4));
+        statBasicRolls.add(new Roll(6));
+        statBasicRolls.add(new Roll(8));
+        statBasicRolls.add(new Roll(10));
+        statBasicRolls.add(new Roll(12));
         int i = 0;
         statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "StrengthStatItem", "rsstats:strenght", "item.StrengthStatItem")));
         statsInventory.setInventorySlotContents(i++, new ItemStack(new StatItem(statBasicRolls, "AgilityStatItem", "rsstats:agility", "item.AgilityStatItem")));
@@ -185,13 +185,13 @@ public class TestMainContainer {
 
         RollModifier level_zero = new RollModifier(-2,"modifiers.MissingSkill");
 
-        ArrayList<BasicRoll> skillBasicRolls = new ArrayList<BasicRoll>();
-        skillBasicRolls.add(new BasicRoll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
-        skillBasicRolls.add(new BasicRoll(4));
-        skillBasicRolls.add(new BasicRoll(6));
-        skillBasicRolls.add(new BasicRoll(8));
-        skillBasicRolls.add(new BasicRoll(10));
-        skillBasicRolls.add(new BasicRoll(12));
+        ArrayList<Roll> skillBasicRolls = new ArrayList<Roll>();
+        skillBasicRolls.add(new Roll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
+        skillBasicRolls.add(new Roll(4));
+        skillBasicRolls.add(new Roll(6));
+        skillBasicRolls.add(new Roll(8));
+        skillBasicRolls.add(new Roll(10));
+        skillBasicRolls.add(new Roll(12));
         i = 0;
         skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "EquitationSkillItem", "rsstats:skills/Equitation", "item.EquitationSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));
         skillsInventory.setInventorySlotContents(i++, new ItemStack(new SkillItem(skillBasicRolls, "LockpickingSkillItem", "rsstats:skills/Lockpicking", "item.LockpickingSkillItem", (StatItem) statsInventory.getStackInSlot(1).getItem())));

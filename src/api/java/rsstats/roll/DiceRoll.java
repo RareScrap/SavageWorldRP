@@ -15,7 +15,7 @@ import static rsstats.items.StatItem.getRoll;
  * @author RareScrap
  */
 //@SideOnly(Side.SERVER) // TODO: Нужно юзать роллы только на сервере, но клиенту тоже зачем-то они нужны (крашится без них, хотя нигде на клиенте не юзается). Исправить.
-public class DiceRoll extends BasicRoll { // TODO: rename to PlayerRoll
+public class DiceRoll extends Roll { // TODO: rename to PlayerRoll
     public final EntityPlayerMP player;
     public ItemStack rollStack;
 

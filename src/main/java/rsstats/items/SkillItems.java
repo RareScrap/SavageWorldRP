@@ -2,7 +2,7 @@ package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.util.StatCollector;
-import rsstats.roll.BasicRoll;
+import rsstats.roll.Roll;
 import rsstats.roll.RollModifier;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import static rsstats.items.StatItems.*;
  * @author RareScrap
  */
 public class SkillItems {
-    public static ArrayList<BasicRoll> basicRolls;
+    public static ArrayList<Roll> basicRolls;
     static { // TODO: Они же должны быть только на сервере
         // TODO: Проверять на то, поставляется ли dices уже с модификаторами
         //List<RollModifier> modificators = new ArrayList<RollModifier>();
@@ -24,13 +24,13 @@ public class SkillItems {
 
         RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")); // TODO: Разобраться почему это работает на сервере
 
-        basicRolls = new ArrayList<BasicRoll>();
-        basicRolls.add(new BasicRoll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
-        basicRolls.add(new BasicRoll(4));
-        basicRolls.add(new BasicRoll(6));
-        basicRolls.add(new BasicRoll(8));
-        basicRolls.add(new BasicRoll(10));
-        basicRolls.add(new BasicRoll(12));
+        basicRolls = new ArrayList<Roll>();
+        basicRolls.add(new Roll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
+        basicRolls.add(new Roll(4));
+        basicRolls.add(new Roll(6));
+        basicRolls.add(new Roll(8));
+        basicRolls.add(new Roll(10));
+        basicRolls.add(new Roll(12));
     }
 
     // TODO: Слишком много литералов. Легко сделать ошибку, которую трудно отследить

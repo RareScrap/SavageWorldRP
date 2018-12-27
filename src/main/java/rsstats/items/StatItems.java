@@ -1,7 +1,7 @@
 package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import rsstats.roll.BasicRoll;
+import rsstats.roll.Roll;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,14 +13,14 @@ import static rsstats.common.RSStats.MODID;
  * @author RareScrap
  */
 public class StatItems {
-    public static ArrayList<BasicRoll> basicRolls;
+    public static ArrayList<Roll> basicRolls;
     static { // TODO: Они же должны быть только на сервере
-        basicRolls = new ArrayList<BasicRoll>();
-        basicRolls.add(new BasicRoll(4));
-        basicRolls.add(new BasicRoll(6));
-        basicRolls.add(new BasicRoll(8));
-        basicRolls.add(new BasicRoll(10));
-        basicRolls.add(new BasicRoll(12));
+        basicRolls = new ArrayList<Roll>();
+        basicRolls.add(new Roll(4));
+        basicRolls.add(new Roll(6));
+        basicRolls.add(new Roll(8));
+        basicRolls.add(new Roll(10));
+        basicRolls.add(new Roll(12));
     }
 
     public static final StatItem strenghtStatItem = new StatItem(basicRolls, "StrengthStatItem", MODID + ":strenght", "item.StrengthStatItem"); // 3 - rarescrap:StrenghtIcon_
