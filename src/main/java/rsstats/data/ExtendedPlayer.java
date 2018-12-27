@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class ExtendedPlayer implements IExtendedEntityProperties {
 
-    public enum Rank {
+    public enum Rank implements IClientTranslatable {
         NOVICE,
         TEMPERED,
         VETERAN,
@@ -52,8 +52,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
             return Rank.values()[lvl];
         }
 
-        @SideOnly(Side.CLIENT)
-        public String getTranslatedName() {
+        @Override
+        public String getTranslatedString() {
             return StatCollector.translateToLocal("rank." + this.name().toLowerCase());
         }
     }

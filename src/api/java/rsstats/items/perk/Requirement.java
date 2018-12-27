@@ -1,14 +1,13 @@
 package rsstats.items.perk;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.StatCollector;
 import rsstats.data.ExtendedPlayer;
+import rsstats.i18n.IClientTranslatable;
 
 /**
  * Класс, реализующий "требования" для перков
  */
-public abstract class Requirement {
+public abstract class Requirement implements IClientTranslatable {
     /**
      * Определяет, удовлетворяет ли игрок данному требованию
      * @param player Игрок
@@ -16,11 +15,6 @@ public abstract class Requirement {
      */
     public abstract boolean isSuitableFor(ExtendedPlayer player);
 
-    /**
-     * @return Переведенное описание требования на языке пользователя (клиента игры)
-     */
-    @SideOnly(Side.CLIENT)
-    public abstract String toStringTranslated();
 
 
     /**
@@ -38,9 +32,12 @@ public abstract class Requirement {
             return player.getRank().compareTo(minRank) >= 0;
         }
 
+        /**
+         * @return Переведенное описание требования на языке пользователя (клиента игры)
+         */
         @Override
-        public String toStringTranslated() {
-            return StatCollector.translateToLocalFormatted("requirement.rank", minRank.getTranslatedName());
+        public String getTranslatedString() {
+            return StatCollector.translateToLocalFormatted("requirement.rank", minRank.getTranslatedString());
         }
     }
 }

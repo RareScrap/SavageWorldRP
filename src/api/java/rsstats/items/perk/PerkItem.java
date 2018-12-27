@@ -45,7 +45,7 @@ public abstract class PerkItem extends Item {
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
         for (Requirement requirement : getRequirements()) {
-            list.add(requirement.toStringTranslated());
+            list.add(requirement.getTranslatedString());
         }
 
         list.add("");
