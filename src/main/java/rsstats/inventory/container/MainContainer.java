@@ -85,17 +85,6 @@ public class MainContainer extends TabContainer {
 
         addSlots();
     }
-
-
-    public MainContainer() {
-        this.player = null;
-        this.inventoryPlayer = null;
-        this.statsInventory = null;
-        this.skillsInventory = null;
-        this.wearableInventory = null;
-        this.otherTabsHost = null;
-        this.otherTabsInventory = null;
-    }
     
     private void addSlots() {
         /*if (inventoryPlayer != null)
