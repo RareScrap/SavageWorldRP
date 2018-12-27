@@ -1,6 +1,5 @@
 package rsstats.roll;
 
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.StatItem;
@@ -15,16 +14,15 @@ import static rsstats.items.StatItem.getRoll;
  * @author RareScrap
  */
 //@SideOnly(Side.SERVER) // TODO: Нужно юзать роллы только на сервере, но клиенту тоже зачем-то они нужны (крашится без них, хотя нигде на клиенте не юзается). Исправить.
-public class DiceRoll extends Roll { // TODO: rename to PlayerRoll
-    public final EntityPlayerMP player;
+public class PlayerRoll extends Roll {
+    public final ExtendedPlayer player;
     public ItemStack rollStack;
 
-    public DiceRoll(EntityPlayerMP player, ItemStack rollStack) {
+    public PlayerRoll(ExtendedPlayer player, ItemStack rollStack) {
         super(getRoll(rollStack));
 
         // Добавляем релефантные модификаторы, которыми обладает игрок
-        ExtendedPlayer extendedPlayer = ExtendedPlayer.get(player);
-        List<RollModifier> modifiers = extendedPlayer.modifierManager.getModifiers((StatItem) rollStack.getItem()); // TODO: Как-то сцыкотно.
+        List<RollModifier> modifiers = player.modifierManager.getModifiers((StatItem) rollStack.getItem()); // TODO: Как-то сцыкотно.
         if (modifiers != null)
             this.modifiers.addAll(modifiers);
 

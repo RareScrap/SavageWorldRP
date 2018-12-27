@@ -15,7 +15,7 @@ import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.roll.DiceRoll;
+import rsstats.roll.PlayerRoll;
 import rsstats.roll.Result;
 import rsstats.roll.RollModifier;
 import rsstats.utils.Utils;
@@ -97,8 +97,8 @@ public class RollPacketToServer implements IMessage {
             }
 
             // Формируем бросок
-            DiceRoll diceRoll = (DiceRoll) new DiceRoll(entityPlayerMP, statStack).withWildDice(m.withWildDice);
-            Result result = diceRoll.roll(); // Пробрасываем бросок
+            PlayerRoll playerRoll = (PlayerRoll) new PlayerRoll(ExtendedPlayer.get(entityPlayerMP), statStack).withWildDice(m.withWildDice);
+            Result result = playerRoll.roll(); // Пробрасываем бросок
             // Формируем компонент с модификаторами
             ChatComponentText modifiersComp = createModifierComponent(result);
             // Формируем финальный компонент
