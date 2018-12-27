@@ -48,7 +48,6 @@ public class MainContainer extends TabContainer {
     private final TabHostInventory otherTabsHost;
     private final TabInventory otherTabsInventory;
 
-    private boolean withWildDice; // TODO: Удалить ненужное поле
     /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
     public boolean isEditMode = false;
 
