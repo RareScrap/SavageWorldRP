@@ -21,6 +21,21 @@ public class ModifierManager { // TODO: UNIT-TEST ALL!
     private HashMap<IModifierDependent, List<RollModifier>> modifiers = new HashMap<IModifierDependent, List<RollModifier>>();
 
     /**
+     * @param target Параметр, для которого вычисляется сумма значений модификаторов
+     * @return Сумма значений всех модификаторов
+     */
+    public int getTotalValue(IModifierDependent target) {
+        int value = 0;
+        List<RollModifier> modifiers = getModifiers(target);
+        if (modifiers == null) return value;
+
+        for (RollModifier modifier : modifiers)
+            value += modifier.value;
+
+        return value;
+    }
+
+    /**
      * @return Модификаторы, увеличивающие или уменьшающие заданный параметр
      */
     public List<RollModifier> getModifiers(IModifierDependent target) {
