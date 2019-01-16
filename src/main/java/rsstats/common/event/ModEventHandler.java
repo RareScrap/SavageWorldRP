@@ -55,6 +55,8 @@ public class ModEventHandler {
         if (e.entity instanceof EntityPlayer) {
             ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) e.entity);
 
+            player.initContainer(); // Включаем постоянную синхронизацию инвентарей
+
             // Альтернативная начальная инициализация вкладок
             if (player.otherTabsHost.isEmpty()) {
                 player.otherTabsHost.setInventorySlotContents(0, new ItemStack(OtherItems.perksTabItem, 1));

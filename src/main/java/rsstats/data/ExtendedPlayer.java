@@ -86,7 +86,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     private Rank rank;
     private int tiredness = 0;
     private int tirednessLimit = 25;
-    
+
+    /** Контейнер инвентаря, который будет синхронизироваться с клиентом даже тогда, когда не открыт. Прямо как
+     * {@link EntityPlayer#inventoryContainer}. Именно через этот контейнер и будут синнхронизироваться инвентари. */
+    public MainContainer mainContainer;
+
     /** Инвентарь для статов */
     public final StatsInventory statsInventory;
     /** Инвентарь для скиллов */
@@ -218,6 +222,15 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         // Инициализируем основные параметры
         updateParams();
+    }
+
+    /**
+     * Инициализирует {@link #mainContainer}. Следует вызвать, когда ExtendedPlayer и все его инвентари будут
+     * инициализированы и готовы к работе.
+     */
+    public void initContainer() {
+        mainContainer = new MainContainer(this);
+        if (isServerSide()) mainContainer.addCraftingToCrafters((EntityPlayerMP) getEntityPlayer());
     }
 
     public int getProtection() {

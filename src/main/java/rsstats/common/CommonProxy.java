@@ -15,7 +15,6 @@ import rsstats.blocks.UpgradeStationEntity;
 import rsstats.common.event.KeyHandler;
 import rsstats.common.network.*;
 import rsstats.data.ExtendedPlayer;
-import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
 import rsstats.items.*;
@@ -50,7 +49,7 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
 
         // Регистрируем сообщения для библиотеки MinecraftTabInventory
-        NetworkUtils.registerMessages(INSTANCE, discriminator);
+        NetworkUtils.registerMessages(INSTANCE, TabInventoryHandlers.SetTabSlotMessageHandler.class, TabInventoryHandlers.TabInventoryItemsMessageHandler.class, discriminator);
 
         // Регистрация предметов
         StatItems.registerItems();
@@ -85,7 +84,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case RSStats.GUI:
-                return new MainContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory, ExtendedPlayer.get(player).skillsInventory, ExtendedPlayer.get(player).wearableInventory, ExtendedPlayer.get(player).otherTabsHost, ExtendedPlayer.get(player).otherTabsInventory);
+                return ExtendedPlayer.get(player).mainContainer;
             case RSStats.SSP_UI_CODE:
                 return new StatsContainer(player, player.inventory, ExtendedPlayer.get(player).statsInventory);
             case RSStats.UPGRADE_UI_FROM_BLOCK_CODE: {

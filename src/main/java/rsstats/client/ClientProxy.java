@@ -22,7 +22,6 @@ import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.event.KeyHandler;
 import rsstats.data.ExtendedPlayer;
-import rsstats.inventory.container.MainContainer;
 import rsstats.inventory.container.UpgradeContainer;
 
 /**
@@ -50,13 +49,7 @@ public class ClientProxy extends CommonProxy {
                 case RSStats.GUI: {
                     return new MainMenuGUI(
                             ExtendedPlayer.get(player),
-                            new MainContainer(player,
-                                    player.inventory, // TODO: Уменьшить количество аргументов
-                                    ExtendedPlayer.get(player).statsInventory,
-                                    ExtendedPlayer.get(player).skillsInventory,
-                                    ExtendedPlayer.get(player).wearableInventory,
-                                    ExtendedPlayer.get(player).otherTabsHost,
-                                    ExtendedPlayer.get(player).otherTabsInventory)
+                            ExtendedPlayer.get(player).mainContainer
                     );
                 }
                 /*
