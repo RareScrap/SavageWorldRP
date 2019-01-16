@@ -53,19 +53,19 @@ public class ModEventHandler {
     @SubscribeEvent
     public void entityJoinWorld(EntityJoinWorldEvent e) {
         if (e.entity instanceof EntityPlayer) {
-            ExtendedPlayer data = ExtendedPlayer.get((EntityPlayer) e.entity);
+            ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) e.entity);
 
             // Альтернативная начальная инициализация вкладок
-            if (data.otherTabsHost.isEmpty()) {
-                data.otherTabsHost.setInventorySlotContents(0, new ItemStack(OtherItems.perksTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(1, new ItemStack(OtherItems.flawsTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(2, new ItemStack(OtherItems.positiveEffectsTabItem, 1));
-                data.otherTabsHost.setInventorySlotContents(3, new ItemStack(OtherItems.negativeEffectsTabItem, 1));
+            if (player.otherTabsHost.isEmpty()) {
+                player.otherTabsHost.setInventorySlotContents(0, new ItemStack(OtherItems.perksTabItem, 1));
+                player.otherTabsHost.setInventorySlotContents(1, new ItemStack(OtherItems.flawsTabItem, 1));
+                player.otherTabsHost.setInventorySlotContents(2, new ItemStack(OtherItems.positiveEffectsTabItem, 1));
+                player.otherTabsHost.setInventorySlotContents(3, new ItemStack(OtherItems.negativeEffectsTabItem, 1));
 
             }
 
-            if (data != null)
-                data.sync();
+            if (player != null)
+                player.sync();
         }
     }
 
