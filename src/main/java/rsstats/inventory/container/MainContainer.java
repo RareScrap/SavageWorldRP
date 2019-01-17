@@ -544,11 +544,7 @@ public class MainContainer extends TabContainer {
     // Пересчет при закрытии контейнера нужен, когда в диалоге нажимается "Отменить изменения"
     @Override
     public void onContainerClosed(EntityPlayer entityPlayer) {
-        // Пересчитываем параметры и синхронизируем их с клиентом
-        if (!entityPlayer.worldObj.isRemote) {
-            ExtendedPlayer.get(player).updateParams();
-            ExtendedPlayer.get(player).sync();
-        }
+        isEditMode = false;
         super.onContainerClosed(entityPlayer);
     }
 
@@ -591,6 +587,8 @@ public class MainContainer extends TabContainer {
                 }
             }
         }
+
+        player.updateParams();
 
         /* addItemStackToInventory успешно работает с ситуацией, если вернутся больше чем 64 предмета.
          * Нет нужды в своих проверках. */
