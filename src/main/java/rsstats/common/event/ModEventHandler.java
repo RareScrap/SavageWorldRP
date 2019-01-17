@@ -6,6 +6,7 @@
 package rsstats.common.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -136,5 +137,13 @@ public class ModEventHandler {
             //e.printStackTrace();
             return false;
         }
+    }
+
+    @SubscribeEvent
+    public void onUpdatePlayer(TickEvent.PlayerTickEvent event) {
+        if (event.player.worldObj.isRemote) return;
+        ExtendedPlayer player = ExtendedPlayer.get(event.player);
+        if (event.player.openContainer != player.mainContainer)
+            player.mainContainer.detectAndSendChanges();
     }
 }
