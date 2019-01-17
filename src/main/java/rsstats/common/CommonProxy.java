@@ -46,9 +46,12 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketSyncGUI.MessageHandler.class, PacketSyncGUI.class, discriminator++, Side.SERVER);
         INSTANCE.registerMessage(PacketDialogAction.MessageHandler.class, PacketDialogAction.class, discriminator++, Side.SERVER);
 
-        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketCommandReponse.MessageHandler.class, PacketCommandReponse.class, discriminator++, Side.CLIENT);
 
+        // Пакет для синхронизации IEEP
+        INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
+
+        // Пакеты для синхронизации MainContainer'а
         INSTANCE.registerMessage(PacketContainerContent.MessageHandler.class, PacketContainerContent.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketContainerChange.CommonSlotMessageHandler.class, PacketContainerChange.class, discriminator++, Side.CLIENT);
         // Регистрируем сообщения для библиотеки MinecraftTabInventory
