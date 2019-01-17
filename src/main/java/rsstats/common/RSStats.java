@@ -1,5 +1,6 @@
 package rsstats.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -85,6 +86,7 @@ public class RSStats {
     public void preInit(FMLPreInitializationEvent event) {
         modEventHandler = new ModEventHandler();
         MinecraftForge.EVENT_BUS.register(modEventHandler);
+        FMLCommonHandler.instance().bus().register(modEventHandler);
 
         // Обрабатываем конфиг
         config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));
