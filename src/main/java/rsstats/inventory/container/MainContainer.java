@@ -6,13 +6,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import rsstats.common.RSStats;
+import rsstats.common.network.PacketContainerChange;
+import rsstats.common.network.PacketContainerContent;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
@@ -411,6 +413,23 @@ public class MainContainer extends TabContainer {
     }
 
     @Override
+    public void addCraftingToCrafters(ICrafting p_75132_1_) {
+        if (!crafters.contains(p_75132_1_)) {
+            crafters.add(p_75132_1_);
+
+            if (p_75132_1_ instanceof EntityPlayerMP) {
+                // Высылаем содержимое слотов контейнера игроку на клиент
+                CommonProxy.INSTANCE.sendTo(new PacketContainerContent(this), (EntityPlayerMP) p_75132_1_);
+            } else {
+                // TODO: Понятия не имею как разруливать ситуацию, если это случится
+                super.addCraftingToCrafters(p_75132_1_);
+            }
+
+            detectAndSendChanges();
+        }
+    }
+
+    @Override
     public void detectAndSendChanges() {
         /* Т.к. по логике данного контейнера slotClick(...) может не работать на клиенте и сервере одинакого,
          * то для поддержания работоспособности синхронизации нам нужно выставить isChangingQuantityOnly = false
@@ -421,9 +440,42 @@ public class MainContainer extends TabContainer {
          * осуществляет сервер. Именно поэтому slotClick(...) работает по разному на клиенте и сервере.
          */
         // https://rarescrap.blogspot.com/2018/10/minecraft-1_18.html?zx=7ca4a4ed658beb3
-        if (player instanceof EntityPlayerMP)
-            ((EntityPlayerMP) player).isChangingQuantityOnly = false;
-        super.detectAndSendChanges(); // Вызов на клиенте ни к чему не приведет, т.к. список crafters будет пустым
+        if (player.getEntityPlayer() instanceof EntityPlayerMP)
+            ((EntityPlayerMP) player.getEntityPlayer()).isChangingQuantityOnly = false; // TODO: Кандидат на удаление, т.к. ванильная синзронизация из EntityPlayerMP более не используется
+
+        // Вызов на клиенте ни к чему не приведет, т.к. список crafters будет пустым // TODO: А будет ли вызов на клиенте?
+        // copy-paste from TabContainer#detectAndSendChanges()
+        for (int i = 0; i < inventorySlots.size(); ++i)
+        {
+            /* ================================== MinecraftTabInventory START ================================== */
+            // Пропускаем синхронизацию слотов из TabInventory. Этой задачей займется другой объект.
+            if ( ((Slot) inventorySlots.get(i)).inventory instanceof TabInventory ) {
+                continue;
+            }
+            /* =================================== MinecraftTabInventory END =================================== */
+
+            ItemStack itemstack = ((Slot)inventorySlots.get(i)).getStack();
+            ItemStack itemstack1 = (ItemStack)inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack))
+            {
+                itemstack1 = itemstack == null ? null : itemstack.copy();
+                this.inventoryItemStacks.set(i, itemstack1);
+
+                for (int j = 0; j < crafters.size(); ++j)
+                {
+                    if (crafters.get(j) instanceof EntityPlayerMP) {
+                        // Высылаем изменение в слоте (Только для обычных инвентарей, не для TabInventory)
+                        CommonProxy.INSTANCE.sendTo(new PacketContainerChange(itemstack1, i), (EntityPlayerMP) crafters.get(j));
+                    } else {
+                        // TODO: Понятия не имею как разруливать ситуацию, если это случится
+                        ((ICrafting) crafters.get(j)).sendSlotContents(this, i, itemstack1);
+                    }
+                }
+            }
+        }
+
+        getSync().detectAndSendChanges(crafters); // Синхронизируем TabInventory'и
     }
 
     // TODO: Это выполняется и для клиента и для сервера. Разгранич код. Приводит ли такое поведение к рассинхронизации?
