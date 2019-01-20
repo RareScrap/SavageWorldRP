@@ -17,8 +17,6 @@ import rsstats.common.network.PacketContainerChange;
 import rsstats.common.network.PacketContainerContent;
 import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.SkillsInventory;
-import rsstats.inventory.StatsInventory;
-import rsstats.inventory.WearableInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
 import rsstats.items.MiscItems;
@@ -28,7 +26,6 @@ import rsstats.items.StatItem;
 import rsstats.items.perk.PerkItem;
 import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabContainer;
-import ru.rarescrap.tabinventory.TabHostInventory;
 import ru.rarescrap.tabinventory.TabInventory;
 
 import java.util.ArrayList;
@@ -41,14 +38,7 @@ import java.util.Map;
  * @author rares
  */
 public class MainContainer extends TabContainer {
-    private final EntityPlayer player;
-    private final InventoryPlayer inventoryPlayer;
-    private final StatsInventory statsInventory;
-    private final WearableInventory wearableInventory;
-    private final SkillsInventory skillsInventory;
-
-    private final TabHostInventory otherTabsHost;
-    private final TabInventory otherTabsInventory;
+    private final ExtendedPlayer player;
 
     /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
     public boolean isEditMode = false;
@@ -66,23 +56,16 @@ public class MainContainer extends TabContainer {
     /** Количество очков прокачки, которые следует вернуть игроку, если тот решил отменить прокачку */
     private int wastedPoints;
 
-    public MainContainer(EntityPlayer player, InventoryPlayer inventoryPlayer, StatsInventory statsInventory, SkillsInventory skillsInventory, WearableInventory wearableInventory, TabHostInventory otherTabsHost, TabInventory otherTabsInventory) {
+    public MainContainer(ExtendedPlayer player) {
         this.player = player;
-        this.inventoryPlayer = inventoryPlayer;
-        this.statsInventory = statsInventory;
-        this.skillsInventory = skillsInventory;
-        this.wearableInventory = wearableInventory;
-
-        this.otherTabsHost = otherTabsHost;
-        this.otherTabsInventory = otherTabsInventory;
 
         // Добавляем вкладочный инвентарь к контейнеру
-        tabInventories.put(skillsInventory.getInventoryName(), skillsInventory);
-        tabInventories.put(otherTabsInventory.getInventoryName(), otherTabsInventory);
+        tabInventories.put(player.skillsInventory.getInventoryName(), player.skillsInventory);
+        tabInventories.put(player.otherTabsInventory.getInventoryName(), player.otherTabsInventory);
         // Добавляем его к движку синхронизации (СЕРВЕР->КЛИЕНТ)
-        if (!player.worldObj.isRemote) {
-            getSync().addSync(skillsInventory);
-            getSync().addSync(otherTabsInventory);
+        if (player.isServerSide()) {
+            getSync().addSync(player.skillsInventory);
+            getSync().addSync(player.otherTabsInventory);
         }
 
         addSlots();
@@ -98,26 +81,26 @@ public class MainContainer extends TabContainer {
 
         // Расставляем слоты на панели руки
         for (int i = 0; i < 9; i++) {
-            this.addSlotToContainer(new Slot(inventoryPlayer, i, (i*18 -3) +8, 188));
+            this.addSlotToContainer(new Slot(player.getEntityPlayer().inventory, i, (i*18 -3) +8, 188));
         }
 
         // Расставляем слоты на панели статов
-        for (int i = 0, slotIndex = 0; i < statsInventory.getSizeInventory(); ++i, slotIndex++) {
-            this.addSlotToContainer(new StatSlot(statsInventory, i, (i*18 +167) +8, /*-24*/8));
+        for (int i = 0, slotIndex = 0; i < player.statsInventory.getSizeInventory(); ++i, slotIndex++) {
+            this.addSlotToContainer(new StatSlot(player.statsInventory, i, (i*18 +167) +8, /*-24*/8));
             //this.addSlotToContainer(new StatSlot(statsInventory, slotIndex, i*9, 0));
         }
 
         // Расставляем слоты на панели скиллов
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlotToContainer(new SkillSlot(skillsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 26));
+                this.addSlotToContainer(new SkillSlot(player.skillsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 26));
             }
         }
 
         // Расставляем слоты для брони
         for (int i = 0; i < 4; ++i) {
             final int k = i;
-            this.addSlotToContainer(new Slot(inventoryPlayer, inventoryPlayer.getSizeInventory() - 1 - i, (i * 18 + 51) + 8, 8) {
+            this.addSlotToContainer(new Slot(player.getEntityPlayer().inventory, player.getEntityPlayer().inventory.getSizeInventory() - 1 - i, (i * 18 + 51) + 8, 8) {
 
                 @Override
                 public int getSlotStackLimit() {
@@ -127,7 +110,7 @@ public class MainContainer extends TabContainer {
                 @Override
                 public boolean isItemValid(ItemStack par1ItemStack) {
                     if (par1ItemStack == null) return false;
-                    return par1ItemStack.getItem().isValidArmor(par1ItemStack, k, player);
+                    return par1ItemStack.getItem().isValidArmor(par1ItemStack, k, player.getEntityPlayer());
                 }
 
                 @SideOnly(Side.CLIENT)
@@ -139,7 +122,7 @@ public class MainContainer extends TabContainer {
                 @Override
                 public void onPickupFromSlot(EntityPlayer p_82870_1_, ItemStack itemStack) {
                     super.onPickupFromSlot(p_82870_1_, itemStack);
-                    ExtendedPlayer.get(player).modifierManager.removeModifiersFrom(itemStack); // Удаляем модификаторы от прошлой брони
+                    player.modifierManager.removeModifiersFrom(itemStack); // Удаляем модификаторы от прошлой брони
                 }
 
                 /**
@@ -151,13 +134,13 @@ public class MainContainer extends TabContainer {
                 public void putStack(ItemStack itemStack) {
                     // TODO: Баг с рассинхронизацией модификаторов на клиенте и серве был впервые замечен тут
                     // if (!player.worldObj.isRemote) - не работает на клиенте
-                    if (/*!*/player.worldObj.isRemote) {
+                    if (!player.isServerSide()) {
                         // Если в слоте уже был предмет - удаляем его модификаторы
                         if (this.getStack() != null) {
-                            ExtendedPlayer.get(player).modifierManager.removeModifiersFrom(this.getStack());
+                            player.modifierManager.removeModifiersFrom(this.getStack());
                         }
                         // Извлекаем и сохраняем модификаторы из стака, который кладется в слот
-                        ExtendedPlayer.get(player).modifierManager.addModifiersFrom(itemStack);
+                        player.modifierManager.addModifiersFrom(itemStack);
                     }
                     super.putStack(itemStack);
 
@@ -180,7 +163,7 @@ public class MainContainer extends TabContainer {
         // Расставляем слоты на панели носимых вещей
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 4; ++x) {
-                this.addSlotToContainer(new Slot(wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26) {
+                this.addSlotToContainer(new Slot(player.wearableInventory, x + y * 4 /*+ 9*/, (x*18 + 51) +8, (y * 18) + 26) {
                     // Сюда нельзя помещать броню
                     @Override
                     public boolean isItemValid(ItemStack p_75214_1_) {
@@ -194,11 +177,11 @@ public class MainContainer extends TabContainer {
         }
 
         // Расставляем слоты на панели вкладок
-        for (int i = 0, slotIndex = 0; i < otherTabsHost.getSizeInventory(); ++i, slotIndex++) {
-            this.addSlotToContainer(new Slot(otherTabsHost, i, (i*18 +167) +8, 116) {
+        for (int i = 0, slotIndex = 0; i < player.otherTabsHost.getSizeInventory(); ++i, slotIndex++) {
+            this.addSlotToContainer(new Slot(player.otherTabsHost, i, (i*18 +167) +8, 116) {
                 @Override
                 public boolean isItemValid(ItemStack p_75214_1_) {
-                    return otherTabsHost.isUseableByPlayer(player);
+                    return player.otherTabsHost.isUseableByPlayer(player.getEntityPlayer());
                 }
             });
 
@@ -207,17 +190,17 @@ public class MainContainer extends TabContainer {
         // Расставляем слоты, которе будут хранить содержимое вкладок
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 9; ++x) {
-                this.addSlotToContainer(new Slot(otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 134) {
+                this.addSlotToContainer(new Slot(player.otherTabsInventory, x + y * 9 /*+ 9*/, (x*18 +167) +8, (y * 18) + 134) {
                     @Override
                     public boolean isItemValid(ItemStack itemStack) {
                         // Получаем имя вкладки с перками
                         String perkTabName = OtherItems.perksTabItem.getUnlocalizedName();
 
                         // Проверяем в какую вкладку игрок хочет поместить стак (пока проверяем только очет ли он поместить ее в вкладку перков)
-                        if (itemStack != null && itemStack.getItem() instanceof PerkItem && otherTabsInventory.getCurrentTab().equals(perkTabName)) {
+                        if (itemStack != null && itemStack.getItem() instanceof PerkItem && player.otherTabsInventory.getCurrentTab().equals(perkTabName)) {
                             // Проверяем, может ли игрок использовать целевой инвентарь и удовлетворяет ли игрок требованиям перка
                             PerkItem perkItem = (PerkItem) itemStack.getItem();
-                            return otherTabsHost.isUseableByPlayer(player) && perkItem.isSuitableFor(ExtendedPlayer.get(player));
+                            return player.otherTabsHost.isUseableByPlayer(player.getEntityPlayer()) && perkItem.isSuitableFor(player);
                         }
 
                         return false;
@@ -260,7 +243,7 @@ public class MainContainer extends TabContainer {
     // TODO: баг при стаках очков прокачки 64 и 1
     // TODO: Стоимость прокачки статы должна быть 2 очка, а не 1
     /**
-     * Увеличивает переданную стату на 1, если в {@link #inventoryPlayer} есть хотя бы один {@link rsstats.items.ExpItem}.
+     * Увеличивает переданную стату на 1, если в {@link EntityPlayer#inventory} в ExtendedPlayer есть хотя бы один {@link rsstats.items.ExpItem}.
      * Так же уменьшает ExpItem на 1.
      * @param statStack Стак со статой, которую необходимо прокачать
      * @throws IllegalAccessException Если в statStack нет {@link StatItem}'а
@@ -511,7 +494,7 @@ public class MainContainer extends TabContainer {
             return temp;
         }
 
-        if ((slot.inventory == statsInventory || slot.inventory == skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
+        if ((slot.inventory == player.statsInventory || slot.inventory == player.skillsInventory) && (itemInSlot instanceof SkillItem || itemInSlot instanceof StatItem)) {
             ItemStack itemStack = getSlot(slotId).getStack();
 
             // Защита от дублирующихся сообщений в чате + ролл посылается в клиента, где определен класс GuiScreen
@@ -522,16 +505,16 @@ public class MainContainer extends TabContainer {
         }
 
         // Поведение, если кликнут слот инвентаря otherTabsHost
-        if (slot.inventory == otherTabsHost) {
-            if (otherTabsHost.isUseableByPlayer(playerIn)) { // TODO: Не лучше ли использовать isItemValid из переопределенного слота?
+        if (slot.inventory == player.otherTabsHost) {
+            if (player.otherTabsHost.isUseableByPlayer(playerIn)) { // TODO: Не лучше ли использовать isItemValid из переопределенного слота?
                 return super.slotClick(slotId, clickedButton, mode, playerIn); // "Захватваем" стак
             } else {
                 return null; // Ничего не делаем
             }
         }
         // Поведение, если кликнут слот инвентаря otherTabsInventory
-        if (slot.inventory == otherTabsInventory) {
-            if (otherTabsInventory.isUseableByPlayer(playerIn)) {
+        if (slot.inventory == player.otherTabsInventory) {
+            if (player.otherTabsInventory.isUseableByPlayer(playerIn)) {
                 return super.slotClick(slotId, clickedButton, mode, playerIn);
             } else {
                 return null;
@@ -549,7 +532,7 @@ public class MainContainer extends TabContainer {
     }
 
     public SkillsInventory getSkillsInventory() {
-        return skillsInventory;
+        return player.skillsInventory;
     }
 
     /**
@@ -557,11 +540,11 @@ public class MainContainer extends TabContainer {
      */
     public void saveBild() {
         savedBild.clear();
-        for (ItemStack statStack : statsInventory.getStats()) {
+        for (ItemStack statStack : player.statsInventory.getStats()) {
             if (statStack != null)
                 savedBild.put(statStack, statStack.getItemDamage());
         }
-        for (ItemStack skillStack : skillsInventory.getSkills()) {
+        for (ItemStack skillStack : player.skillsInventory.getSkills()) {
             if (skillStack != null)
                 savedBild.put(skillStack, skillStack.getItemDamage());
         }
@@ -574,13 +557,13 @@ public class MainContainer extends TabContainer {
         for (ItemStack bildStack : savedBild.keySet()) {
             int lvl = savedBild.get(bildStack);
             if (bildStack.getItem() instanceof SkillItem) {
-                for (ItemStack currentSkillStack : skillsInventory.getSkills()) {
+                for (ItemStack currentSkillStack : player.skillsInventory.getSkills()) {
                     if (currentSkillStack != null && currentSkillStack.getItem() == bildStack.getItem()) {
                         currentSkillStack.setItemDamage(lvl);
                     }
                 }
             } else {
-                for (ItemStack currentStatStack : statsInventory.getStats()) {
+                for (ItemStack currentStatStack : player.statsInventory.getStats()) {
                     if (currentStatStack != null && currentStatStack.getItem() == bildStack.getItem()) {
                         currentStatStack.setItemDamage(lvl);
                     }
@@ -593,7 +576,7 @@ public class MainContainer extends TabContainer {
         /* addItemStackToInventory успешно работает с ситуацией, если вернутся больше чем 64 предмета.
          * Нет нужды в своих проверках. */
         ItemStack expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"), wastedPoints);
-        this.player.inventory.addItemStackToInventory(expStack);
+        this.player.getEntityPlayer().inventory.addItemStackToInventory(expStack);
     }
 
     /**
@@ -623,7 +606,7 @@ public class MainContainer extends TabContainer {
         int statItemDamage = statItem.getDamage(statStack);
         if (statItemDamage != subtypes) {
             if (statItem instanceof SkillItem) {
-                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
+                ItemStack parentStatStack = player.statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
                 int parentStatDamage = parentStatStack.getItemDamage(); //((SkillItem) statItem).parentStat.getDamage(parentStatStack);
                 if (statItemDamage > parentStatDamage)
                     price = 2;
@@ -705,7 +688,7 @@ public class MainContainer extends TabContainer {
      */
     public void doRefund(int refund) { // TODO: Unit-test this
         ItemStack expStack = new ItemStack(MiscItems.expItem, refund);
-        this.player.inventory.addItemStackToInventory(expStack);
+        this.player.getEntityPlayer().inventory.addItemStackToInventory(expStack);
         wastedPoints -= refund;
     }
 
@@ -732,7 +715,7 @@ public class MainContainer extends TabContainer {
 
         if (isEditMode && !playerIn.worldObj.isRemote) { // Игрок в режиме прокачки - пытается повысить стату/навык
             int price = getUpgradePrice(slot.getStack());
-            if (price != -1 && Utils.removeItemStackFromInventory(inventoryPlayer, "item.ExpItem", price)) {
+            if (price != -1 && Utils.removeItemStackFromInventory(player.getEntityPlayer().inventory, "item.ExpItem", price)) {
                 wastedPoints += price;
 
                 // Добавляем трату очков в историю
@@ -782,7 +765,7 @@ public class MainContainer extends TabContainer {
         upgradeHistory = new HashMap<ItemStack, ArrayList<Integer>>();
 
         // Инициализируем историю трат для статов
-        for (ItemStack itemStack : statsInventory.getStats()) {
+        for (ItemStack itemStack : player.statsInventory.getStats()) {
             if (itemStack == null) continue;
             StatItem statItem = (StatItem) itemStack.getItem();
 
@@ -793,7 +776,7 @@ public class MainContainer extends TabContainer {
         }
 
         // Инициализируем историю трат для скиллов
-        for (ItemStack itemStack : skillsInventory.getSkills()) {
+        for (ItemStack itemStack : player.skillsInventory.getSkills()) {
             if (itemStack == null) continue;
             SkillItem skillItem = (SkillItem) itemStack.getItem();
 
