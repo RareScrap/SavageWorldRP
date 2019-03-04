@@ -102,6 +102,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Инвентарь с вкладками для прочей информации вроде перков, изъянов и т.д. */
     public TabInventory otherTabsInventory;
 
+    /** Менеджер прокачки, содержащий правила развития персонажа */
+    public LevelupManager levelupManager; // Server thread only
     /** Хранилище модификаторов броска игрока */
     public ModifierManager modifierManager = new ModifierManager();
 

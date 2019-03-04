@@ -5,7 +5,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import rsstats.inventory.container.MainContainer;
+import rsstats.data.ExtendedPlayer;
 
 /**
  * Сообщение, информирующее сервер о том, что была нажата одна из кнопок в
@@ -61,7 +61,7 @@ public class PacketDialogAction implements IMessage {
             switch (message.actionType) {
                 case CANCEL: {
                     // Восстанавливаем статы и навыки
-                    ((MainContainer) ctx.getServerHandler().playerEntity.openContainer).restoreBild();
+                    ExtendedPlayer.get(ctx.getServerHandler().playerEntity).levelupManager.restoreBild();
                     break;
                 }
             }

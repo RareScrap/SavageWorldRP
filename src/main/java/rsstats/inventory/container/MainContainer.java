@@ -1,6 +1,5 @@
 package rsstats.inventory.container;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiScreen;
@@ -12,10 +11,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import rsstats.common.RSStats;
+import rsstats.common.CommonProxy;
 import rsstats.common.network.PacketContainerChange;
 import rsstats.common.network.PacketContainerContent;
 import rsstats.data.ExtendedPlayer;
+import rsstats.data.LevelupManager;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.slots.SkillSlot;
 import rsstats.inventory.slots.StatSlot;
@@ -24,14 +24,8 @@ import rsstats.items.OtherItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.items.perk.PerkItem;
-import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabContainer;
 import ru.rarescrap.tabinventory.TabInventory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -42,19 +36,6 @@ public class MainContainer extends TabContainer {
 
     /** True, если игрок начал прокачивать статы, перейдя тем самым в режим редактирования */
     public boolean isEditMode = false;
-
-    /** Хранит в себе прокачку игрока, которая была до того как он начал раскидывать очки прокачки.
-     * Используется для отката изменений. */
-    /* Может показаться, что ключ уже хранит свой itemDamage, который является уровнем статы, и можно просто
-     * реализовать хранение через ArrayList, но не нужно забывать, что itemDamage в ключах - может быть измен
-     * игроком, что делает хранилище ArrayList, т.к. сохраненные уровни стат будут утеряны */
-    private Map<ItemStack, Integer> savedBild = new HashMap<ItemStack, Integer>(); // TODO: Заменить пару на String-Integer
-    /** Хранит историю трат при прокачке в формате стак->массив. Каждая ячейка массива соответствует цене,
-     * которую заплатил игрок для поднятия уровня стат на 1. */
-    protected Map<ItemStack, ArrayList<Integer>> upgradeHistory;
-
-    /** Количество очков прокачки, которые следует вернуть игроку, если тот решил отменить прокачку */
-    private int wastedPoints;
 
     public MainContainer(ExtendedPlayer player) {
         this.player = player;
@@ -240,161 +221,6 @@ public class MainContainer extends TabContainer {
         return itemstack;
     }
 
-    // TODO: баг при стаках очков прокачки 64 и 1
-    // TODO: Стоимость прокачки статы должна быть 2 очка, а не 1
-    /**
-     * Увеличивает переданную стату на 1, если в {@link EntityPlayer#inventory} в ExtendedPlayer есть хотя бы один {@link rsstats.items.ExpItem}.
-     * Так же уменьшает ExpItem на 1.
-     * @param statStack Стак со статой, которую необходимо прокачать
-     * @throws IllegalAccessException Если в statStack нет {@link StatItem}'а
-     */
-    public void statUp(ItemStack statStack) {
-        if ( !(statStack.getItem() instanceof StatItem) ) {
-            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
-        }
-
-        StatItem statItem = (StatItem) statStack.getItem();
-
-        // Находим стак с очками прокачки // TODO: Удаляем комментарии
-//        ItemStack expStack = null;
-//        int expStackPos = -1; // Если -1 - значит стак с очками прокачки нельзя создать + его и не было
-//        for (int i = 0; i < inventoryPlayer.mainInventory.length; i++) {
-//            ItemStack itemStack = inventoryPlayer.mainInventory[i];
-//            if (itemStack != null && "item.ExpItem".equals(itemStack.getUnlocalizedName())) {
-//                expStack = itemStack;
-//                expStackPos = i;
-//                break;
-//            }
-//        }
-//        if (expStack == null) {
-//            return; // Если очков прокачки нет - выходим
-//        }
-
-        // Выявляет количество подтипов (уровней) статы
-//        List subitems = new ArrayList();
-//        statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
-        int subitems = statItem.getMaxDamage();
-        int statItemDamage = statItem.getDamage(statStack);
-
-
-//        if (statItemDamage != subitems.size() - 1) {
-//            int price = 1; // Цена прокачки
-//            if (statItem instanceof SkillItem) {
-//                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
-//                int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
-//                if (statItemDamage > parentStatDamage)
-//                    price = 2;
-//            }
-//
-//            // Отнимает очко прокачки ...
-//            if (expStack.stackSize >= price) {
-//                wastedPoints += price; // Сохраняем количество очков, что потратил пользователь
-//                if (expStack.stackSize == price) {
-//                    inventoryPlayer.mainInventory[expStackPos] = null; // Убираем стак
-//                } else {
-//                    expStack.stackSize -= price; // Уменьшаем стак
-//                }
-//            } else {
-//                return;
-//            }
-
-        // и увеличиваем стату ...
-        statStack.setItemDamage(statItemDamage < subitems ? statItemDamage + 1 : subitems);
-//        } else { // Стата уже прокачана до предела - выходим
-//            return;
-//        }
-    }
-
-    // TODO: Рефакторить. См addItemStackToInventory
-    public void statDown(ItemStack statStack) {
-        if ( !(statStack.getItem() instanceof StatItem) ) {
-            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
-        }
-
-        StatItem statItem = (StatItem) statStack.getItem();
-        int statItemDamage = statItem.getDamage(statStack);
-//        boolean isExpStackCreated = false; // TODO: Удаляем комментарии
-
-        /* В случае, если игрок в ходе одной сессии прокачки захотел обнулить
-         * навыки, прокачанный в прошлой сесии - останавливаем его */
-//        ItemStack s = statStack;
-//        for (ItemStack keyStack : savedBild.keySet()) { // TODO: Нужно найти и использовать уже имеющийся поиск. Задолбало его писать каждый раз
-//            if (keyStack.getUnlocalizedName().equals(statStack.getUnlocalizedName())) {
-//                s = keyStack;
-//                break;
-//            }
-//        }
-//        if (statItemDamage <= savedBild.get(s)) {
-//            return;
-//        }
-
-        // Находим стак с очками прокачки
-//        ItemStack expStack = null;
-//        for (ItemStack itemStack : inventoryPlayer.mainInventory) {
-//            if (itemStack != null && "item.ExpItem".equals(itemStack.getUnlocalizedName())) {
-//                expStack = itemStack;
-//            }
-//        }
-//        // Если очков прокачки нет или их стак забит - ищем свободное место в инветаре, куда их можно положить
-//        if (expStack == null || expStack.stackSize >= expStack.getMaxStackSize()) {
-//            int freeSpaceIndex = findFreeSpaceInInventory(inventoryPlayer);
-//            if (freeSpaceIndex != -1 && statItemDamage != 0) {
-//                expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"));
-//                isExpStackCreated = true;
-//                inventoryPlayer.setInventorySlotContents(freeSpaceIndex, expStack);
-//            } else { // Если свободное место не было найдено - выходим
-//                return;
-//            }
-//        }
-//
-//        // Выявляет количество подтипов (уровней) статы
-//        List subitems = new ArrayList();
-//        statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems);
-//
-//        if (statItemDamage > 0) {
-//            int reward; // Сколько очков прокачки вернется за отмену прокачки
-//            if (statItem instanceof SkillItem) {
-//                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
-//                int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
-//                if (statItemDamage > parentStatDamage+1)
-//                    reward = 2;
-//                else
-//                    reward = 1;
-//            } else { // instanceof StatItem
-//                reward = 1;
-//            }
-//
-//            // возвращаем игроку очки прокачки ...
-//            if (expStack.stackSize + reward <= expStack.getMaxStackSize()) {
-//                // Убираем очки из "возмещения", если тот сам (т.е. без диалога) отменил прокачку конкретного навыка или статы
-//                wastedPoints -= reward;
-//
-//                if (isExpStackCreated) {
-//                    expStack.stackSize = reward;
-//                } else {
-//                    expStack.stackSize += reward;
-//                }
-//            } else {
-//                reward = (expStack.stackSize + reward) % expStack.getMaxStackSize();
-//                expStack.stackSize = expStack.getMaxStackSize();
-//
-//                int freeSpaceIndex = findFreeSpaceInInventory(inventoryPlayer);
-//                if (freeSpaceIndex != -1) {
-//                    expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"));
-//                    expStack.stackSize = reward;
-//                    inventoryPlayer.setInventorySlotContents(freeSpaceIndex, expStack);
-//                } else {
-//                    return;
-//                }
-//            }
-
-        // и уменьшаем стату ...
-        statStack.setItemDamage(statItemDamage > 0 ? statItemDamage-1 : 0);
-//        } else { // Стата уже спущена до минимального предела - выходим
-//            return;
-//        }
-    }
-
     @Override
     public void addCraftingToCrafters(ICrafting p_75132_1_) {
         if (!crafters.contains(p_75132_1_)) {
@@ -536,163 +362,6 @@ public class MainContainer extends TabContainer {
     }
 
     /**
-     * Сохраняет прокачку персонажа, дабыы иметь возможность ее восстановить
-     */
-    public void saveBild() {
-        savedBild.clear();
-        for (ItemStack statStack : player.statsInventory.getStats()) {
-            if (statStack != null)
-                savedBild.put(statStack, statStack.getItemDamage());
-        }
-        for (ItemStack skillStack : player.skillsInventory.getSkills()) {
-            if (skillStack != null)
-                savedBild.put(skillStack, skillStack.getItemDamage());
-        }
-    }
-
-    /**
-     * Восстанавливает прокачку персонажа
-     */
-    public void restoreBild() {
-        for (ItemStack bildStack : savedBild.keySet()) {
-            int lvl = savedBild.get(bildStack);
-            if (bildStack.getItem() instanceof SkillItem) {
-                for (ItemStack currentSkillStack : player.skillsInventory.getSkills()) {
-                    if (currentSkillStack != null && currentSkillStack.getItem() == bildStack.getItem()) {
-                        currentSkillStack.setItemDamage(lvl);
-                    }
-                }
-            } else {
-                for (ItemStack currentStatStack : player.statsInventory.getStats()) {
-                    if (currentStatStack != null && currentStatStack.getItem() == bildStack.getItem()) {
-                        currentStatStack.setItemDamage(lvl);
-                    }
-                }
-            }
-        }
-
-        player.updateParams();
-
-        /* addItemStackToInventory успешно работает с ситуацией, если вернутся больше чем 64 предмета.
-         * Нет нужды в своих проверках. */
-        ItemStack expStack = new ItemStack(GameRegistry.findItem(RSStats.MODID, "ExpItem"), wastedPoints);
-        this.player.getEntityPlayer().inventory.addItemStackToInventory(expStack);
-    }
-
-    /**
-     * Вычисляет стоимость прокачки статы или навыка на один пункт.
-     * @param statStack Стак со статой
-     * @return Стоимость прокачки статы или навыка на один пункт. Если достигнут предел, вовзращает -1
-     * @throws IllegalAccessException Если в statStack нет {@link StatItem}'а
-     */
-    public int getUpgradePrice(ItemStack statStack) {  // TODO: Unit-test this
-        if ( !(statStack.getItem() instanceof StatItem) ) {
-            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
-        }
-
-        StatItem statItem = (StatItem) statStack.getItem();
-
-//        List subitems = new ArrayList(); // TODO: Удалить закоментированный код
-//        statStack.getItem().getSubItems(statItem, CreativeTabs.tabMaterials, subitems); // TODO: БАГ! Крашится на Dedicated сервере. Заменить костыль ниже на приемлимый аналог
-        int subtypes = statItem.getMaxDamage();
-//        if (statItem instanceof SkillItem) {
-//            subtypes = SkillItem.NUMBER_OF_LEVELS - 1;
-//        } else { // statItem instanceof StatItem
-//            subtypes = StatItem.NUMBER_OF_LEVELS - 1;
-//        }
-
-        int price = 1; // Цена прокачки по-умолчанию
-
-        int statItemDamage = statItem.getDamage(statStack);
-        if (statItemDamage != subtypes) {
-            if (statItem instanceof SkillItem) {
-                ItemStack parentStatStack = player.statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
-                int parentStatDamage = parentStatStack.getItemDamage(); //((SkillItem) statItem).parentStat.getDamage(parentStatStack);
-                if (statItemDamage > parentStatDamage)
-                    price = 2;
-            } else { // instanceof StatItem ONLY
-                price = 2;
-            }
-
-            return price;
-        }
-
-        return -1; // TODO: Не самый удачный выбор возвращаемого числа. Может быть сменить на 0?
-    }
-
-    /**
-     * Вычисляет количество очков, которое получит игрок после даунгрейда статы или навыка на один пункт.
-     * @param statStack Стак со статой
-     * @return Возврат за даунгрейд статы или навыка на один пункт. Если достигнут предел, вовзращает -1
-     * @throws IllegalAccessException Если в statStack нет {@link StatItem}'а
-     */
-    public int getDowngradeReward(ItemStack statStack) {  // TODO: Unit-test this
-        if ( !(statStack.getItem() instanceof StatItem) ) {
-            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
-        }
-
-        StatItem statItem = (StatItem) statStack.getItem();
-        int statItemDamage = statStack.getItemDamage();
-
-        // Выявляет количество подтипов (уровней) статы // TODO: Удалить закоментированный код
-//        List subitems = new ArrayList();
-//        statItem.getSubItems(statItem, CreativeTabs.tabMaterials, subitems); // TODO: Вклалдка не нужна
-        int subitem = statItem.getMaxDamage();
-
-//        int reward; // Сколько очков прокачки вернется за отмену прокачки
-//        if (statItemDamage > 0) {
-//            if (statItem instanceof SkillItem) {
-//                ItemStack parentStatStack = statsInventory.getStat(((SkillItem) statItem).parentStat.getUnlocalizedName());
-//                int parentStatDamage = ((SkillItem) statItem).parentStat.getDamage(parentStatStack);
-//                if (statItemDamage > parentStatDamage + 1)
-//                    reward = 2;
-//                else
-//                    reward = 1;
-//            } else { // instanceof StatItem ONLY
-//                reward = 2;
-//            }
-//            return reward;
-//        }
-
-        //return -1;
-
-        return getPriceFor(statStack, statStack.getItemDamage()/*-1*/);
-    }
-
-    /**
-     * Определяет, может ли игрок получить возврат очков прокачки при попытки понизить стату
-     * @param statStack Стак со статой
-     * @return True, если может, false - нет или если попытается сбросить стату, которую не прокачивал в рамках текущей сессии прокачки.
-     * @see #saveBild()
-     */
-    public boolean canRefund(ItemStack statStack) {  // TODO: Unit-test this
-        if ( !(statStack.getItem() instanceof StatItem) ) {
-            throw new IllegalArgumentException("ItemStack argument must contain an StatItem.");
-        }
-
-        int statItemDamage = statStack.getItemDamage();
-
-        ItemStack s = statStack;
-        for (ItemStack keyStack : savedBild.keySet()) { // TODO: Нужно найти и использовать уже имеющийся поиск. Задолбало его писать каждый раз
-            if (keyStack.getUnlocalizedName().equals(statStack.getUnlocalizedName())) {
-                s = keyStack;
-                break;
-            }
-        }
-        return statItemDamage > savedBild.get(s); // TODO: Проверка на null
-    }
-
-    /**
-     * Возвращает игроку указанное количество очков прокачи и отнимает из их {@link #wastedPoints}
-     * @param refund Очки прокачки, которые будут возвращены игроку
-     */
-    public void doRefund(int refund) { // TODO: Unit-test this
-        ItemStack expStack = new ItemStack(MiscItems.expItem, refund);
-        this.player.getEntityPlayer().inventory.addItemStackToInventory(expStack);
-        wastedPoints -= refund;
-    }
-
-    /**
      * Обрабатывает ПКМ по стате/навыку, т.е. намерение пользователя прокачать навык
      * @param slot Слот, в котором лежит стата/навык
      * @param mode Режим клик (см. {@link net.minecraft.client.gui.inventory.GuiContainer#handleMouseClick})
@@ -705,30 +374,15 @@ public class MainContainer extends TabContainer {
             // ... тогда инициализируем режим прокачки и сохраняем текущий билд игрока
             isEditMode = true;
             if (!playerIn.worldObj.isRemote) {
-                wastedPoints = 0;
-                saveBild();
-                initUpgradeHistory();
+                player.levelupManager = new LevelupManager(player);
             } else {
                 return slot.getStack();
             }
         }
 
         if (isEditMode && !playerIn.worldObj.isRemote) { // Игрок в режиме прокачки - пытается повысить стату/навык
-            int price = getUpgradePrice(slot.getStack());
-            if (price != -1 && Utils.removeItemStackFromInventory(player.getEntityPlayer().inventory, "item.ExpItem", price)) {
-                wastedPoints += price;
-
-                // Добавляем трату очков в историю
-                rememberPriceToNextLevel(slot.getStack(), price);
-
-                // Поднимаем стату
-                statUp(slot.getStack());
-
-                // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
-                ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
-                extendedPlayer.updateParams();
-                extendedPlayer.sync();
-            }
+            player.levelupManager.statUp(slot.getStack());
+            ExtendedPlayer.get(playerIn).sync(); // Информируем клиент, чтобы он пересчитал параметры
         }
 
         return slot.getStack();
@@ -745,66 +399,11 @@ public class MainContainer extends TabContainer {
         if (playerIn.worldObj.isRemote) // Расчет производится только на сервере
             return slot.getStack();
 
-        int refund = getDowngradeReward(slot.getStack());
-        if (isEditMode && canRefund(slot.getStack()) && refund != -1) { // Игрок в режиме прокачки - пытается понизить стату/навык
-            statDown(slot.getStack());
-            doRefund(refund);
-
-            // Пересчитваем параметры на сервере и информируем клиент, чтобы он сделал то же самое
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(playerIn);
-            extendedPlayer.updateParams();
-            extendedPlayer.sync();
+        if (isEditMode) { // Игрок в режиме прокачки - пытается понизить стату/навык
+            player.levelupManager.statDown(slot.getStack());
+            ExtendedPlayer.get(playerIn).sync(); // Информируем клиент, чтобы он пересчитал параметры
         }
         return slot.getStack();
-    }
-
-    /**
-     * Инициализирует {@link #upgradeHistory} нулевой историей трат
-     */
-    protected void initUpgradeHistory() { // TODO: Unit-test this
-        upgradeHistory = new HashMap<ItemStack, ArrayList<Integer>>();
-
-        // Инициализируем историю трат для статов
-        for (ItemStack itemStack : player.statsInventory.getStats()) {
-            if (itemStack == null) continue;
-            StatItem statItem = (StatItem) itemStack.getItem();
-
-            ArrayList<Integer> history = new ArrayList<Integer>(
-                    Collections.nCopies(statItem.getMaxDamage()+1, 0)
-            );
-            upgradeHistory.put(itemStack, history);
-        }
-
-        // Инициализируем историю трат для скиллов
-        for (ItemStack itemStack : player.skillsInventory.getSkills()) {
-            if (itemStack == null) continue;
-            SkillItem skillItem = (SkillItem) itemStack.getItem();
-
-            ArrayList<Integer> history = new ArrayList<Integer>(
-                    Collections.nCopies(skillItem.getMaxDamage()+1, 0)
-            );
-            upgradeHistory.put(itemStack, history);
-        }
-    }
-
-    /**
-     * Сохраняет стомость прокачки, которую заплатит игрок, чтобы увеличить стату/навык на следующий уровень
-     * @param itemStack Стак со статой/навыком
-     * @param price Цена прокачки на следующий уровень
-     */
-    protected void rememberPriceToNextLevel(ItemStack itemStack, int price) { // TODO: Unit-test this
-        ArrayList<Integer> history = upgradeHistory.get(itemStack);
-        history.set(itemStack.getItemDamage()+1, price);
-    }
-
-    /**
-     * Возвращет цену, которую заплатил игрок, чтобы стата перешла на определенный уровень (lvl) с предыдущего
-     * @param itemStack Стак со статой/скиллом
-     * @param lvl Уровень, на который поднялась стата с предыдущего уровня
-     * @return Цена, которую заплатил игрок, чтобы стата перешла на определеннх уровень с предыдущего
-     */
-    protected int getPriceFor(ItemStack itemStack, int lvl) { // TODO: Unit-test this
-        return upgradeHistory.get(itemStack).get(lvl);
     }
 
 }
