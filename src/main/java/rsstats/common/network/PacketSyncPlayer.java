@@ -9,9 +9,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import rsstats.data.ExtendedPlayer;
-import rsstats.items.perk.PerkItem;
-
-import java.util.ArrayList;
 
 import static rsstats.data.ExtendedPlayer.Rank;
 
@@ -68,21 +65,6 @@ public class PacketSyncPlayer implements IMessage {
             player.persistence = m.persistence;
             player.rank = m.rank;
             return null;
-        }
-
-        // Оставлен т.к. понадобится, если вдруг придется синхронизировать модификаторы
-        /**
-         * Извлекает из стаков с PerkItem'ами модификаторы и копирует их в modifierManager клиента. Сами стаки
-         * ни в какой нинветарь не помещаются.
-         */
-        public void setPerkModifiers(ExtendedPlayer extendedPlayer, ArrayList<ItemStack> perkModifiers) {
-            extendedPlayer.modifierManager.clear(); // Очищаем уже имеющиеся модификаторы // TODO: А что если на клиенте есть модификаторы от брони или из других источников?
-            for (ItemStack perkStack : perkModifiers) {
-                if (perkStack == null) continue;
-
-                PerkItem perkItem = (PerkItem) perkStack.getItem();
-                extendedPlayer.modifierManager.addModifiers(perkItem.getModifiers());
-            }
         }
     }
 }
