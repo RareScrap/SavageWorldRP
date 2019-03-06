@@ -22,6 +22,8 @@ import ru.rarescrap.tabinventory.SupportTabs;
 import ru.rarescrap.tabinventory.network.syns.TabInventorySync;
 import ru.rarescrap.tabinventory.utils.Utils;
 
+import static rsstats.data.ExtendedPlayer.ParamKeys.*;
+
 /**
  * GUI для основного окна мода. Содержит информацию о персонаже (имя, уровень, здоровье, защита, харизма,
  * стойкость), панель предметов и панели статов, навыков и перков.
@@ -141,13 +143,13 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
     @Override
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         int textY = 123;
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.step", player.getStep()), 8, textY, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.rank", player.getRank().getTranslatedName()), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.protection", player.getProtection()), 8, textY+=10, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.getExp()), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.persistence", player.getPersistence()), 8, textY+=10, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.tiredness", player.getTiredness()), 60, textY, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getCharisma()), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.step", player.getParamWithModifiers(STEP)), 8, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.rank", player.rank.getTranslatedString()), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.protection", player.getParamWithModifiers(PROTECTION)), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.exp), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.persistence", player.getParamWithModifiers(PERSISTENCE)), 8, textY+=10, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.tiredness", player.getParamWithModifiers(TIREDNESS)), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getParamWithModifiers(CHARISMA)), 8, textY+=10, 0x444444, false);
 
         super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
 

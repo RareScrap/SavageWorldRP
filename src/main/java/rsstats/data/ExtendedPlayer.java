@@ -1,7 +1,5 @@
 package rsstats.data;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,21 +13,20 @@ import net.minecraftforge.common.util.Constants;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncPlayer;
+import rsstats.i18n.IClientTranslatable;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
+import rsstats.inventory.container.MainContainer;
 import rsstats.items.OtherItems;
 import rsstats.items.SkillItems;
 import rsstats.items.StatItem;
 import rsstats.items.StatItems;
 import rsstats.items.perk.IModifierDependent;
 import rsstats.items.perk.PerkItem;
-import rsstats.roll.RollModifier;
 import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabHostInventory;
 import ru.rarescrap.tabinventory.TabInventory;
-
-import java.util.List;
 
 /**
  *
@@ -58,14 +55,14 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         }
     }
 
-    /**
-     * Ключи статичных параметров игрока
-     */
-    public enum ParamKeys implements IModifierDependent { // TODO: Упростить get и set методы ExtendedPlayer'а, использая в качестве параметра константы из енума Rank
+    /** Ключи статичных параметров игрока */
+    public enum ParamKeys implements IModifierDependent {
         STEP,
         PROTECTION,
         PERSISTENCE,
-        CHARISMA
+        CHARISMA,
+        TIREDNESS,
+        TIREDNESS_LIMIT
     }
 
     /** Каждый наследник {@link IExtendedEntityProperties} должен иметь индивидуальное имя */
@@ -74,18 +71,21 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     private final EntityPlayer entityPlayer;
 
     /** Основной параметр игрока - Шаг */
-    private int step = 6;
+    public int step = 6;
     /** Основной параметр игрока - Защита */
-    private int protection;
+    public int protection;
     /** Основной параметр игрока - Стойкость */
-    private int persistence;
+    public int persistence;
     /** Основной параметр игрока - Харизма */
-    private int charisma = 0;
+    public int charisma = 0;
 
-    private int exp = 0;
-    private Rank rank;
-    private int tiredness = 0;
-    private int tirednessLimit = 25;
+    /** Вторичный параметр игрока - Усталость */
+    public int tiredness = 0;
+    /** Вторичный параметр игрока - Предел усталость */
+    public int tirednessLimit = 25;
+
+    public int exp = 0;
+    public Rank rank;
 
     /** Контейнер инвентаря, который будет синхронизироваться с клиентом даже тогда, когда не открыт. Прямо как
      * {@link EntityPlayer#inventoryContainer}. Именно через этот контейнер и будут синнхронизироваться инвентари. */
@@ -235,52 +235,25 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         if (isServerSide()) mainContainer.addCraftingToCrafters((EntityPlayerMP) getEntityPlayer());
     }
 
-    public int getProtection() {
-        return protection;
-    }
+    /**
+     * @param param Параметр игрока
+     * @return Значение параметра игрока с учетом модификаторов
+     */
+    public int getParamWithModifiers(ParamKeys param) {
+        switch (param) {
+            case CHARISMA: return charisma+modifierManager.getTotalValue(param);
+            case PERSISTENCE: return persistence+modifierManager.getTotalValue(param);
+            case PROTECTION: return protection+modifierManager.getTotalValue(param);
+            case STEP: return step+modifierManager.getTotalValue(param);
+            case TIREDNESS: return tiredness+modifierManager.getTotalValue(param);
+            case TIREDNESS_LIMIT: return tirednessLimit+modifierManager.getTotalValue(param);
+        }
 
-    public int getStep() {
-        return step;
-    }
-
-    public int getPersistence() {
-        return persistence;
-    }
-
-    public int getCharisma() {
-        return charisma;
-    }
-
-    public int getExp() {
-        return exp;
-    }
-
-    public Rank getRank() {
-        return rank;
-    }
-
-    public int getTiredness() {
-        return tiredness;
-    }
-
-    public int getTirednessLimit() {
-        return tirednessLimit;
-    }
-
-    public void setProtection(int protection) {
-        this.protection = protection;
-    }
-
-    public void setPersistence(int persistence) {
-        this.persistence = persistence;
+        throw new IllegalStateException("Impossible state. Contact me about it");
     }
 
     public EntityPlayer getEntityPlayer() {
         return entityPlayer;
-    }
-
-    public void setRank(Rank rank) {
-        this.rank = rank;
     }
 
     /**
@@ -305,17 +278,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         itemStack = Utils.findIn(statsInventory, Utils.getRegistryName(StatItems.enduranceStatItem));
         if (itemStack != null)
             this.persistence = 2 + StatItem.getRoll(itemStack).dice / 2;
-
-        // Расчитываем параметр "Харизма"
-        charisma = 0;
-        List<RollModifier> modifiers = modifierManager.getModifiers(ExtendedPlayer.ParamKeys.CHARISMA);
-        if (modifiers != null) {
-            for (RollModifier rollModifier : modifiers) {
-                charisma += rollModifier.value;
-            }
-        }
     }
-
 
     /**
      * Синхронихронизиует серверного и клиентского ExtendedPlayer'а.

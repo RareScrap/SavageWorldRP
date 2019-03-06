@@ -29,7 +29,7 @@ public abstract class Requirement implements IClientTranslatable {
 
         @Override
         public boolean isSuitableFor(ExtendedPlayer player) {
-            return player.getRank().compareTo(minRank) >= 0;
+            return player.rank.compareTo(minRank) >= 0;
         }
 
         /**

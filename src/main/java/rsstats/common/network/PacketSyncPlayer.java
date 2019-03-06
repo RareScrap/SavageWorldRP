@@ -8,7 +8,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.perk.PerkItem;
 
@@ -17,73 +16,57 @@ import java.util.ArrayList;
 import static rsstats.data.ExtendedPlayer.Rank;
 
 /**
- * Пакет, синхронизирующий некоторый поля {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
+ * Пакет, синхронизирующий базовые значение параметров {@link ExtendedPlayer}'а с ExtendedPlayer'ом на клиенте.
  */
+// Модификаторы к параметрам синхронизирует MainContainer, т.к. это просто итемы
 public class PacketSyncPlayer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
 
-    /** Основной параметр игрока - Защита */
+    private int step;
     private int protection;
-    /** Основной параметр игрока - Стойкость */
     private int persistence;
-    /** Основной параметр игрока - Харизма */
     private int charisma;
-    /** Ранг игрока */
     private Rank rank;
+    // Еще не определился какие значения нужны, так что синхроню то, что пока использую
 
-    /**
-     * Необходимый пустой публичный конструктор
-     */
+    // for reflection newInstance
     public PacketSyncPlayer() {}
 
     public PacketSyncPlayer(ExtendedPlayer player) {
-        this.rank = player.getRank();
-        this.protection = player.getProtection();
-        this.persistence = player.getPersistence();
-        this.charisma = player.getCharisma();
-
+        this.step = player.step;
+        this.protection = player.protection;
+        this.persistence = player.persistence;
+        this.charisma = player.charisma;
+        this.rank = player.rank;
     }
 
-    /**
-     * Convert from the supplied buffer into your specific message type
-     *
-     * @param buf
-     */
     @Override
     public void fromBytes(ByteBuf buf) {
-        rank = Rank.fromInt(ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE));
+        step = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         protection = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         persistence = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         charisma = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
+        rank = Rank.fromInt(ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE));
     }
 
-    /**
-     * Deconstruct your message into the supplied byte buffer
-     *
-     * @param buf
-     */
     @Override
     public void toBytes(ByteBuf buf) {
-        ByteBufUtils.writeVarInt(buf, rank.toInt(), BUFFER_INT_SIZE);
+        ByteBufUtils.writeVarInt(buf, step, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, protection, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, persistence, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, charisma, BUFFER_INT_SIZE);
-
+        ByteBufUtils.writeVarInt(buf, rank.toInt(), BUFFER_INT_SIZE);
     }
 
-    /**
-     * Обработчик сообщения {@link PacketOpenRSStatsInventory}
-     */
     public static class MessageHandler implements IMessageHandler<PacketSyncPlayer, IMessage> {
         @Override
         @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
-        public IMessage onMessage(PacketSyncPlayer message, MessageContext ctx) {
-            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
-            extendedPlayer.setProtection(message.protection);
-            extendedPlayer.setPersistence(message.persistence);
-            extendedPlayer.setCharisma(message.charisma);
-            extendedPlayer.setRank(message.rank);
-
+        public IMessage onMessage(PacketSyncPlayer m, MessageContext ctx) {
+            ExtendedPlayer player = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
+            player.step = m.step;
+            player.protection = m.protection;
+            player.persistence = m.persistence;
+            player.rank = m.rank;
             return null;
         }
 
