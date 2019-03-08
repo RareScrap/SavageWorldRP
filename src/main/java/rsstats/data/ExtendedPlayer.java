@@ -119,9 +119,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         statsInventory = new StatsInventory("stats_inv", 9);
         skillsInventory = new SkillsInventory("skills_inv", 36, entityPlayer, statsInventory);
+        skillsInventory.connect();
 
         otherTabsHost = new TabHostInventory("effects_host", 4);
         otherTabsInventory = new TabInventory("effects", 36, entityPlayer, otherTabsHost);
+        otherTabsInventory.connect();
     }
     
     /**

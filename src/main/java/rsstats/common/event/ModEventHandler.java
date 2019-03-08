@@ -56,16 +56,16 @@ public class ModEventHandler {
         if (e.entity instanceof EntityPlayer) {
             ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) e.entity);
 
-            player.initContainer(); // Включаем постоянную синхронизацию инвентарей
-
             // Альтернативная начальная инициализация вкладок
             if (player.otherTabsHost.isEmpty()) {
                 player.otherTabsHost.setInventorySlotContents(0, new ItemStack(OtherItems.perksTabItem, 1));
                 player.otherTabsHost.setInventorySlotContents(1, new ItemStack(OtherItems.flawsTabItem, 1));
                 player.otherTabsHost.setInventorySlotContents(2, new ItemStack(OtherItems.positiveEffectsTabItem, 1));
                 player.otherTabsHost.setInventorySlotContents(3, new ItemStack(OtherItems.negativeEffectsTabItem, 1));
-
             }
+
+            // TODO: Мне не нравится что контейнер инициализируется снаружи ExtendedPlayer'а. Я думаю, что это источник потенциальных ошибок. Ровно как и из-за альтернативной инициализции я вынужден инициализировать контейнер тут, т.к. инициализация должна происходить только после того как все иначальные итемы будут расставлены. А еще мне не нравится и это требование. Почему итемы нельзя расставлять после инициализации контейнера?
+            player.initContainer(); // Включаем постоянную синхронизацию инвентарей (После инициализации вкладок!)
 
             if (player != null)
                 player.sync();
