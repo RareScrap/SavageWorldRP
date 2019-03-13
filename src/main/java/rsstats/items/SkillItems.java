@@ -22,7 +22,7 @@ public class SkillItems {
         //List<RollModifier> modificators = new ArrayList<RollModifier>();
         //modificators.add(new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")));
 
-        RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")); // TODO: Разобраться почему это работает на сервере
+        RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill"));
 
         basicRolls = new ArrayList<Roll>();
         basicRolls.add(new Roll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов
