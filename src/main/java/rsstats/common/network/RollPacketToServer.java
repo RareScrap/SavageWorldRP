@@ -144,14 +144,9 @@ public class RollPacketToServer implements IMessage {
 
             ChatComponentText modifiersComp = new ChatComponentText("<MODIFIERS>"); // Маркируем компонент, чтобы клиент мог его найти
             for (RollModifier modifier : rollResult.modifiers) {
-
-                // Добавляем модификаторы к компоненту
-                modifiersComp.appendSibling(new ChatComponentText(
-                        String.format("(%+d: %2$s) ", // TODO: Не нравитсямне добавление пробела в конце и почему шаблон берется не из файлов локализации?
-                        modifier.value,
-                        modifier.description)
-                ));
-
+                // Данные модификаторов будем слать двумя объектами, прикрепленными в виде сиблингов // TODO: Если слать одним, то придется делать парсинг на клиенте, что подталкиевает к написанию своего ChatComponent'а. А если писать его, то придется еще и либу к нему писать
+                modifiersComp.appendText(String.valueOf(modifier.value));
+                modifiersComp.appendText(modifier.description);
             }
 
             return modifiersComp;

@@ -1,7 +1,6 @@
 package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.util.StatCollector;
 import rsstats.roll.Roll;
 import rsstats.roll.RollModifier;
 
@@ -22,7 +21,7 @@ public class SkillItems {
         //List<RollModifier> modificators = new ArrayList<RollModifier>();
         //modificators.add(new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill")));
 
-        RollModifier level_zero = new RollModifier(-2, StatCollector.translateToLocal("modifiers.MissingSkill"));
+        RollModifier level_zero = new RollModifier(-2,"modifiers.MissingSkill");
 
         basicRolls = new ArrayList<Roll>();
         basicRolls.add(new Roll(4, level_zero)); // Создание дополнительного броска для нулевого уровня скиллов

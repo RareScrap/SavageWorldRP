@@ -21,6 +21,9 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.OtherItems;
+import rsstats.roll.RollModifier;
+
+import java.util.List;
 
 /**
  *
@@ -110,16 +113,33 @@ public class ModEventHandler {
                 if (part instanceof ChatComponentText
                         && ((ChatComponentText) part).getChatComponentText_TextValue().equals("<MODIFIERS>")) {
 
-                    // Формируем новый компонент, на основе старого...
+                    // Формируем новый компонент с модификаторами броска, на основе старого
                     modifiersComp = new ChatComponentText("");
-                    for (Object o : ((ChatComponentText) part).getSiblings()) {
-                        ChatComponentText modifier = (ChatComponentText) o;
-                        if (modifier.getFormattedText().contains("(+")) { // ... но применяем пользовательские настройки цвета
-                            modifier.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)); // TODO: Юзать конфиг
+
+                    List siblings = ((ChatComponentText) part).getSiblings();
+                    for (int i1 = 0; i1 < siblings.size(); i1+=2) {
+                        // Данные модификаторов хранятся в сиблингах по 2 объекта на один модификатор
+                        ChatComponentText modifierValueComponent = (ChatComponentText) siblings.get(i1);
+                        ChatComponentText modifierDescriptionComponent = (ChatComponentText) siblings.get(i1+1);
+
+                        // Создаем объект модификатора
+                        RollModifier modifier = new RollModifier(
+                                Integer.parseInt(modifierValueComponent.getChatComponentText_TextValue()),
+                                modifierDescriptionComponent.getChatComponentText_TextValue()
+                        );
+
+                        // Формируем на основе его компонент
+                        ChatComponentText modifierComponent = new ChatComponentText(modifier.getTranslatedString());
+                        modifierComponent.appendText(" ");  // И пробел чтобы модификаторы не слиплялись
+
+                        if (modifier.value >= 0) { // Применяем пользовательские настройки цвета
+                            modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)); // TODO: Юзать конфиг
                         } else { // contains("(-")
-                            modifier.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
+                            modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
                         }
-                        modifiersComp.appendSibling(modifier);
+
+                        // Присоединяем компонент с модификатором к общему хранилищу
+                        modifiersComp.appendSibling(modifierComponent);
                     }
 
                     // Заменяем старый компонен на новый

@@ -15,7 +15,7 @@ item.StatItem.rollChatMessage=%1$s is rolling skill %2$s(d%3$d): %4$s %5$sTOTAL:
 item.StatItem.rollChatMessage_withWildDice=%1$s is rolling skill %2$s(d%3$d): %4$s WD: %5$s %6$sTOTAL: %7$d
 item.StatItem.level=%1$d level
 
-modifier.string=§%3$s(§%3$s%1$s: %2$s)§r
+modifier.string=(%1$s: %2$s)
 
 user_not_found=User "%1$s" not found
 stat_not_found=Stat/skill "%1$s" not found in player "%2$s"

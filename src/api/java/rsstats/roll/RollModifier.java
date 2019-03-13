@@ -1,9 +1,7 @@
 package rsstats.roll;
 
 import net.minecraft.util.StatCollector;
-import rsstats.common.RSStats;
 import rsstats.i18n.IClientTranslatable;
-import rsstats.utils.DescriptionCutter;
 
 /**
  * Модификатора броска
@@ -44,18 +42,13 @@ public class RollModifier implements IClientTranslatable {
 
     @Override
     public String getTranslatedString() {
-        String formatCode;
-        if (value > 0) {
-            formatCode = RSStats.config.modifierColorPositive;
-        } else {
-            formatCode = RSStats.config.modifierColorNegative;
-        }
-
-        // TODO: Из-за бага с русскими буквами в RollModifier.description, может придти пустое слово. Все работает норм, но при юзании отладчика - можно увидеть как сюда приходит пустое слово. В игре такое не разу не замечено
-        String cut_descr = DescriptionCutter.formatEveryWord(description, "\u00A7" + formatCode); // Символ §
+        String localizedDescription = StatCollector.translateToLocal(description);
 
         // Форматируем выходную строку
-        return StatCollector.translateToLocalFormatted("modifier.string", value > 0 ? "+"+value : String.valueOf(value), cut_descr, formatCode);
+        return StatCollector.translateToLocalFormatted(
+                "modifier.string",
+                value > 0 ? "+"+value : String.valueOf(value),
+                localizedDescription == null ? description : localizedDescription);
     }
 
     @Override
