@@ -102,9 +102,6 @@ public class ModEventHandler {
             // Пытаем кастануть сообщение
             ChatComponentTranslation chatComp = (ChatComponentTranslation) event.message;
 
-            // Извлекаем сообщение модификаторов, чтобы применить к ним клиентский конфиг игрока
-            ChatComponentText modifiersComp;
-
             Object[] formatArgs = chatComp.getFormatArgs();
             for (int i = 0; i < formatArgs.length; i++) {
                 Object part = formatArgs[i];
@@ -113,37 +110,8 @@ public class ModEventHandler {
                 if (part instanceof ChatComponentText
                         && ((ChatComponentText) part).getChatComponentText_TextValue().equals("<MODIFIERS>")) {
 
-                    // Формируем новый компонент с модификаторами броска, на основе старого
-                    modifiersComp = new ChatComponentText("");
-
-                    List siblings = ((ChatComponentText) part).getSiblings();
-                    for (int i1 = 0; i1 < siblings.size(); i1+=2) {
-                        // Данные модификаторов хранятся в сиблингах по 2 объекта на один модификатор
-                        ChatComponentText modifierValueComponent = (ChatComponentText) siblings.get(i1);
-                        ChatComponentText modifierDescriptionComponent = (ChatComponentText) siblings.get(i1+1);
-
-                        // Создаем объект модификатора
-                        RollModifier modifier = new RollModifier(
-                                Integer.parseInt(modifierValueComponent.getChatComponentText_TextValue()),
-                                modifierDescriptionComponent.getChatComponentText_TextValue()
-                        );
-
-                        // Формируем на основе его компонент
-                        ChatComponentText modifierComponent = new ChatComponentText(modifier.getTranslatedString());
-                        modifierComponent.appendText(" ");  // И пробел чтобы модификаторы не слиплялись
-
-                        if (modifier.value >= 0) { // Применяем пользовательские настройки цвета
-                            modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)); // TODO: Юзать конфиг
-                        } else { // contains("(-")
-                            modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
-                        }
-
-                        // Присоединяем компонент с модификатором к общему хранилищу
-                        modifiersComp.appendSibling(modifierComponent);
-                    }
-
-                    // Заменяем старый компонен на новый
-                    formatArgs[i] = modifiersComp;
+                    // Заменяем старый компонен на новый, к которому применен конфиг на клиенте
+                    formatArgs[i] = processModifiersComponent((ChatComponentText) part);
 
                     // Повторно локализуем компонент
                     event.message = chatComp.createCopy(); // Думаю, это решение вполне совместимо с другими модами
@@ -157,6 +125,44 @@ public class ModEventHandler {
             //e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Преобразует чат-компонент с модификаторами в читаемый вид
+     * @param modifiersComponent Сырой конпонент с модификаторами
+     * @return Локализованные модификаторы с примененными цветами и удаленным текстом-маркером
+     */
+    private static ChatComponentText processModifiersComponent(ChatComponentText modifiersComponent) {
+        // Формируем новый компонент с модификаторами броска, на основе старого
+        ChatComponentText returnedComponent = new ChatComponentText("");
+
+        List siblings = modifiersComponent.getSiblings();
+        for (int i1 = 0; i1 < siblings.size(); i1+=2) {
+            // Данные модификаторов хранятся в сиблингах по 2 объекта на один модификатор
+            ChatComponentText modifierValueComponent = (ChatComponentText) siblings.get(i1);
+            ChatComponentText modifierDescriptionComponent = (ChatComponentText) siblings.get(i1+1);
+
+            // Создаем объект модификатора
+            RollModifier modifier = new RollModifier(
+                    Integer.parseInt(modifierValueComponent.getChatComponentText_TextValue()),
+                    modifierDescriptionComponent.getChatComponentText_TextValue()
+            );
+
+            // Формируем на основе его компонент
+            ChatComponentText modifierComponent = new ChatComponentText(modifier.getTranslatedString());
+            modifierComponent.appendText(" ");  // И пробел чтобы модификаторы не слиплялись
+
+            if (modifier.value >= 0) { // Применяем пользовательские настройки цвета
+                modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)); // TODO: Юзать конфиг
+            } else { // contains("(-")
+                modifierComponent.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED));
+            }
+
+            // Присоединяем компонент с модификатором к общему хранилищу
+            returnedComponent.appendSibling(modifierComponent);
+        }
+
+        return returnedComponent;
     }
 
     @SubscribeEvent
