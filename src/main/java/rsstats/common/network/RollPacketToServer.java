@@ -19,6 +19,9 @@ import rsstats.roll.PlayerRoll;
 import rsstats.roll.Result;
 import rsstats.roll.RollModifier;
 import rsstats.utils.Utils;
+import ru.rarescrap.tabinventory.TabInventory;
+
+import static rsstats.common.RSStats.MODID;
 
 /**
  * Пакет, побуждающий сервер произвести проброс статы/скилла
@@ -127,9 +130,9 @@ public class RollPacketToServer implements IMessage {
             // А потом из итема достаем стату-родитель и получаем ее имя, которое используется как ключ вкладки
             String parentStatName = GameRegistry.findUniqueIdentifierFor(rollItem.parentStat).name;
 
-            statStack = ru.rarescrap.tabinventory.utils.Utils.findIn(
+            statStack = TabInventory.findIn(
                     player.skillsInventory,
-                    rollName,
+                    GameRegistry.findItem(MODID, rollName), // TODO: КОСТЫЛЬ ЕБАНЫЙ!
                     "item."+parentStatName); // TODO: Ебанный костыль
 
             return statStack;

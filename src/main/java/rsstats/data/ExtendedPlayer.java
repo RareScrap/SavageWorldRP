@@ -263,9 +263,9 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
      */
     public void updateParams() {
         // Расчитываем параметр "Защита"
-        ItemStack itemStack = ru.rarescrap.tabinventory.utils.Utils.findIn(
+        ItemStack itemStack = TabInventory.findIn(
                 skillsInventory,
-                Utils.getRegistryName(SkillItems.fightingSkillItem),
+                SkillItems.fightingSkillItem,
                 StatItems.agilityStatItem.getUnlocalizedName()); // TODO: UnlocalizedName используется в качестве ключа вкладки!
 
         if (itemStack != null) {
