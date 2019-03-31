@@ -290,4 +290,25 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
         }
     }
+
+    public ItemStack getPerk(PerkItem perkItem) {
+        return TabInventory.findIn(otherTabsInventory, perkItem, OtherItems.perksTabItem.getUnlocalizedName()); // TODO: Пора бы перестать юзать unlocaized-name В качестве ключа
+    }
+
+    /**
+     * Добавляет игроку новый перк, если есть свободное место и если игрок еще не имеет этого перка.
+     * @param perkItem Перк, стак которого требуется добавить
+     * @return True, если перк добавлен успешно. Иначе - false.
+     */
+    public boolean addPerk(PerkItem perkItem) {
+        // TODO: UnlocalizedName используется в качестве ключа вкладки!)
+        TabInventory.Tab tab = otherTabsInventory.getTab(OtherItems.perksTabItem.getUnlocalizedName()); // TODO: Сделать бы otherTabsInventory.getPerkTab()
+        int emptyStackIndex = -1; // Не сцы, обратиться к массиву с таким индексом невозможно из-за цикла ниже
+        for (int i = 0; i < tab.stacks.length; i++) { // TODO: Кандидат на вынос в утильный метод для IInventory
+            if (tab.stacks[i] == null && emptyStackIndex == -1) emptyStackIndex = i;
+            if (tab.stacks[i] != null && tab.stacks[i].getItem() == perkItem) return false;
+        }
+        tab.stacks[emptyStackIndex] = new ItemStack(perkItem);
+        return true;
+    }
 }
