@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static rsstats.data.ExtendedPlayer.Rank;
+
 public class Riches extends PerkItem {
 
     public Riches() {
@@ -21,7 +23,7 @@ public class Riches extends PerkItem {
 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
-        list.add(ExtendedPlayer.get(player).rank.getTranslatedString()); // TODO: Тут будет ошибка, если игрок будет просматривать перки друого игрока. Пока оставляем так, т.к. на данный момент нельзя смотреть перки другого игрока.
+        list.add(Rank.NOVICE.getTranslatedString());
         list.add("");
         super.addInformation(itemStack, player, list, p_77624_4_);
     }
