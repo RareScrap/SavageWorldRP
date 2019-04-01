@@ -10,7 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.roll.RollModifier;
-import rsstats.utils.DescriptionCutter;
+import rsstats.utils.LangUtils;
 import ru.rarescrap.tabinventory.events.StackAddToTabEvent;
 
 import java.util.List;
@@ -40,13 +40,9 @@ public abstract class PerkItem extends Item {
 
         // Дополнительная информация по кнопке Shift
         if (GuiScreen.isShiftKeyDown()) {
-            String[] str = DescriptionCutter.cut(4, StatCollector.translateToLocal(getUnlocalizedName() + ".description"));
-            for (int i = 0; i < str.length; i++)
-                list.add( str[i] );
-
-            list.add("");
+            list.addAll(LangUtils.translateToLocal(getUnlocalizedName() + ".description"));
         } else {
-            list.add(StatCollector.translateToLocal(getUnlocalizedName() + ".description_short"));
+            list.addAll(LangUtils.translateToLocal(getUnlocalizedName() + ".description_short"));
             list.add( StatCollector.translateToLocal("item.StatItem.moreInfo") );
         }
     }
