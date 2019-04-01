@@ -19,3 +19,5 @@ modifier.string=(%1$s: %2$s)
 
 user_not_found=User "%1$s" not found
 stat_not_found=Stat/skill "%1$s" not found in player "%2$s"
+
+lang.or=or
