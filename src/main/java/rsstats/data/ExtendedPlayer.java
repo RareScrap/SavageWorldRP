@@ -18,10 +18,7 @@ import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.inventory.container.MainContainer;
-import rsstats.items.OtherItems;
-import rsstats.items.SkillItems;
-import rsstats.items.StatItem;
-import rsstats.items.StatItems;
+import rsstats.items.*;
 import rsstats.items.perk.IModifierDependent;
 import rsstats.items.perk.PerkItem;
 import rsstats.utils.Utils;
@@ -277,7 +274,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         }
 
         // Рассчитываем параметр "Стойкость"
-        itemStack = Utils.findIn(statsInventory, Utils.getRegistryName(StatItems.enduranceStatItem));
+        itemStack = Utils.findIn(statsInventory, StatItems.enduranceStatItem);
         if (itemStack != null)
             this.persistence = 2 + StatItem.getRoll(itemStack).dice / 2;
     }

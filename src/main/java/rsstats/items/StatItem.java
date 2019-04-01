@@ -17,7 +17,6 @@ import rsstats.common.network.RollPacketToServer;
 import rsstats.data.ExtendedPlayer;
 import rsstats.roll.BasicRoll;
 import rsstats.utils.DescriptionCutter;
-import rsstats.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -240,7 +239,7 @@ public class StatItem extends Item {
     public void sendRollPacket(ItemStack itemStack, EntityPlayer entityplayer, boolean withWildDice) {
         RollPacketToServer packet = new RollPacketToServer(
                 entityplayer.getDisplayName(),
-                Utils.getRegistryName(itemStack.getItem()),
+                Item.getIdFromItem(itemStack.getItem()),
                 withWildDice);
         CommonProxy.INSTANCE.sendToServer(packet);
     }

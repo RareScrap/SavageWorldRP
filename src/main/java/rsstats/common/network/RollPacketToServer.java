@@ -5,23 +5,18 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.common.registry.GameRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
-import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
 import rsstats.roll.PlayerRoll;
 import rsstats.roll.Result;
 import rsstats.roll.RollModifier;
-import rsstats.utils.Utils;
-import ru.rarescrap.tabinventory.TabInventory;
-
-import static rsstats.common.RSStats.MODID;
 
 /**
  * Пакет, побуждающий сервер произвести проброс статы/скилла
@@ -30,9 +25,8 @@ import static rsstats.common.RSStats.MODID;
 public class RollPacketToServer implements IMessage {
     /** Имя игрока, делающий бросок */
     private String playerName; // TODO: Зачем оно нужно, ведь можно получить его из ctx?
-    /** Уникальное имя пробрасываемой статы
-     * @see cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier#name */
-    private String rollName;
+    /** ID итема пробрасываемой статы */
+    private int rollItemId;
     /** Стоит ли включить в результаты броска Дикий Кубик */
     private boolean withWildDice;
 
@@ -42,16 +36,16 @@ public class RollPacketToServer implements IMessage {
      */
     public RollPacketToServer() {}
 
-    public RollPacketToServer(String playerName, String rollName, boolean withWildDice) {
+    public RollPacketToServer(String playerName, int rollItemId, boolean withWildDice) {
         this.playerName = playerName;
-        this.rollName = rollName;
+        this.rollItemId = rollItemId;
         this.withWildDice = withWildDice;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         playerName = ByteBufUtils.readUTF8String(buf);
-        rollName = ByteBufUtils.readUTF8String(buf);
+        rollItemId = ByteBufUtils.readVarShort(buf); // Майн тоже передает ID через short
         withWildDice = ByteBufUtils.readVarShort(buf) == 1; // 1 - true, 0 (or other) - false
     }
 
@@ -62,7 +56,7 @@ public class RollPacketToServer implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         ByteBufUtils.writeUTF8String(buf, playerName);
-        ByteBufUtils.writeUTF8String(buf, rollName);
+        ByteBufUtils.writeVarShort(buf, rollItemId);
         ByteBufUtils.writeVarShort(buf, withWildDice ? 1 : 0);
     }
     
@@ -90,11 +84,12 @@ public class RollPacketToServer implements IMessage {
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(entityPlayerMP);
 
             // Ищем у него стак с указанным итемом
-            ItemStack statStack = findRollStack(extendedPlayer, m.rollName);
+            Item clickedItem = Item.getItemById(m.rollItemId);
+            ItemStack statStack = findRollStack(extendedPlayer, clickedItem);
             if (statStack == null) {
                 entityPlayerMP.addChatMessage(new ChatComponentTranslation(
                         "stat_not_found",
-                        m.rollName,
+                        new ChatComponentTranslation(clickedItem.getUnlocalizedName() + ".name"),
                         m.playerName));
                 return null;
             }
@@ -115,27 +110,16 @@ public class RollPacketToServer implements IMessage {
         /**
          * Находит стак по имени статы/навыка
          * @param player Игрок, в инвентаре которого произвойдет поиск
-         * @param rollName Уникальное имя статы/навыка
+         * @param rollItem Итем статы/навыка
          * @return Стак с итемом статы/навыка. Null, если ничего не найдено.
          */
-        private ItemStack findRollStack(ExtendedPlayer player, String rollName) {
+        private ItemStack findRollStack(ExtendedPlayer player, Item rollItem) {
             // Ищем среди статов
-            ItemStack statStack = Utils.findIn(player.statsInventory, rollName);
-            if (statStack != null) return statStack;
-
-            // Если не нашли - среди скиллов
-
-            // Чтоб не перебирать все вкладки инвентаря, находим итем скилла по указанному имени ... // TODO: Замерить производительность при переборе и сравнить с текущим решением
-            SkillItem rollItem = (SkillItem) GameRegistry.findItem(RSStats.MODID, rollName);
-            // А потом из итема достаем стату-родитель и получаем ее имя, которое используется как ключ вкладки
-            String parentStatName = GameRegistry.findUniqueIdentifierFor(rollItem.parentStat).name;
-
-            statStack = TabInventory.findIn(
-                    player.skillsInventory,
-                    GameRegistry.findItem(MODID, rollName), // TODO: КОСТЫЛЬ ЕБАНЫЙ!
-                    "item."+parentStatName); // TODO: Ебанный костыль
-
-            return statStack;
+            if (rollItem instanceof SkillItem) { // TODO: Пора отказаться от наследования в итемах
+                return player.getSkill((SkillItem) rollItem);
+            } else { // instance of StatItem
+                return player.getStat((StatItem) rollItem);
+            }
         }
 
         /**

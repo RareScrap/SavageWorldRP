@@ -12,16 +12,14 @@ public class Utils {
     /**
      * Проверяет инвентарь на наличи какого-либо предмета. Если нашел - возвращает стак этого предмета.
      * @param inventory Целевой инвентарь
-     * @param itemRegistryName Уникальное имя предмета
+     * @param item Предмет, стак с которы нужно найти
      * @return Первый попавшийся стак, соответсвующий запросу. Если не нашел - null.
      */
-    public static ItemStack findIn(IInventory inventory, String itemRegistryName) {
+    public static ItemStack findIn(IInventory inventory, Item item) {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
             if (stack == null) continue;
-
-            String stackItemName = getRegistryName(stack.getItem());
-            if (stackItemName.equals(itemRegistryName)) return stack;
+            if (stack.getItem() == item) return stack;
         }
 
         return null;
