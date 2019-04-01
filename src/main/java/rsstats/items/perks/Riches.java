@@ -4,13 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.items.perk.IModifierDependent;
 import rsstats.items.perk.PerkItem;
-import rsstats.roll.RollModifier;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static rsstats.data.ExtendedPlayer.Rank;
 
@@ -31,10 +27,5 @@ public class Riches extends PerkItem {
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
         return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE);
-    }
-
-    @Override
-    public Map<IModifierDependent, RollModifier> getModifiers() {
-        return new HashMap<IModifierDependent, RollModifier>(); // null?
     }
 }

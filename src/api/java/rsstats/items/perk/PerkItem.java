@@ -13,10 +13,11 @@ import rsstats.roll.RollModifier;
 import rsstats.utils.LangUtils;
 import ru.rarescrap.tabinventory.events.StackAddToTabEvent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class PerkItem extends Item {
+public class PerkItem extends Item {
 
     public PerkItem() {
         this.setCreativeTab(RSStats.CREATIVE_TAB);
@@ -24,7 +25,9 @@ public abstract class PerkItem extends Item {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public abstract Map<IModifierDependent, RollModifier> getModifiers();
+    public Map<IModifierDependent, RollModifier> getModifiers() {
+        return new HashMap<IModifierDependent, RollModifier>(); // TODO: null?
+    }
 
     public void activate(EntityPlayer entityPlayer) {
         // TODO: Не тестировалось

@@ -9,7 +9,6 @@ import rsstats.items.perk.IModifierDependent;
 import rsstats.items.perk.PerkItem;
 import rsstats.roll.RollModifier;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class Vigilance extends PerkItem {
 
     @Override
     public Map<IModifierDependent, RollModifier> getModifiers() {
-        HashMap<IModifierDependent, RollModifier> modifiers = new HashMap<IModifierDependent, RollModifier>();
+        Map<IModifierDependent, RollModifier> modifiers = super.getModifiers();
         modifiers.put(SkillItems.perceptionSkillItem, new RollModifier(+2, "item.VigilancePerkItem.name"));
         return modifiers;
     }
