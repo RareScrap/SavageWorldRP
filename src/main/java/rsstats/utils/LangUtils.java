@@ -14,6 +14,15 @@ import java.util.List;
  * @author RareScrap
  */
 public class LangUtils {
+
+    /**
+     * @return Слово "и" с учетом локали клиента
+     */
+    @SideOnly(Side.CLIENT)
+    public static String and() {
+        return StatCollector.translateToLocal("lang.and");
+    }
+
     /**
      * @return Слово "или" с учетом локали клиента
      */
