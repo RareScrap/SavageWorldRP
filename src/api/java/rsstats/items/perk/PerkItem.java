@@ -24,9 +24,6 @@ public abstract class PerkItem extends Item {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    // абстрактный, т.к. наследник вероятнее всего удалит какой-нибудь Requirement из супера. А возвращать null слишком уродливо и бессмсленно по большому счету
-    public abstract List<Requirement> getRequirements();
-
     public abstract Map<IModifierDependent, RollModifier> getModifiers();
 
     public void activate(EntityPlayer entityPlayer) {
@@ -34,21 +31,12 @@ public abstract class PerkItem extends Item {
     }
 
     public boolean isSuitableFor(ExtendedPlayer player) {
-        for (Requirement requirement : getRequirements()) {
-            if (!requirement.isSuitableFor(player))
-                return false;
-        }
-
         return true;
     }
 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
-        for (Requirement requirement : getRequirements()) {
-            list.add(requirement.getTranslatedString());
-        }
-
-        list.add("");
+        // Требования к перку добавляются в потомках
 
         // Дополнительная информация по кнопке Shift
         if (GuiScreen.isShiftKeyDown()) {
