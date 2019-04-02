@@ -42,7 +42,7 @@ public class AristocratPerk extends PerkItem {
     @Override
     public Map<IModifierDependent, RollModifier> getModifiers() {
         Map<IModifierDependent, RollModifier> modifiers = super.getModifiers();
-        modifiers.put(ParamKeys.CHARISMA, new RollModifier(+2, "item.AristocratPerkItem.name"));
+        modifiers.put(ParamKeys.CHARISMA, new RollModifier(+2, getUnlocalizedName()+".name"));
         return modifiers;
     }
 

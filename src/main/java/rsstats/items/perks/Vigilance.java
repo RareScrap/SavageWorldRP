@@ -35,7 +35,7 @@ public class Vigilance extends PerkItem {
     @Override
     public Map<IModifierDependent, RollModifier> getModifiers() {
         Map<IModifierDependent, RollModifier> modifiers = super.getModifiers();
-        modifiers.put(SkillItems.perceptionSkillItem, new RollModifier(+2, "item.VigilancePerkItem.name"));
+        modifiers.put(SkillItems.perceptionSkillItem, new RollModifier(+2, getUnlocalizedName()+".name"));
         return modifiers;
     }
 }
