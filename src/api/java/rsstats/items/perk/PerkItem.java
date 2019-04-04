@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.common.RSStats;
@@ -29,8 +30,18 @@ public class PerkItem extends Item {
         return new HashMap<IModifierDependent, RollModifier>(); // TODO: null?
     }
 
-    public void activate(EntityPlayer entityPlayer) {
-        // TODO: Не тестировалось
+    /**
+     * Вызывается, если игрок активирует данный перк
+     * @param entityPlayer Игрок, акивирующий перк
+     */
+    public void activate(EntityPlayer entityPlayer) {}
+
+    /**
+     * Определяет, является ли перк акивируемым
+     * @return True, если перк можно активироть. Иначе - false.
+     */
+    public boolean canActivate() {
+        return false;
     }
 
     public boolean isSuitableFor(ExtendedPlayer player) {
@@ -47,6 +58,7 @@ public class PerkItem extends Item {
         } else {
             list.addAll(LangUtils.translateToLocal(getUnlocalizedName() + ".description_short"));
             list.add( StatCollector.translateToLocal("item.StatItem.moreInfo") );
+            if (canActivate()) list.add( EnumChatFormatting.GOLD + StatCollector.translateToLocal("item.PerkItem.canActivate") );
         }
     }
 
