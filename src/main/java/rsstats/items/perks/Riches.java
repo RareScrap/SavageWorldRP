@@ -10,7 +10,7 @@ import java.util.List;
 
 import static rsstats.data.ExtendedPlayer.Rank;
 
-public class Riches extends PerkItem {
+public class Riches extends PerkItem { // TODO: Уровни перков делать ли через метадату итема?
 
     public Riches() {
         setUnlocalizedName("RichesPerkItem");
