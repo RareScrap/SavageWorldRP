@@ -49,8 +49,7 @@ public class BreathOfCourage extends PerkItem {
 
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE)
-                && player.getStatLvl(StatItems.enduranceStatItem) >= 3;
+        return super.isSuitableFor(player) && player.getStatLvl(StatItems.enduranceStatItem) >= 3;
     }
 
     @SubscribeEvent

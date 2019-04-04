@@ -12,7 +12,6 @@ import rsstats.roll.RollModifier;
 import java.util.List;
 import java.util.Map;
 
-import static rsstats.data.ExtendedPlayer.Rank;
 import static rsstats.utils.LangUtils.and;
 import static rsstats.utils.LangUtils.getLocalizedName;
 
@@ -33,7 +32,7 @@ public class BigBoy extends PerkItem {
 
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(Rank.NOVICE)
+        return super.isSuitableFor(player)
                 && player.getStatLvl(StatItems.strenghtStatItem) >= 2
                 && player.getStatLvl(StatItems.enduranceStatItem) >= 2;
 

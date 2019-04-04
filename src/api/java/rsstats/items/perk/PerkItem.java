@@ -45,7 +45,7 @@ public class PerkItem extends Item {
     }
 
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return true;
+        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE);
     }
 
     @Override

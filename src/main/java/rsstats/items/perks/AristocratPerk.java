@@ -35,11 +35,6 @@ public class AristocratPerk extends PerkItem {
     }
 
     @Override
-    public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(Rank.NOVICE);
-    }
-
-    @Override
     public Map<IModifierDependent, RollModifier> getModifiers() {
         Map<IModifierDependent, RollModifier> modifiers = super.getModifiers();
         modifiers.put(ParamKeys.CHARISMA, new RollModifier(+2, getUnlocalizedName()+".name"));

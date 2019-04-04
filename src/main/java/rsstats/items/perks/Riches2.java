@@ -29,7 +29,6 @@ public class Riches2 extends PerkItem {
 
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE) &&
-                (player.hasPerk(riches) || player.hasPerk(aristocrat));
+        return super.isSuitableFor(player) && (player.hasPerk(riches) || player.hasPerk(aristocrat));
     }
 }

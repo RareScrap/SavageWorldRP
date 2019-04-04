@@ -31,8 +31,7 @@ public class Swiftness extends PerkItem {
 
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE)
-                && player.getStatLvl(StatItems.agilityStatItem) >= 2;
+        return super.isSuitableFor(player) && player.getStatLvl(StatItems.agilityStatItem) >= 2;
     }
 
     @Override

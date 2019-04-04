@@ -22,10 +22,5 @@ public class FaithfulBeast extends PerkItem {
         super.addInformation(itemStack, player, list, p_77624_4_);
     }
 
-    @Override
-    public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE);
-    }
-
     // TODO: Я хз как сделать функционал этому перку в данной стадии готовности мода
 }

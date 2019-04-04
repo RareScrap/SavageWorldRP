@@ -26,11 +26,6 @@ public class Lucky extends PerkItem {
         super.addInformation(itemStack, player, list, p_77624_4_);
     }
 
-    @Override
-    public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE);
-    }
-
     @SubscribeEvent
     public void onNewSession(NewSessionEvent event) { // TODO: НЕ ТЕСТИРОВАЛОСЬ!
         if (event.extendedPlayer.hasPerk(PerkItems.lucky))

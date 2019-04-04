@@ -31,8 +31,7 @@ public class Lucky2 extends PerkItem {
 
     @Override
     public boolean isSuitableFor(ExtendedPlayer player) {
-        return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE)
-                && player.hasPerk(PerkItems.lucky);
+        return super.isSuitableFor(player) && player.hasPerk(PerkItems.lucky);
     }
 
     @SubscribeEvent
