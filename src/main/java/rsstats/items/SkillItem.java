@@ -8,7 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import rsstats.roll.Roll;
+import rsstats.api.roll.Roll;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,7 +21,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.OtherItems;
-import rsstats.roll.RollModifier;
+import rsstats.api.roll.RollModifier;
 
 import java.util.List;
 

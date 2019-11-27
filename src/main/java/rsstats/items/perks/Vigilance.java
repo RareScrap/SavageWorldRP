@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import rsstats.common.RSStats;
 import rsstats.items.SkillItems;
-import rsstats.items.perk.IModifierDependent;
-import rsstats.items.perk.PerkItem;
-import rsstats.roll.RollModifier;
+import rsstats.api.items.perk.IModifierDependent;
+import rsstats.api.items.perk.PerkItem;
+import rsstats.api.roll.RollModifier;
 
 import java.util.List;
 import java.util.Map;

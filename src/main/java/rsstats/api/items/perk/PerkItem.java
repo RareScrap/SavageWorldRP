@@ -1,4 +1,4 @@
-package rsstats.items.perk;
+package rsstats.api.items.perk;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,7 +10,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.roll.RollModifier;
+import rsstats.api.roll.RollModifier;
 import rsstats.utils.LangUtils;
 import ru.rarescrap.tabinventory.events.StackAddToTabEvent;
 

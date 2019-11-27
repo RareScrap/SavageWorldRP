@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import rsstats.common.RSStats;
 import rsstats.items.StatItem;
-import rsstats.items.perk.IModifierDependent;
-import rsstats.roll.RollModifier;
+import rsstats.api.items.perk.IModifierDependent;
+import rsstats.api.roll.RollModifier;
 
 import java.util.*;
 

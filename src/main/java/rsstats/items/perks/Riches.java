@@ -3,7 +3,7 @@ package rsstats.items.perks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import rsstats.common.RSStats;
-import rsstats.items.perk.PerkItem;
+import rsstats.api.items.perk.PerkItem;
 
 import java.util.List;
 

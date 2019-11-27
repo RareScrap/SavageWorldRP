@@ -1,4 +1,4 @@
-package rsstats.i18n;
+package rsstats.api.i18n;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

@@ -1,8 +1,8 @@
 package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import rsstats.roll.Roll;
-import rsstats.roll.RollModifier;
+import rsstats.api.roll.Roll;
+import rsstats.api.roll.RollModifier;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

@@ -5,10 +5,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.events.NewSessionEvent;
+import rsstats.api.events.NewSessionEvent;
 import rsstats.items.MiscItems;
 import rsstats.items.PerkItems;
-import rsstats.items.perk.PerkItem;
+import rsstats.api.items.perk.PerkItem;
 
 import java.util.List;
 

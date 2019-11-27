@@ -1,4 +1,4 @@
-package rsstats.roll;
+package rsstats.api.roll;
 
 import net.minecraft.item.ItemStack;
 import rsstats.data.ExtendedPlayer;

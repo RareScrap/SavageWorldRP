@@ -7,9 +7,9 @@ import net.minecraftforge.common.MinecraftForge;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.PerkItems;
-import rsstats.items.perk.IModifierDependent;
-import rsstats.items.perk.PerkItem;
-import rsstats.roll.RollModifier;
+import rsstats.api.items.perk.IModifierDependent;
+import rsstats.api.items.perk.PerkItem;
+import rsstats.api.roll.RollModifier;
 import ru.rarescrap.tabinventory.events.StackAddToTabEvent;
 
 import java.util.List;

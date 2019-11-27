@@ -23,7 +23,7 @@ import rsstats.items.MiscItems;
 import rsstats.items.OtherItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.items.perk.PerkItem;
+import rsstats.api.items.perk.PerkItem;
 import ru.rarescrap.tabinventory.TabContainer;
 import ru.rarescrap.tabinventory.TabInventory;
 

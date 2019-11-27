@@ -14,9 +14,9 @@ import net.minecraft.util.ChatComponentTranslation;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.roll.PlayerRoll;
-import rsstats.roll.Result;
-import rsstats.roll.RollModifier;
+import rsstats.api.roll.PlayerRoll;
+import rsstats.api.roll.Result;
+import rsstats.api.roll.RollModifier;
 
 /**
  * Пакет, побуждающий сервер произвести проброс статы/скилла

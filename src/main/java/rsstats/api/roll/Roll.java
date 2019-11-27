@@ -1,4 +1,4 @@
-package rsstats.roll;
+package rsstats.api.roll;
 
 import java.util.ArrayList;
 import java.util.Arrays;

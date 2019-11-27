@@ -1,7 +1,7 @@
-package rsstats.roll;
+package rsstats.api.roll;
 
 import net.minecraft.util.StatCollector;
-import rsstats.i18n.IClientTranslatable;
+import rsstats.api.i18n.IClientTranslatable;
 
 /**
  * Модификатора броска

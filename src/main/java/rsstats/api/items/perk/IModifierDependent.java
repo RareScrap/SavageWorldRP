@@ -1,4 +1,4 @@
-package rsstats.items.perk;
+package rsstats.api.items.perk;
 
 /**
  * Обозначает, что к реализатору могут быть применены модификаторы,

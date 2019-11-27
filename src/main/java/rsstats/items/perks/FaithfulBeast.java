@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.items.perk.PerkItem;
+import rsstats.api.items.perk.PerkItem;
 
 import java.util.List;
 
