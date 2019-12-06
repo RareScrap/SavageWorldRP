@@ -13,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'ru.rarescrap:depATs:1.0.0' // Для поиска трансформеров в зависимостях
     }
 }
 
@@ -24,6 +25,7 @@ repositories {
 
 apply plugin: 'java' // TODO: Зачем? Можно ли тестить без этого?
 apply plugin: 'forge'
+apply plugin: 'DepATs'
 
 version = "0.0.1a"
 group= "com.rarescrap.RSStats" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -32,6 +34,7 @@ archivesBaseName = "RSStats"
 minecraft {
     version = "1.7.10-10.13.4.1558-1.7.10"
     runDir = "eclipse"
+    at(DepATs.getDepATs())
 }
 
 dependencies {
