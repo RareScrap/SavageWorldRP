@@ -21,6 +21,8 @@ import rsstats.inventory.container.MainContainer;
 import ru.rarescrap.tabinventory.SupportTabs;
 import ru.rarescrap.tabinventory.network.syns.TabInventorySync;
 import ru.rarescrap.tabinventory.utils.Utils;
+import ru.rarescrap.weightapi.IWeightProvider;
+import ru.rarescrap.weightapi.WeightRegistry;
 
 import static rsstats.data.ExtendedPlayer.ParamKeys.*;
 
@@ -151,6 +153,15 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.tiredness", player.getParamWithModifiers(TIREDNESS)), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getParamWithModifiers(CHARISMA)), 8, textY+=10, 0x444444, false);
 
+        IWeightProvider weightProvider = WeightRegistry.getActiveWeightProvider(); // TODO: Вот бы метод для проверки и шоб без нула
+        if (weightProvider != null) {
+            // TODO: Какие же это уродливые методы. Вот бы получать нужную инфу как-то так? WeightUtils.getWeight(EntityPlayerMP)
+            double currentWeight = weightProvider.getWeight(player.getEntityPlayer().inventory, player.getEntityPlayer());
+            double maxWeight = weightProvider.getMaxWeight(player.getEntityPlayer().inventory, player.getEntityPlayer());
+            boolean isOverloaded = weightProvider.isOverloaded(player.getEntityPlayer().inventory, player.getEntityPlayer());
+            String str = StatCollector.translateToLocalFormatted("gui.inventory_weight", currentWeight, maxWeight);
+            mc.fontRenderer.drawString(str, 60, textY, isOverloaded ? 0xDB1818 : 4210752, false);
+        }
         super.drawGuiContainerForegroundLayer(p_146979_1_, p_146979_2_);
 
         /*
