@@ -224,11 +224,12 @@ public class MainContainer extends TabContainer {
     @Override
     public void addCraftingToCrafters(ICrafting p_75132_1_) {
         if (!crafters.contains(p_75132_1_)) {
-            crafters.add(p_75132_1_);
 
             if (p_75132_1_ instanceof EntityPlayerMP) {
                 // Высылаем содержимое слотов контейнера игроку на клиент
+                // TODO: Почему тут нельзя положится на уже имеющуюся логику ванилы и TabInventoryLib?
                 CommonProxy.INSTANCE.sendTo(new PacketContainerContent(this), (EntityPlayerMP) p_75132_1_);
+                crafters.add(p_75132_1_);
             } else {
                 // TODO: Понятия не имею как разруливать ситуацию, если это случится
                 super.addCraftingToCrafters(p_75132_1_);
