@@ -5,10 +5,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -22,6 +19,8 @@ import rsstats.common.command.Card;
 import rsstats.common.command.OpenWindow;
 import rsstats.common.command.ParamsPlayer;
 import rsstats.common.event.ModEventHandler;
+import rsstats.weight.WeightProvider;
+import ru.rarescrap.weightapi.WeightRegistry;
 
 import java.io.File;
 
@@ -31,7 +30,7 @@ import java.io.File;
  * "страниц" меню, которые затем помещаются на хост-мод (этот мод)
  * @author rares
  */
-@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0]")
+@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0];required-after:configurableweight@[0.5.1]")
 public class RSStats {
     /** ID мода */
     public static final String MODID = "rsstats";
@@ -72,6 +71,7 @@ public class RSStats {
     //public static SimpleNetworkWrapper INSTANCE = new SimpleNetworkWrapper(MODID);
 
     public static Config config;
+    public static WeightProvider WEIGHT_PROVIDER;
 
     /**
      * Конструктор, инициализирующий список допустимых дайсов
@@ -102,6 +102,15 @@ public class RSStats {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+    }
+
+    // Читам конфиг веса на сервере
+    @EventHandler
+    public void onServerStart(FMLServerAboutToStartEvent event) {
+        File configFile = new File(Loader.instance().getConfigDir(), MODID+"_weight.cfg");
+        if (configFile.exists()) {
+            WeightRegistry.registerWeightProvider(MODID, WEIGHT_PROVIDER = new WeightProvider(configFile));
+        } else throw new RuntimeException("["+MODNAME+"] Can't find config file. Weights not loaded!");
     }
 
     @EventHandler

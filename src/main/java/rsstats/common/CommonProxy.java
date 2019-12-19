@@ -18,6 +18,7 @@ import rsstats.data.ExtendedPlayer;
 import rsstats.inventory.container.StatsContainer;
 import rsstats.inventory.container.UpgradeContainer;
 import rsstats.items.*;
+import rsstats.weight.WeightProvider;
 import ru.rarescrap.tabinventory.network.NetworkUtils;
 import ru.rarescrap.tabinventory.network.TabInventoryItemsMessage;
 
@@ -55,7 +56,9 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketContainerContent.MessageHandler.class, PacketContainerContent.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketContainerChange.CommonSlotMessageHandler.class, PacketContainerChange.class, discriminator++, Side.CLIENT);
         // Регистрируем сообщения для библиотеки MinecraftTabInventory
-        NetworkUtils.registerMessages(INSTANCE, PacketContainerChange.TabInventorySlotMessageHandler.class, TabInventoryItemsMessage.MessageHandler.class, discriminator); // TODO: Второй хандлер оставлен по умолчанию, но непонятно что будет, если в моде будет присуствовать и постоянный контейнер с TabInventory, и не постоянный
+        NetworkUtils.registerMessages(INSTANCE, PacketContainerChange.TabInventorySlotMessageHandler.class, TabInventoryItemsMessage.MessageHandler.class, discriminator++); // TODO: Второй хандлер оставлен по умолчанию, но непонятно что будет, если в моде будет присуствовать и постоянный контейнер с TabInventory, и не постоянный
+        // Для синхронизации WeightProvider'а
+        INSTANCE.registerMessage(WeightProvider.MessageHandler.class, WeightProvider.SyncMessage.class,discriminator, Side.CLIENT);
 
         // Регистрация предметов
         StatItems.registerItems();

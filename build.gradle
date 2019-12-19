@@ -58,6 +58,7 @@ dependencies {
 
     compile 'ru.rarescrap.tabinventory:minecraft-tab-inventory-lib:0.3.12_1.7.10'
     compile 'ru.rarescrap.weightapi:weightapi:0.5.0_1.7.10:dev'
+    compile 'ru.rarescrap.configurableweight:configurableweight:0.5.1_1.7.10:dev' // Снапшот. Берется из локального репа
     compile 'ru.rarescrap.weightapi:weightapi-case1:0.5.0_1.7.10:dev' // Для тестов
 
     // for more info...

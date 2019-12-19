@@ -83,6 +83,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     public int exp = 0;
     public Rank rank;
+    public double weightModifier = 2.5; // TODO: Просто константа. Пока не синхронизируется
 
     /** Контейнер инвентаря, который будет синхронизироваться с клиентом даже тогда, когда не открыт. Прямо как
      * {@link EntityPlayer#inventoryContainer}. Именно через этот контейнер и будут синнхронизироваться инвентари. */
