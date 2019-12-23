@@ -36,7 +36,8 @@ public class WeightProvider extends ConfigurableWeightProvider { // TODO: Воз
         double maxWeight;
         if (owner instanceof EntityPlayer) {
             ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) owner);
-            maxWeight = player.weightModifier * StatItem.getRoll(player.getStat(StatItems.strenghtStatItem)).dice;
+            double weightModifier = player.getEntityPlayer().getEntityAttribute(ExtendedPlayer.WEIGHT_MULTIPLIER).getAttributeValue();
+            maxWeight = weightModifier * StatItem.getRoll(player.getStat(StatItems.strenghtStatItem)).dice;
         } else maxWeight = inventory.getSizeInventory() * 64;
 
         CalculateMaxWeightEvent event = new CalculateMaxWeightEvent(inventory, maxWeight, owner);

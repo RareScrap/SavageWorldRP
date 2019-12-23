@@ -1,6 +1,8 @@
 package rsstats.data;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -83,7 +85,9 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     public int exp = 0;
     public Rank rank;
-    public double weightModifier = 2.5; // TODO: Просто константа. Пока не синхронизируется
+
+    // TODO: Будет апдейтиться раз в 3 тика. Скажется ли то как-нибудь на геймплее?
+    public static final IAttribute WEIGHT_MULTIPLIER = (new RangedAttribute("player.weightMultiplier", 2.5D, 0.0D, Double.MAX_VALUE)).setDescription("Weight Modifier").setShouldWatch(true);
 
     /** Контейнер инвентаря, который будет синхронизироваться с клиентом даже тогда, когда не открыт. Прямо как
      * {@link EntityPlayer#inventoryContainer}. Именно через этот контейнер и будут синнхронизироваться инвентари. */
@@ -224,6 +228,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
         // Инициализируем основные параметры
         updateParams();
+
+        ((EntityPlayer) entity).getAttributeMap().registerAttribute(WEIGHT_MULTIPLIER);
     }
 
     /**
