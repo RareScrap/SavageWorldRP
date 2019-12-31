@@ -19,7 +19,7 @@ import static rsstats.data.ExtendedPlayer.Rank;
 public class PacketSyncPlayer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
 
-    private int step;
+    private int step; // TODO: Зачем синхронить эти вещи, если они могут высчитаться на клиенте сами?
     private int protection;
     private int persistence;
     private int charisma;
