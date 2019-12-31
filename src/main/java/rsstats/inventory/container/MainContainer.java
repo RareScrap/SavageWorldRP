@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.CommonProxy;
 import rsstats.common.network.PacketContainerChange;
 import rsstats.common.network.PacketContainerContent;
@@ -23,7 +24,6 @@ import rsstats.items.MiscItems;
 import rsstats.items.OtherItems;
 import rsstats.items.SkillItem;
 import rsstats.items.StatItem;
-import rsstats.api.items.perk.PerkItem;
 import ru.rarescrap.tabinventory.TabContainer;
 import ru.rarescrap.tabinventory.TabInventory;
 
@@ -343,7 +343,9 @@ public class MainContainer extends TabContainer {
         if (slot.inventory == player.otherTabsInventory) {
             if (player.otherTabsInventory.isUseableByPlayer(playerIn)) {
                 return super.slotClick(slotId, clickedButton, mode, playerIn);
-            } else {
+            } else if (player.otherTabsInventory.getCurrentTab().equals(OtherItems.perksTabItem.getUnlocalizedName())) {
+                PerkItem perkItem = (PerkItem) slot.getStack().getItem();
+                if (perkItem.canActivate()) perkItem.activate(player.getEntityPlayer());
                 return null;
             }
         }
