@@ -12,17 +12,17 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.Constants;
+import rsstats.api.i18n.IClientTranslatable;
+import rsstats.api.items.perk.IModifierDependent;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncPlayer;
-import rsstats.api.i18n.IClientTranslatable;
 import rsstats.inventory.SkillsInventory;
 import rsstats.inventory.StatsInventory;
 import rsstats.inventory.WearableInventory;
 import rsstats.inventory.container.MainContainer;
 import rsstats.items.*;
-import rsstats.api.items.perk.IModifierDependent;
-import rsstats.api.items.perk.PerkItem;
 import rsstats.utils.Utils;
 import ru.rarescrap.tabinventory.TabHostInventory;
 import ru.rarescrap.tabinventory.TabInventory;
@@ -131,7 +131,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         otherTabsInventory = new TabInventory("effects", 36, entityPlayer, otherTabsHost);
         otherTabsInventory.connect();
     }
-    
+
     /**
      * Used to register these extended properties for the entityPlayer during EntityConstructing event
      * This method is for convenience only; it will make your code look nicer
@@ -140,13 +140,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public static final void register(EntityPlayer player) {
         player.registerExtendedProperties(ExtendedPlayer.EXTENDED_ENTITY_TAG, new ExtendedPlayer(player));
     }
-    
+
     /**
      * Returns ExtendedPlayer properties for entityPlayer
      * This method is for convenience only; it will make your code look nicer
      */
     public static final ExtendedPlayer get(EntityPlayer player) {
-       return (ExtendedPlayer) player.getExtendedProperties(EXTENDED_ENTITY_TAG); // TODO: Добавить Exception, если null
+        return (ExtendedPlayer) player.getExtendedProperties(EXTENDED_ENTITY_TAG); // TODO: Добавить Exception, если null
     }
 
     public boolean isServerSide() {
@@ -297,6 +297,44 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         if(!entityPlayer.worldObj.isRemote) {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
         }
+    }
+
+    /**
+     * @return Стата игрока со всей информацией в виде итемстака
+     */
+    public ItemStack getStat(StatItem statItem) {
+        return Utils.findIn(statsInventory, statItem);
+    }
+
+    /**
+     * @return уровень (не бросок) указанно статы.
+     * Нумерация уровней стат начианается с 1.
+     */
+    public int getStatLvl(StatItem statItem) { // TODO: Напрашивается сделать pojo класс Stat
+        return 1 + getStat(statItem).getItemDamage();
+    }
+
+    /**
+     * @return скилл игрока со всей информацией в виде итемстака
+     */
+    public ItemStack getSkill(SkillItem skillItem) {
+        return TabInventory.findIn(skillsInventory, skillItem, skillItem.parentStat.getUnlocalizedName()); // TODO: Пора бы перестать юзать unlocaized-name В качестве ключа
+    }
+
+    /**
+     * @return уровень (не бросок) указанно скилла.
+     * Нумерация уровней скиллов начианается с 0.
+     */
+    public int getSkillLvl(SkillItem skillItem) { // TODO: Напрашивается сделать pojo класс Skill
+        return getSkill(skillItem).getItemDamage();
+    }
+
+    /**
+     * Проверяет, если у игрока указанный перк
+     * @return True, если есть. Иначе - false.
+     */
+    public boolean hasPerk(PerkItem perkItem) {
+        return getPerk(perkItem) != null;
     }
 
     public ItemStack getPerk(PerkItem perkItem) {
