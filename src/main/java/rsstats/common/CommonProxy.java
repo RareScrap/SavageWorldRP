@@ -66,7 +66,7 @@ public class CommonProxy implements IGuiHandler {
         OtherItems.registerItems();
         MiscItems.registerItems();
         PerkItems.registerItems();
-        DebugItems.registerDebugItems();
+        //DebugItems.registerDebugItems();
 
         // Регистрация блоков
         Blocks.registerBlocks();
