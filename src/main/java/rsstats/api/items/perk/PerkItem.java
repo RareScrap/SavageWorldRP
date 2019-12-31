@@ -8,9 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.MinecraftForge;
+import rsstats.api.roll.RollModifier;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
-import rsstats.api.roll.RollModifier;
 import rsstats.utils.LangUtils;
 import ru.rarescrap.tabinventory.events.StackAddToTabEvent;
 
@@ -64,7 +64,7 @@ public class PerkItem extends Item {
 
     // Не предполагаю использования инвентаря для перков, отличного от TabInventory. Поэтому и использую евент StackAddToTabEvent
     @SubscribeEvent
-    public void onInventoryChanged(StackAddToTabEvent e) { //TODO: Изобрести общий евент для изменения любых инвентарей
+    public void onInventoryChanged(StackAddToTabEvent.Pre e) { //TODO: Изобрести общий евент для изменения любых инвентарей
         //if (e.entity.worldObj.isRemote)
         //return;
 
@@ -78,15 +78,17 @@ public class PerkItem extends Item {
             onRemove(e);
     }
 
-    public void onAdd(StackAddToTabEvent e) {
+    public void onAdd(StackAddToTabEvent.Pre e) {
         ExtendedPlayer extendedPlayer = ExtendedPlayer.get(e.entityPlayer);
         extendedPlayer.modifierManager.addModifiers(getModifiers());
-        extendedPlayer.updateParams();
+        //extendedPlayer.updateParams(); // TODO: Т.к. модификаторы влияют только на роллы и не могут влиять на уровень статов, то пересчитывать параметры нет нужды. Но это только пока!
+        extendedPlayer.sync();
     }
 
-    public void onRemove(StackAddToTabEvent e) {
+    public void onRemove(StackAddToTabEvent.Pre e) {
         ExtendedPlayer extendedPlayer = ExtendedPlayer.get(e.entityPlayer);
         extendedPlayer.modifierManager.removeModifiers(getModifiers());
-        extendedPlayer.updateParams();
+        //extendedPlayer.updateParams();
+        extendedPlayer.sync();
     }
 }
