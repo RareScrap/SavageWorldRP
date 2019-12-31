@@ -48,6 +48,10 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
             return Rank.values()[lvl];
         }
 
+        public boolean moreOrEqual(Rank anotherRank) {
+            return this.ordinal() >= anotherRank.ordinal();
+        }
+
         @Override
         public String getTranslatedString() {
             return StatCollector.translateToLocal("rank." + this.name().toLowerCase());
