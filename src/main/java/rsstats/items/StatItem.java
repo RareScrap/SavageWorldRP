@@ -11,11 +11,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import rsstats.api.items.perk.IModifierDependent;
+import rsstats.api.roll.Roll;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
-import rsstats.data.ExtendedPlayer;
-import rsstats.roll.BasicRoll;
 import rsstats.utils.DescriptionCutter;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.List;
  * Предмет, реализующий функции статы
  * @author RareScrap
  */
-public class StatItem extends Item {
+public class StatItem extends Item implements IModifierDependent { // TODO: Ну как-то стремно выглятит
     /** Общее количество уровней статы */
     private static int NUMBER_OF_LEVELS = 5; // TODO: Зачем?
     
