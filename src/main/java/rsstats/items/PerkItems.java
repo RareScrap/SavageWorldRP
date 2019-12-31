@@ -1,10 +1,11 @@
 package rsstats.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import rsstats.items.perk.PerkItem;
-import rsstats.items.perks.AristocratPerk;
-import rsstats.items.perks.Riches;
-import rsstats.items.perks.Vigilance;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import rsstats.api.items.perk.PerkItem;
+import rsstats.items.perks.*;
+import rsstats.utils.LangUtils;
 
 import java.util.LinkedHashMap;
 
@@ -55,5 +56,21 @@ public class PerkItems {
         skills.put(breathOfCourage.getUnlocalizedName(), breathOfCourage);
         skills.put(thrifty.getUnlocalizedName(), thrifty);
         return skills;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static String or(PerkItem... perkItems) { // TODO: Только перкитемы?
+        StringBuffer buffer = new StringBuffer();
+        String or = LangUtils.or();
+        for (int i = 0; i < perkItems.length; i++) {
+            PerkItem perkItem = perkItems[i];
+            buffer.append(LangUtils.getLocalizedName(perkItem));
+            if (i < perkItems.length - 1) {
+                buffer.append(" ")
+                        .append(or)
+                        .append(" ");
+            }
+        }
+        return buffer.toString();
     }
 }
