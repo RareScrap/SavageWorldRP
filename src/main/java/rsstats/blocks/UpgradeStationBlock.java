@@ -66,11 +66,14 @@ public class UpgradeStationBlock extends BlockContainer {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack p_149689_6_) {
         //This gets the direction the player is facing as an int from 0 to 3
-        int dir = MathHelper.floor_double((player.rotationYaw * 4F) / 360F + 0.5D) & 3;
-        //You can use the block metadata to save the direction
-        world.setBlockMetadataWithNotify(x, y, z, dir, 3);
-        //Or you can save it in a tile entity if you are using one
-        //createNewTileEntity(world, world.getBlockMetadata(x, y, z));
-        super.onBlockPlacedBy(world, x, y, z, player, p_149689_6_);
+        int dir = MathHelper.floor_double((player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int dirMeta = 0;
+        switch (dir) { // Удивительно, но Minecraft хранит направление блоков с меты начиная с 2
+            case 0: dirMeta = 2; break; // север
+            case 1: dirMeta = 5; break; // восток
+            case 2: dirMeta = 3; break; // юг
+            case 3: dirMeta = 4; break; // запад
+        }
+        world.setBlockMetadataWithNotify(x, y, z, dirMeta, 3);
     }
 }
