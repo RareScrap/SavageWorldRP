@@ -23,7 +23,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer {
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F); // Позиционируем в центре блока
-        int dir = entity.blockMetadata; // Достаем направление блока из метадаты
+        int dir = entity.getBlockMetadata(); // Достаем направление блока из метадаты
         switch (dir) { // Преобразуем в угол поворота (прямо как в вальнильном коде)
             case 2: dir = 180; break;
             case 3: dir = 0; break;
