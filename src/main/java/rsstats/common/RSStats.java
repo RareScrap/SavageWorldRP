@@ -14,7 +14,7 @@ import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.blocks.UpgradeStationBlock;
 import rsstats.client.gui.SSPPage;
-import rsstats.common.command.AddLevel;
+import rsstats.common.command.AddExp;
 import rsstats.common.command.Card;
 import rsstats.common.command.OpenWindow;
 import rsstats.common.command.ParamsPlayer;
@@ -116,7 +116,7 @@ public class RSStats {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         // register server commands
-        event.registerServerCommand(new AddLevel());
+        event.registerServerCommand(new AddExp());
         //event.registerServerCommand(new OpenInventory());
         event.registerServerCommand(new ParamsPlayer());
         event.registerServerCommand(new Card());
