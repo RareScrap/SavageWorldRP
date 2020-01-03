@@ -16,10 +16,9 @@ import rsstats.api.roll.Roll;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.RollPacketToServer;
-import rsstats.utils.DescriptionCutter;
+import rsstats.utils.LangUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // Эти классы передаются в методы
@@ -98,22 +97,15 @@ public class StatItem extends Item implements IModifierDependent { // TODO: Ну
         list.add(StatCollector.translateToLocal(generalPrefix + ".roll") + ": d" + basicRolls.get(statLevel).dice);
         
         // Пустая строка-разделитель
-        list.add(""); 
-        
+        list.add("");
+
         // Дополнительная информация по кнопке Shift
         if (GuiScreen.isShiftKeyDown()) {
-            String[] str = DescriptionCutter.cut(4, StatCollector.translateToLocal(localePrefix + ".description"));
-            for (int i = 0; i < str.length; i++)
-                list.add( str[i] );
-
+            list.addAll(LangUtils.translateToLocal(localePrefix + ".description"));
             list.add("");
-        } else {
-            list.add( StatCollector.translateToLocal(generalPrefix + ".moreInfo") );
-        }
+        } else list.add(StatCollector.translateToLocal("item.StatItem.moreInfo"));
 
-
-        String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(generalPrefix + ".cleanRoll"));
-        list.addAll(Arrays.asList(strs));
+        list.addAll(LangUtils.translateToLocal(generalPrefix + ".cleanRoll"));
     }
 
     /**

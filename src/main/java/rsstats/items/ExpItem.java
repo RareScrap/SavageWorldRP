@@ -5,9 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
-import rsstats.utils.DescriptionCutter;
+import rsstats.utils.LangUtils;
 
 import java.util.List;
 
@@ -49,9 +48,6 @@ public class ExpItem extends Item {
     public void addInformation(ItemStack itemstack, EntityPlayer player, List list, boolean par4) {
         // Пустая строка-разделитель
         //list.add("");
-
-        String[] str = DescriptionCutter.cut(4, StatCollector.translateToLocal(generalPrefix + ".lore"));
-        for (int i = 0; i < str.length; i++)
-            list.add( str[i] );
+        list.addAll(LangUtils.translateToLocal(generalPrefix + ".lore"));
     }
 }

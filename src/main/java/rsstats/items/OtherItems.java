@@ -4,11 +4,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 import rsstats.common.RSStats;
-import rsstats.utils.DescriptionCutter;
+import rsstats.utils.LangUtils;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -33,8 +31,7 @@ public class OtherItems {
         // Получаем информацию предмета из файла локализации
         @Override
         public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List infoLines, boolean p_77624_4_) {
-            String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(getUnlocalizedName() + ".lore"));
-            infoLines.addAll(Arrays.asList(strs));
+            infoLines.addAll(LangUtils.translateToLocal(getUnlocalizedName() + ".lore"));
         }
     }
 
