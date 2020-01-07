@@ -2,6 +2,7 @@ package rsstats.items.perks;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,14 +12,13 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.PerkItems;
 import rsstats.items.StatItems;
-import rsstats.api.items.perk.PerkItem;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class BreathOfCourage extends PerkItem {
     }
 
     static class DrunkEffect extends PotionEffect {
-        boolean flag = false;
+        boolean isApplied = false;
 
         public DrunkEffect(int potionId, int duration) {
             super(potionId, duration);
@@ -93,26 +93,16 @@ public class BreathOfCourage extends PerkItem {
         public boolean onUpdate(EntityLivingBase entityLivingBase) {
             if (getDuration() > 0)
             {
-                if (!flag)
+                if (!isApplied)
                 {
                     this.performEffect(entityLivingBase);
-                    flag = true;
+                    isApplied = true;
                 }
 
-                this.deincrementDuration(); // TODO: Заюзать трансформеры
+                this.deincrementDuration();
             }
 
             return this.getDuration() > 0;
-        }
-
-        public void deincrementDuration() {
-            try {
-                Method deincrementDuration = this.getClass().getSuperclass().getDeclaredMethod("deincrementDuration");
-                deincrementDuration.setAccessible(true);
-                deincrementDuration.invoke(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -120,7 +110,6 @@ public class BreathOfCourage extends PerkItem {
             if (entityLivingBase instanceof EntityPlayer && !entityLivingBase.worldObj.isRemote) {
                 ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) entityLivingBase);
                 ItemStack endurance = player.getStat(StatItems.enduranceStatItem);
-                System.out.println("Поднимает стату с " + endurance.getItemDamage() + " до " + (endurance.getItemDamage() < endurance.getMaxDamage() ? endurance.getItemDamage()+1 : endurance.getMaxDamage()));
                 endurance.setItemDamage(endurance.getItemDamage() < endurance.getMaxDamage() ? endurance.getItemDamage()+1 : endurance.getMaxDamage());
             }
         }

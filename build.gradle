@@ -98,8 +98,8 @@ tasks.withType(JavaCompile) {
 }
 
 // Debug option: Включает access-трансформеры
-//jar {
-//    manifest {
-//        attributes 'FMLAT': 'rsstats_at.cfg'
-//    }
-//}
+jar {
+    manifest {
+        attributes 'FMLAT': 'rsstats_at.cfg'
+    }
+}
