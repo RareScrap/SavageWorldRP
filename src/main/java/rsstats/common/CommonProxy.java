@@ -56,9 +56,10 @@ public class CommonProxy implements IGuiHandler {
         INSTANCE.registerMessage(PacketContainerContent.MessageHandler.class, PacketContainerContent.class, discriminator++, Side.CLIENT);
         INSTANCE.registerMessage(PacketContainerChange.CommonSlotMessageHandler.class, PacketContainerChange.class, discriminator++, Side.CLIENT);
         // Регистрируем сообщения для библиотеки MinecraftTabInventory
-        NetworkUtils.registerMessages(INSTANCE, PacketContainerChange.TabInventorySlotMessageHandler.class, TabInventoryItemsMessage.MessageHandler.class, discriminator++); // TODO: Второй хандлер оставлен по умолчанию, но непонятно что будет, если в моде будет присуствовать и постоянный контейнер с TabInventory, и не постоянный
+        discriminator = NetworkUtils.registerMessages(INSTANCE, PacketContainerChange.TabInventorySlotMessageHandler.class, TabInventoryItemsMessage.MessageHandler.class, discriminator); // TODO: Второй хандлер оставлен по умолчанию, но непонятно что будет, если в моде будет присуствовать и постоянный контейнер с TabInventory, и не постоянный
         // Для синхронизации WeightProvider'а
-        INSTANCE.registerMessage(WeightProvider.MessageHandler.class, WeightProvider.SyncMessage.class,discriminator, Side.CLIENT);
+        INSTANCE.registerMessage(WeightProvider.MessageHandler.class, WeightProvider.SyncMessage.class, discriminator++, Side.CLIENT);
+        discriminator = RulebookRegistry.registerMessages(INSTANCE, discriminator);
 
         // Регистрация предметов
         StatItems.registerItems();
