@@ -32,7 +32,7 @@ public class BreathOfCourage extends PerkItem {
         increasePotionsStorage();
     }
     public static final BreathOfCouragePotion potion = new BreathOfCouragePotion(24, false, 12345678);
-    public static final ResourceLocation potionIcon = new ResourceLocation(RSStats.MODID,"textures/breath_of_courage_potion_icon5.png");
+    private static final ResourceLocation potionIcon = new ResourceLocation(RSStats.MODID,"textures/gui/container/potion_icons.png");
 
     public BreathOfCourage() {
         setUnlocalizedName("BreathOfCouragePerkItem");
@@ -132,13 +132,22 @@ public class BreathOfCourage extends PerkItem {
         protected BreathOfCouragePotion(int id, boolean isBadEffect, int liquidColor) {
             super(id, isBadEffect, liquidColor);
             setPotionName("potion.breathOfCourage");
-            setIconIndex(0, 0);
+            setIconIndex(0, 0); // позиция по длине и высоте в текстуре с иконками
+        }
+
+        // https://forum.mcmodding.ru/threads/kak-programno-sdvinut-teksturu.23852/#post-176186
+        @Override
+        public boolean hasStatusIcon() {
+            return false; // Предотвращаем ванильный рендер.
+            // Очень надеюсь что сторонние моды догадаются что это единственный нормальный способ сделать это
+            // и не будут юзать этот метод для проверки наличия у зелья иконки. Вместо этого им следует производить
+            // вычисление супер-метода самостоятельно
         }
 
         @Override
-        public boolean hasStatusIcon() {
-            Minecraft.getMinecraft().renderEngine.bindTexture(potionIcon);
-            return true;
+        public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
+            mc.renderEngine.bindTexture(potionIcon);
+            Gui.func_146110_a(x + 6, y + 7, 0, 0, 18, 18, 18, 18);
         }
 
         // Срабатывает при удалении/истечении действия зелья
