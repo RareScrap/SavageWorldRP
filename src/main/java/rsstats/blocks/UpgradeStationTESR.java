@@ -77,6 +77,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer {
             }
 
             if (type == ItemRenderType.INVENTORY) {
+                GL11.glDisable(GL11.GL_BLEND); // Предотвращает прозрачные полигоны в слотах креативной вкладки
                 GL11.glTranslatef(0.0F, -0.5F, 0.0F); // Чутка опустим предмет вниз, чтобы он нормально отображался в слоте инвентаря
                 //GL11.glScalef(1.3F, 1.3F, 1.3F);
             } else {
