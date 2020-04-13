@@ -70,4 +70,34 @@ public class Utils {
 
         throw new RuntimeException("Unplanned case. This is probably our bug.");
     }
+
+    // TODO: Различается ли представление строки кд в разных локалях?
+    /**
+     * Преобразует время, указанное в тиках с строковое представление в формате "HH mm ss".
+     * Нувые элементы игнорируются
+     * @param ticks Время в тиках игры (20 тиков = 1 сек)
+     * @return Время в формате "HH mm ss"
+     */
+    public static String formatCooldownTime(int ticks) {
+        int secs = (int) (ticks / 20.0D);
+        int mins = (int) (secs / 60.0D);
+        int hrs = (int) (mins / 60.0D);
+//            int days = (int) (hours / 24.0D);
+//            int years = (int) (days / 365.0D);
+
+        //Calculate the seconds to display:
+        int seconds = secs %60;
+        secs -= seconds;
+        //Calculate the minutes:
+        long minutesCount = secs / 60;
+        long minutes = minutesCount % 60;
+        minutesCount -= minutes;
+        //Calculate the hours:
+        long hours = minutesCount / 60;
+        String s = seconds + " s"; // TODO: Брать время из файлов локализации
+        String m = minutes > 0 ? minutes+" m " : "";
+        String h = hours > 0 ? hours+" h " : "";
+
+        return h+m+s;
+    }
 }

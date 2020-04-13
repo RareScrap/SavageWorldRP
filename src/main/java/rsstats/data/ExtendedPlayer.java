@@ -110,6 +110,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     /** Менеджер прокачки, содержащий правила развития персонажа */
     public LevelupManager levelupManager; // Server thread only
+    public CooldownManager cooldownManager = new CooldownManager(this);
     /** Хранилище модификаторов броска игрока */
     public ModifierManager modifierManager = new ModifierManager();
 
@@ -165,6 +166,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.wearableInventory.writeToNBT(properties);
         this.otherTabsHost.writeToNBT(properties);
         this.otherTabsInventory.writeToNBT(properties);
+
+        this.cooldownManager.saveNBTData(properties);
     }
 
     // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
@@ -182,6 +185,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.wearableInventory.readFromNBT(properties);
         this.otherTabsHost.readFromNBT(properties);
         this.otherTabsInventory.readFromNBT(properties);
+
+        this.cooldownManager.loadNBTData(properties);
 
         /* Т.к. ванильный инвентарь переписывать нежелательно, начальная инициализация модификатором от брони
          * реализована здесь */
@@ -296,6 +301,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
+            cooldownManager.sync(this);
         }
     }
 

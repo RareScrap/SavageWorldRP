@@ -41,13 +41,14 @@ public class Thrifty extends PerkItem {
     }
 
     @Override
-    public void activate(EntityPlayer entityPlayer) {
-        if (entityPlayer.worldObj.isRemote) return;
+    public void activate(ExtendedPlayer player) {
+        if (player.getEntityPlayer().worldObj.isRemote) return;
 
         ChatStyle style = new ChatStyle().setColor(EnumChatFormatting.GOLD);
         ChatComponentTranslation msg = new ChatComponentTranslation(
-                getUnlocalizedName()+".activate_msg", entityPlayer.getDisplayName());
+                getUnlocalizedName()+".activate_msg", player.getEntityPlayer().getDisplayName());
         msg.setChatStyle(style);
         FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(msg);
+        super.activate(player);
     }
 }

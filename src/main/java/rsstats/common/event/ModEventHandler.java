@@ -169,6 +169,8 @@ public class ModEventHandler {
     public void onUpdatePlayer(TickEvent.PlayerTickEvent event) {
         if (event.player.worldObj.isRemote) return;
         ExtendedPlayer player = ExtendedPlayer.get(event.player);
+        player.cooldownManager.tick();
+        if (event.player.worldObj.isRemote) return;
         if (event.player.openContainer != player.mainContainer)
             player.mainContainer.detectAndSendChanges();
     }

@@ -51,6 +51,8 @@ public class CommonProxy implements IGuiHandler {
 
         // Пакет для синхронизации IEEP
         INSTANCE.registerMessage(PacketSyncPlayer.MessageHandler.class, PacketSyncPlayer.class, discriminator++, Side.CLIENT);
+        // Для синхронизации кулдаунов перков
+        INSTANCE.registerMessage(PacketCooldown.MessageHandler.class, PacketCooldown.class, discriminator++, Side.CLIENT);
 
         // Пакеты для синхронизации MainContainer'а
         INSTANCE.registerMessage(PacketContainerContent.MessageHandler.class, PacketContainerContent.class, discriminator++, Side.CLIENT);
