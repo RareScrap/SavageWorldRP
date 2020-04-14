@@ -37,7 +37,7 @@ public class PacketCooldown implements IMessage {
         @SideOnly(Side.CLIENT)
         public IMessage onMessage(PacketCooldown message, MessageContext ctx) {
             ExtendedPlayer player = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
-            player.cooldownManager.loadNBTData(message.cooldowns);
+            player.cooldownManager.parseSyncNBt(message.cooldowns);
             return null;
         }
     }

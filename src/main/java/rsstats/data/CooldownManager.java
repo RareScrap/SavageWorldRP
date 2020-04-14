@@ -1,7 +1,10 @@
 package rsstats.data;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldInfo;
 import rsstats.api.items.perk.PerkItem;
@@ -98,27 +101,53 @@ public class CooldownManager {
 
             if (!player.getEntityPlayer().worldObj.isRemote && !RSStats.proxy.ignoreDowntimeInCooldown) {
                 long downtimeTicks = millisToTicks(player.offlineTime);
-                if (cooldownData.mergeDowntime(downtimeTicks)) continue;
+                if (cooldownData.mergeDowntime(downtimeTicks)) continue; // TODO: event для завершившихся кулдаунов?
             }
 
-            cooldowns.put(getPerkItem(id), cooldownData); // TODO: Может вообще пропускать просрочившиеся кулдауны?
+            cooldowns.put(getPerkItem(id), cooldownData);
         }
     }
 
     // TODO: Почему иногда улетает пустой компаунд?
+    /**
+     * Отсылает на указанный клиент кулдаун для одного перка
+     * @param player Игрок, на клиент которого нужно послать пакет
+     */
     private void sync(ExtendedPlayer player, PerkItem perkItem, CooldownData cooldownData) {
         NBTTagCompound compound = new NBTTagCompound();
-
-        NBTTagCompound nbtCooldowns = cooldownData.saveNBTData(getID(perkItem));
-        compound.setTag("cooldowns", nbtCooldowns);
-
+        appendToSyncNBT(compound, perkItem, cooldownData);
         CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
     }
 
+    /**
+     * Отсылает на указанный клиент все имеющиеся кулдауны одним пакетом
+     * @param player Игрок, на клиент которого нужно послать пакет
+     */
     public void sync(ExtendedPlayer player) {
         NBTTagCompound compound = new NBTTagCompound();
-        saveNBTData(compound); // TODO: юзать itemInt id для пересылки
+        for (Map.Entry<PerkItem, CooldownData> e : cooldowns.entrySet())
+            appendToSyncNBT(compound, e.getKey(), e.getValue());
         CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
+    }
+
+    /**
+     * Присоединяет перк и его кулдаун к NBT, формируя специальный тег предназначенный для синхронизаци
+     * с клиентами. В отличии от {@link #saveNBTData(NBTTagCompound)} полученный тег не может быть использован
+     * для сохранения состояния менеджера, т.к. строится на изменяемых от версии к версии данных.
+     * @param syncNBT Тег, к которому нужно присоединить данные
+     * @param perkItem Перк, кулдаун которого нужно синхронизировать
+     * @param cooldownData Кулдаун перка
+     */
+    public void appendToSyncNBT(NBTTagCompound syncNBT, PerkItem perkItem, CooldownData cooldownData) {
+        syncNBT.setLong(String.valueOf(Item.getIdFromItem(perkItem)), cooldownData.endTimestamp);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void parseSyncNBt(NBTTagCompound syncNBT) {
+        for (String itemId : (Set<String>) syncNBT.func_150296_c()) {
+            PerkItem perkItem = (PerkItem) Item.getItemById(Integer.parseInt(itemId));
+            cooldowns.put(perkItem, new CooldownData(syncNBT.getLong(itemId)));
+        }
     }
 
     private long getTotalWorldTime() {
