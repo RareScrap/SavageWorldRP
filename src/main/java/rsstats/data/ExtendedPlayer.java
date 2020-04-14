@@ -185,7 +185,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
         lastTimePlayed = properties.getLong("LastPlayed");
-        offlineTime = MinecraftServer.getSystemTimeMillis() - lastTimePlayed;
+        offlineTime = lastTimePlayed == 0 ? 0 : MinecraftServer.getSystemTimeMillis() - lastTimePlayed;
 
         /* Нет нужды очищать инвентари перед применением сохранения, т.к.
          * readFromNBT() перезаписывает ВСЕ слоты инвентаря */

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static rsstats.common.RSStats.LOGGER;
 import static rsstats.utils.Utils.millisToTicks;
 
 // TODO: Делатьли абстрактным и продумывать возможность кастомного кд манагера?
@@ -45,8 +46,8 @@ public class CooldownManager {
     }
 
     public long getCooldown(PerkItem perkItem) {
-        CooldownData cooldownData = cooldowns.get(perkItem); // TODO: Почему работало без этого?
-        return cooldownData == null ? 0L : cooldownData.getTicksLeft(getTotalWorldTime()); // TODO: Что будет если null?
+        CooldownData cooldownData = cooldowns.get(perkItem);
+        return cooldownData == null ? 0L : cooldownData.getTicksLeft(getTotalWorldTime());
     }
 
     public void setCooldown(PerkItem perkItem) {
@@ -59,7 +60,7 @@ public class CooldownManager {
             cooldowns.put(perkItem, cooldownData);
             sync(player, perkItem, cooldownData);
             // TODO: event?
-        } // TODO: else log
+        } else LOGGER.info("Attempt to set a negative cooldown (%d ticks) for perk \"%s\"", ticks, getID(perkItem));
     }
 
     public void tick() {
@@ -82,15 +83,8 @@ public class CooldownManager {
 
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound nbtCooldowns = new NBTTagCompound();
-
         for (Map.Entry<PerkItem, CooldownData> entry : cooldowns.entrySet()) {
-            NBTTagCompound nbtCooldownData = new NBTTagCompound();
-//            nbtCooldown.setString("perkItem", id); // TODO: Не лучше ли использовать intID итема? Или это может привести к непредсказуемым последствиям при запуске мира в новейшей версии игры?
-            nbtCooldownData.setLong("startTimestamp", entry.getValue().startTimestamp);
-            nbtCooldownData.setLong("endTimestamp", entry.getValue().endTimestamp);
-            nbtCooldownData.setLong("skippedTicks", entry.getValue().skippedTicks);
-            String id = GameRegistry.findUniqueIdentifierFor(entry.getKey()).toString();
-            nbtCooldowns.setTag(id, nbtCooldownData);
+            nbtCooldowns.setLong(getID(entry.getKey()), entry.getValue().endTimestamp); // TODO: Не лучше ли использовать intID итема? Или это может привести к непредсказуемым последствиям при запуске мира в новейшей версии игры?
         }
 
         compound.setTag("cooldowns", nbtCooldowns);
@@ -99,31 +93,23 @@ public class CooldownManager {
     public void loadNBTData(NBTTagCompound compound) {
         NBTTagCompound nbtCooldowns = compound.getCompoundTag("cooldowns");
         for (String id : (Set<String>) nbtCooldowns.func_150296_c()) {
-            GameRegistry.UniqueIdentifier identifier = new GameRegistry.UniqueIdentifier(id);
-            PerkItem perkItem = (PerkItem) GameRegistry.findItem(identifier.modId, identifier.name);
-            NBTTagCompound nbtCooldownData = nbtCooldowns.getCompoundTag(id);
+            long endTimestamp = nbtCooldowns.getLong(id);
+            CooldownData cooldownData = new CooldownData(endTimestamp);
 
-            CooldownData cooldownData = new CooldownData(nbtCooldownData);
             if (!player.getEntityPlayer().worldObj.isRemote && !RSStats.proxy.ignoreDowntimeInCooldown) {
-                long skippedTicks = (getTotalWorldTime() + millisToTicks(player.offlineTime)) - cooldownData.startTimestamp;
-                if (cooldownData.startTimestamp + skippedTicks > cooldownData.endTimestamp) continue;
-                cooldownData.skippedTicks = skippedTicks;
+                long downtimeTicks = millisToTicks(player.offlineTime);
+                if (cooldownData.mergeDowntime(downtimeTicks)) continue;
             }
 
-            cooldowns.put(perkItem, cooldownData); // TODO: Может вообще пропускать просрочившиеся кулдауны?
+            cooldowns.put(getPerkItem(id), cooldownData); // TODO: Может вообще пропускать просрочившиеся кулдауны?
         }
     }
 
     // TODO: Почему иногда улетает пустой компаунд?
-    // TODO: А как быть с задержкой сети?
     private void sync(ExtendedPlayer player, PerkItem perkItem, CooldownData cooldownData) {
-        NBTTagCompound nbtCooldowns = new NBTTagCompound();
-        NBTTagCompound nbtCooldownData = new NBTTagCompound();
         NBTTagCompound compound = new NBTTagCompound();
 
-        String identifier = GameRegistry.findUniqueIdentifierFor(perkItem).toString();
-        cooldownData.saveNBTData(nbtCooldownData);
-        nbtCooldowns.setTag(identifier, nbtCooldownData);
+        NBTTagCompound nbtCooldowns = cooldownData.saveNBTData(getID(perkItem));
         compound.setTag("cooldowns", nbtCooldowns);
 
         CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
@@ -131,7 +117,7 @@ public class CooldownManager {
 
     public void sync(ExtendedPlayer player) {
         NBTTagCompound compound = new NBTTagCompound();
-        saveNBTData(compound);
+        saveNBTData(compound); // TODO: юзать itemInt id для пересылки
         CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
     }
 
@@ -139,41 +125,54 @@ public class CooldownManager {
         return player.getEntityPlayer().worldObj.getTotalWorldTime();
     }
 
-    // TODO: Нормально ли оно будет вести себя в хешмапе, ведь я не переопределил equals и hashsum?
+    private static PerkItem getPerkItem(String itemIdentifier) {
+        GameRegistry.UniqueIdentifier identifier = new GameRegistry.UniqueIdentifier(itemIdentifier);
+        return  (PerkItem) GameRegistry.findItem(identifier.modId, identifier.name);
+    }
+
+    private static String getID(PerkItem perkItem) {
+        return GameRegistry.findUniqueIdentifierFor(perkItem).toString();
+    }
+
+    /**
+     * Хранит информацию об оставшихся тиках одного кулдауна.
+     */
     private static class CooldownData {
-        private final long startTimestamp;
-        private final long endTimestamp;
+        /* Благодаря вычилению на сервере времени, при которм кулдан
+         * должен закончится, можно не брать во внимание задерку сети. */
+        private long endTimestamp;
 
-        private long skippedTicks = 0L;
-
-        public CooldownData(NBTTagCompound compound) {
-            startTimestamp = compound.getLong("startTimestamp");
-            endTimestamp = compound.getLong("endTimestamp");
-            skippedTicks = compound.getLong("skippedTicks");
-            // TODO: Проверки на валидные данные
+        public CooldownData(long startTimestamp, int cooldown) {
+            endTimestamp = startTimestamp + Math.max(cooldown, 0);
         }
 
-        // TODO: Может лучше передавать World?
-        public CooldownData(long startTimestamp, int cooldown) {
-            this.startTimestamp = startTimestamp;
-            endTimestamp = startTimestamp + Math.max(cooldown, 0);
-            // TODO: Лог при cooldown <= 0?
+        public CooldownData(long endTimestamp) {
+            this.endTimestamp = endTimestamp;
         }
 
         boolean tick(long totalWorldTime) {
             // TODO: что делать если cant keep up
             // TODO: что делать totalWorldTime перескочет за диапазон?
-            return totalWorldTime+skippedTicks >= endTimestamp; // TODO: граничится только ==?
+            return totalWorldTime >= endTimestamp; // TODO: граничится только ==?
         }
 
-        public void saveNBTData(NBTTagCompound compound) {
-            compound.setLong("startTimestamp", startTimestamp);
-            compound.setLong("endTimestamp", endTimestamp); // TODO: вычислять а не сохранять
-            compound.setLong("skippedTicks", skippedTicks); // TODO: вычислять а не сохранять
+        public NBTTagCompound saveNBTData(String perkItemId) {
+            NBTTagCompound compound = new NBTTagCompound();
+            compound.setLong(perkItemId, endTimestamp);
+            return compound;
         }
 
         public long getTicksLeft(long totalWorldTime) {
-            return endTimestamp - totalWorldTime - skippedTicks;
+            return endTimestamp - totalWorldTime;
+        }
+
+        /**
+         * Принимает в расчет кулдауна время, в течении которог сервер был выулючен.
+         * @param downtimeTicks Время, которое сервер провел в выключенном состоянии (в тиках)
+         * @return True, если кулдаун уже успел закончится. Иначе - false.
+         */
+        public boolean mergeDowntime(long downtimeTicks) {
+            return (endTimestamp -= downtimeTicks) <= 0;
         }
     }
 }

@@ -78,7 +78,7 @@ public class Utils {
      * @param ticks Время в тиках игры (20 тиков = 1 сек)
      * @return Время в формате "HH mm ss"
      */
-    public static String formatCooldownTime(int ticks) {
+    public static String formatCooldownTime(long ticks) {
         int secs = (int) (ticks / 20.0D);
         int mins = (int) (secs / 60.0D);
         int hrs = (int) (mins / 60.0D);
