@@ -3,6 +3,7 @@ package rsstats.data;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.storage.WorldInfo;
 import rsstats.api.items.perk.PerkItem;
 import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
@@ -18,8 +19,23 @@ import static rsstats.utils.Utils.millisToTicks;
 // TODO: Делатьли абстрактным и продумывать возможность кастомного кд манагера?
 // TODO: Как оно должно взаимодейтвовать с Rulebook'ом?
 // TODO: Каким должно быть поведение при пропуске тиков из-за перегруза сервера?
-// TODO: Что должно делаться с кд если игрок отключается от сервера?
-// TODO: Что должно делаться с кд игроков если отключается сам сервер?
+/**
+ * Менеджер времени восстановления перков (кулдаунов).
+ * Отвечает за предоставление информации об оставшемся кулдауне в тиках,
+ * синхронизации кулдаунов с клиентом, установку и своевременное удаление кулдаунов.
+ * <br/>
+ * Синхронизация построена на основе {@link WorldInfo#getWorldTotalTime()}, который
+ * синхронизируется с клиентами самой игрой. Такой подход уменьшает вероятность
+ * рассинхронизации клиентского и серверного CooldownManager'а.
+ * <br/>
+ * При отключении игрока от <strong>продолжающего работу</strong> сервера, время, проведенное
+ * игроком в офлафне будет вычтено из кулдаунов. Таким образом
+ * кулдаун игрока будет расчитываться даже при выходе его из сервера.
+ * <br/>
+ * В случае если сервер был остановлен и снова запущен через некоторое время,
+ * время, в течении которого был отключен сервер, может либо влиять на кулдаун, либо
+ * игнорироваться. См. {@link CommonProxy#ignoreDowntimeInCooldown}
+ */
 public class CooldownManager {
     private ExtendedPlayer player;
     private HashMap<PerkItem, CooldownData> cooldowns = new HashMap<PerkItem, CooldownData>();
