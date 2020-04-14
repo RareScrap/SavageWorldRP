@@ -92,8 +92,9 @@ public class PerkItem extends Item {
             list.add( StatCollector.translateToLocal("item.StatItem.moreInfo") );
 
             ExtendedPlayer extendedPlayer = ExtendedPlayer.get(player);
-            int cooldown = extendedPlayer.cooldownManager.getCooldown(this);
-            if (hasCooldown(extendedPlayer) && cooldown > 0) {
+            if (!hasCooldown(extendedPlayer) ) return;
+            long cooldown = extendedPlayer.cooldownManager.getCooldown(this);
+            if (cooldown > 0) {
                 list.add(EnumChatFormatting.GOLD +
                         StatCollector.translateToLocalFormatted("item.PerkItem.cooldown", formatCooldownTime(cooldown)));
             } else if (canActivate())

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -72,6 +73,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     private static final String EXTENDED_ENTITY_TAG = RSStats.MODID;
 
     private final EntityPlayer entityPlayer;
+
+    /** Последнее время отключения игрока от сервера в миллисекундах  */
+    public long lastTimePlayed;
+    /** Время в миллисекундах, проведенное игроком в офлайне с момента последнего захода на сервер */
+    public long offlineTime;
 
     /** Основной параметр игрока - Шаг */
     public int step = 6;
@@ -160,6 +166,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         properties.setInteger("rank", rank.toInt());
         properties.setInteger("tiredness", tiredness);
         properties.setInteger("tirednessLimit", tirednessLimit);
+        properties.setLong("LastPlayed", MinecraftServer.getSystemTimeMillis());
 
         this.statsInventory.writeToNBT(properties);
         this.skillsInventory.writeToNBT(properties);
@@ -177,6 +184,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         rank = Rank.fromInt(properties.getInteger("rank"));
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
+        lastTimePlayed = properties.getLong("LastPlayed");
+        offlineTime = MinecraftServer.getSystemTimeMillis() - lastTimePlayed;
 
         /* Нет нужды очищать инвентари перед применением сохранения, т.к.
          * readFromNBT() перезаписывает ВСЕ слоты инвентаря */

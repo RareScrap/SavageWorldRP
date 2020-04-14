@@ -4,13 +4,15 @@ import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import rsstats.data.ExtendedPlayer;
 
 public class PacketCooldown implements IMessage {
-    NBTTagCompound cooldowns;
+    private NBTTagCompound cooldowns;
 
     // Чтобы отсылать все кулдауны на клиент
     public PacketCooldown(NBTTagCompound cooldowns) {
@@ -32,6 +34,7 @@ public class PacketCooldown implements IMessage {
     public static class MessageHandler implements IMessageHandler<PacketCooldown, IMessage> {
 
         @Override
+        @SideOnly(Side.CLIENT)
         public IMessage onMessage(PacketCooldown message, MessageContext ctx) {
             ExtendedPlayer player = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
             player.cooldownManager.loadNBTData(message.cooldowns);

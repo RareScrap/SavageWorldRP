@@ -100,4 +100,8 @@ public class Utils {
 
         return h+m+s;
     }
+
+    public static long millisToTicks(long millis) {
+        return millis / 50; // 50мс = 1 тик
+    }
 }

@@ -5,12 +5,15 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import rsstats.api.items.perk.PerkItem;
 import rsstats.common.CommonProxy;
+import rsstats.common.RSStats;
 import rsstats.common.network.PacketCooldown;
 import rsstats.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static rsstats.utils.Utils.millisToTicks;
 
 // TODO: Делатьли абстрактным и продумывать возможность кастомного кд манагера?
 // TODO: Как оно должно взаимодейтвовать с Rulebook'ом?
@@ -25,37 +28,36 @@ public class CooldownManager {
         this.player = player;
     }
 
-    public int getCooldown(PerkItem perkItem) {
-        return cooldowns.get(perkItem).value; // TODO: Что будет если null?
+    public long getCooldown(PerkItem perkItem) {
+        CooldownData cooldownData = cooldowns.get(perkItem); // TODO: Почему работало без этого?
+        return cooldownData == null ? 0L : cooldownData.getTicksLeft(getTotalWorldTime()); // TODO: Что будет если null?
     }
 
     public void setCooldown(PerkItem perkItem) {
-        CooldownData cooldownData = new CooldownData(/*perkItem, */perkItem.getCooldown(player));
-        if (cooldownData.value > 0) {
-            cooldowns.put(perkItem, cooldownData);
-            sync(player, perkItem, cooldownData);
-        }
-        // TODO: event?
+        setCooldown(perkItem, perkItem.getCooldown(player));
     }
 
     public void setCooldown(PerkItem perkItem, int ticks) {
         if (ticks > 0) {
-            CooldownData cooldownData = new CooldownData(ticks);
+            CooldownData cooldownData = new CooldownData(getTotalWorldTime(), ticks);
             cooldowns.put(perkItem, cooldownData);
             sync(player, perkItem, cooldownData);
+            // TODO: event?
         } // TODO: else log
     }
 
     public void tick() {
         for (Map.Entry<PerkItem, CooldownData> entry : cooldowns.entrySet()) {
             CooldownData cooldownData = entry.getValue();
-            System.out.println("cooldown " + Utils.getRegistryName(entry.getKey()) + " = " + cooldownData.value);
-            if (cooldownData.tick()) cooldowns.remove(entry.getKey()); // TODO: event?
+            System.out.println("cooldown " + Utils.getRegistryName(entry.getKey()) + " = " + cooldownData.getTicksLeft(getTotalWorldTime()));
+            if (cooldownData.tick(getTotalWorldTime())) removeCooldown(entry.getKey());
         }
     }
 
     public void removeCooldown(PerkItem perkItem) {
         cooldowns.remove(perkItem);
+        // TODO: sync
+        // TODO: event?
     }
 
     public boolean isCooldown(PerkItem perkItem) {
@@ -66,9 +68,13 @@ public class CooldownManager {
         NBTTagCompound nbtCooldowns = new NBTTagCompound();
 
         for (Map.Entry<PerkItem, CooldownData> entry : cooldowns.entrySet()) {
+            NBTTagCompound nbtCooldownData = new NBTTagCompound();
+//            nbtCooldown.setString("perkItem", id); // TODO: Не лучше ли использовать intID итема? Или это может привести к непредсказуемым последствиям при запуске мира в новейшей версии игры?
+            nbtCooldownData.setLong("startTimestamp", entry.getValue().startTimestamp);
+            nbtCooldownData.setLong("endTimestamp", entry.getValue().endTimestamp);
+            nbtCooldownData.setLong("skippedTicks", entry.getValue().skippedTicks);
             String id = GameRegistry.findUniqueIdentifierFor(entry.getKey()).toString();
-            int cooldownValue = entry.getValue().value;
-            nbtCooldowns.setInteger(id, cooldownValue);
+            nbtCooldowns.setTag(id, nbtCooldownData);
         }
 
         compound.setTag("cooldowns", nbtCooldowns);
@@ -79,53 +85,79 @@ public class CooldownManager {
         for (String id : (Set<String>) nbtCooldowns.func_150296_c()) {
             GameRegistry.UniqueIdentifier identifier = new GameRegistry.UniqueIdentifier(id);
             PerkItem perkItem = (PerkItem) GameRegistry.findItem(identifier.modId, identifier.name);
-            cooldowns.put(perkItem, new CooldownData(/*perkItem, */nbtCooldowns.getInteger(id)));
+            NBTTagCompound nbtCooldownData = nbtCooldowns.getCompoundTag(id);
+
+            CooldownData cooldownData = new CooldownData(nbtCooldownData);
+            if (!player.getEntityPlayer().worldObj.isRemote && !RSStats.proxy.ignoreDowntimeInCooldown) {
+                long skippedTicks = (getTotalWorldTime() + millisToTicks(player.offlineTime)) - cooldownData.startTimestamp;
+                if (cooldownData.startTimestamp + skippedTicks > cooldownData.endTimestamp) continue;
+                cooldownData.skippedTicks = skippedTicks;
+            }
+
+            cooldowns.put(perkItem, cooldownData); // TODO: Может вообще пропускать просрочившиеся кулдауны?
         }
     }
 
+    // TODO: Почему иногда улетает пустой компаунд?
     // TODO: А как быть с задержкой сети?
     private void sync(ExtendedPlayer player, PerkItem perkItem, CooldownData cooldownData) {
-        NBTTagCompound cd = new NBTTagCompound();
-        GameRegistry.UniqueIdentifier identifier = GameRegistry.findUniqueIdentifierFor(perkItem);
-        cd.setInteger(identifier.toString(), cooldownData.value);
-
+        NBTTagCompound nbtCooldowns = new NBTTagCompound();
+        NBTTagCompound nbtCooldownData = new NBTTagCompound();
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag("cooldowns", cd);
+
+        String identifier = GameRegistry.findUniqueIdentifierFor(perkItem).toString();
+        cooldownData.saveNBTData(nbtCooldownData);
+        nbtCooldowns.setTag(identifier, nbtCooldownData);
+        compound.setTag("cooldowns", nbtCooldowns);
 
         CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
     }
 
     public void sync(ExtendedPlayer player) {
-        NBTTagCompound cd = new NBTTagCompound();
-        saveNBTData(cd);
-        CommonProxy.INSTANCE.sendTo(new PacketCooldown(cd), (EntityPlayerMP) player.getEntityPlayer());
+        NBTTagCompound compound = new NBTTagCompound();
+        saveNBTData(compound);
+        CommonProxy.INSTANCE.sendTo(new PacketCooldown(compound), (EntityPlayerMP) player.getEntityPlayer());
+    }
+
+    private long getTotalWorldTime() {
+        return player.getEntityPlayer().worldObj.getTotalWorldTime();
     }
 
     // TODO: Нормально ли оно будет вести себя в хешмапе, ведь я не переопределил equals и hashsum?
     private static class CooldownData {
-//        private PerkItem perkItem;
-        private int value;
+        private final long startTimestamp;
+        private final long endTimestamp;
 
-//        public Cooldown(NBTTagCompound compound) {
-//            GameRegistry.UniqueIdentifier identifier = new GameRegistry.UniqueIdentifier(compound.getString("perkItem"));
-//            perkItem = (PerkItem) GameRegistry.findItem(identifier.modId, identifier.name);
-//            value = compound.getInteger("value");
-//            // TODO: Проверки на валидные данные
-//        }
+        private long skippedTicks = 0L;
 
-        public CooldownData(/*PerkItem perkItem, */int value) {
-//            this.perkItem = perkItem;
-            this.value = Math.max(value, 0);
+        public CooldownData(NBTTagCompound compound) {
+            startTimestamp = compound.getLong("startTimestamp");
+            endTimestamp = compound.getLong("endTimestamp");
+            skippedTicks = compound.getLong("skippedTicks");
+            // TODO: Проверки на валидные данные
         }
 
-        boolean tick() {
-            return --value == 0; // TODO: пре или пост декремент?
+        // TODO: Может лучше передавать World?
+        public CooldownData(long startTimestamp, int cooldown) {
+            this.startTimestamp = startTimestamp;
+            endTimestamp = startTimestamp + Math.max(cooldown, 0);
+            // TODO: Лог при cooldown <= 0?
         }
 
-//        public void saveNBTData(NBTTagCompound compound) {
-//            GameRegistry.UniqueIdentifier identifier = GameRegistry.findUniqueIdentifierFor(perkItem);
-//            compound.setString("perkItem", identifier.toString());
-//            compound.setInteger("value", value);
-//        }
+        boolean tick(long totalWorldTime) {
+            // TODO: что делать если cant keep up
+            // TODO: что делать totalWorldTime перескочет за диапазон?
+            return totalWorldTime+skippedTicks >= endTimestamp; // TODO: граничится только ==?
+        }
+
+        public void saveNBTData(NBTTagCompound compound) {
+            compound.setLong("startTimestamp", startTimestamp);
+            compound.setLong("endTimestamp", endTimestamp); // TODO: вычислять а не сохранять
+            compound.setLong("skippedTicks", skippedTicks); // TODO: вычислять а не сохранять
+        }
+
+        public long getTicksLeft(long totalWorldTime) {
+            return endTimestamp - totalWorldTime - skippedTicks;
+        }
     }
 }
