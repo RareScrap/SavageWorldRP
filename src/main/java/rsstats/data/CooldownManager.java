@@ -23,6 +23,7 @@ import static rsstats.utils.Utils.millisToTicks;
 // TODO: Делатьли абстрактным и продумывать возможность кастомного кд манагера?
 // TODO: Как оно должно взаимодейтвовать с Rulebook'ом?
 // TODO: Каким должно быть поведение при пропуске тиков из-за перегруза сервера?
+// TODO: Консольные команды для работы с кулдаунами
 /**
  * Менеджер времени восстановления перков (кулдаунов).
  * Отвечает за предоставление информации об оставшемся кулдауне в тиках,
@@ -87,7 +88,7 @@ public class CooldownManager {
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound nbtCooldowns = new NBTTagCompound();
         for (Map.Entry<PerkItem, CooldownData> entry : cooldowns.entrySet()) {
-            nbtCooldowns.setLong(getID(entry.getKey()), entry.getValue().endTimestamp); // TODO: Не лучше ли использовать intID итема? Или это может привести к непредсказуемым последствиям при запуске мира в новейшей версии игры?
+            nbtCooldowns.setLong(getID(entry.getKey()), entry.getValue().endTimestamp);
         }
 
         compound.setTag("cooldowns", nbtCooldowns);
