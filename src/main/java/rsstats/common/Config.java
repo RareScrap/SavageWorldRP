@@ -24,11 +24,11 @@ public class Config {
     public static final String DEFAULT_MODIFIER_COLOR_NEGATIVE = "4";
     public static final boolean DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN = false;
 
-    private static final String CATEGORY_CHAT = "chat_client";
-    private static final String CATEGORY_CLIENT = "client";
-    private static final String TEXT_COLOR_NORMAL_KEY = "text_color_normal";
-    private static final String MODIFIER_COLOR_POSITIVE_KEY = "modifier_color_positive";
-    private static final String MODIFIER_COLOR_NEGATIVE_KEY = "modifier_color_negative";
+    private static final String CATEGORY_CHAT = "client chat";
+
+    private static final String TEXT_COLOR_NORMAL_KEY = "textColorNormal";
+    private static final String MODIFIER_COLOR_POSITIVE_KEY = "modifierColorPositive";
+    private static final String MODIFIER_COLOR_NEGATIVE_KEY = "modifierColorNegative";
     private static final String IGNORE_DOWNTIME_IN_COOLDOWN_KEY = "ignoreDowntimeInCooldown";
 
     /** Инферфейс управления конфигурацией */
