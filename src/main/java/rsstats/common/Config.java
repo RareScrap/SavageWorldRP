@@ -4,6 +4,7 @@ import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 
@@ -19,9 +20,9 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
  */
 public class Config {
     /** Числовой код цвета позитивных модификаторов по умолчанию. Представлен строкой. */
-    public static final String DEFAULT_MODIFIER_COLOR_POSITIVE = "2";
+    public static final String DEFAULT_MODIFIER_COLOR_POSITIVE = "green";
     /** Числовой код цвета негативных модификаторов по умолчанию. Представлен строкой. */
-    public static final String DEFAULT_MODIFIER_COLOR_NEGATIVE = "4";
+    public static final String DEFAULT_MODIFIER_COLOR_NEGATIVE = "red";
     public static final boolean DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN = false;
 
     private static final String CATEGORY_CHAT = "client chat";
@@ -35,8 +36,8 @@ public class Config {
     private Configuration configuration;
 
     public String textColorNormal;
-    public String modifierColorPositive;
-    public String modifierColorNegative;
+    public EnumChatFormatting modifierColorPositive;
+    public EnumChatFormatting modifierColorNegative;
 
     public boolean ignoreDowntimeInCooldown;
 
@@ -58,12 +59,12 @@ public class Config {
 
     public void save() {
         // CATEGORY_GENERAL
-        configuration.getBoolean(IGNORE_DOWNTIME_IN_COOLDOWN_KEY, CATEGORY_GENERAL, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN, "test comment");
+        configuration.getBoolean(IGNORE_DOWNTIME_IN_COOLDOWN_KEY, CATEGORY_GENERAL, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN, "Стоит ли кулдаунам игнорировать время, которое сервер провел в выключенном состоянии");
 
         // CHAT_CLIENT
         configuration.getString(TEXT_COLOR_NORMAL_KEY, CATEGORY_CHAT, "f", "test comment");
-        configuration.getString(MODIFIER_COLOR_POSITIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_POSITIVE, "test comment");//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
-        configuration.getString(MODIFIER_COLOR_NEGATIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_NEGATIVE, "test comment");
+        configuration.getString(MODIFIER_COLOR_POSITIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительный модификаторов броска");//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
+        configuration.getString(MODIFIER_COLOR_NEGATIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска");
 
         configuration.save();
     }
@@ -73,8 +74,8 @@ public class Config {
         ignoreDowntimeInCooldown = configuration.get(CATEGORY_GENERAL, IGNORE_DOWNTIME_IN_COOLDOWN_KEY, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN, "test comment").getBoolean();
 
         textColorNormal = configuration.get(CATEGORY_CHAT, TEXT_COLOR_NORMAL_KEY, "f").getString();
-        modifierColorPositive = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE).getString();//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
-        modifierColorNegative = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE).getString();
+        modifierColorPositive = EnumChatFormatting.getValueByName(configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE).getString());//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
+        modifierColorNegative = EnumChatFormatting.getValueByName(configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE).getString());
 
 
     }
