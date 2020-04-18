@@ -30,7 +30,7 @@ import java.io.File;
  * "страниц" меню, которые затем помещаются на хост-мод (этот мод)
  * @author rares
  */
-@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0];required-after:configurableweight@[0.5.1]")
+@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0];required-after:configurableweight@[0.5.1]", guiFactory = "rsstats.common.Config$GuiFactory")
 public class RSStats {
     /** ID мода */
     public static final String MODID = "rsstats";
