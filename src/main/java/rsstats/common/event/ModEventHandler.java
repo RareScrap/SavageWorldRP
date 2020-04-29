@@ -5,6 +5,7 @@
  */
 package rsstats.common.event;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
@@ -163,6 +164,11 @@ public class ModEventHandler {
         }
 
         return returnedComponent;
+    }
+
+    @SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event){
+        if(event.modID.equals(RSStats.MODID)) RSStats.config.syncConfig(false);
     }
 
     @SubscribeEvent

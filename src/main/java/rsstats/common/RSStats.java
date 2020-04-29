@@ -88,8 +88,7 @@ public class RSStats {
         MinecraftForge.EVENT_BUS.register(modEventHandler);
         FMLCommonHandler.instance().bus().register(modEventHandler);
 
-        // Обрабатываем конфиг
-        config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));
+        config = Config.getConfig(); // Обрабатываем конфиг
 
         proxy.preInit(event); // Преинициализация в общем прокси
     }

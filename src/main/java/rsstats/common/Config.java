@@ -2,16 +2,21 @@ package rsstats.common;
 
 import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.client.config.GuiConfig;
+import cpw.mods.fml.common.Loader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
+import static rsstats.common.RSStats.MODNAME;
 
 // TODO: Дочитай туториал в MinecraftByExample
 
@@ -20,14 +25,13 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
  */
 public class Config {
     /** Числовой код цвета позитивных модификаторов по умолчанию. Представлен строкой. */
-    public static final String DEFAULT_MODIFIER_COLOR_POSITIVE = "green";
+    public static final String DEFAULT_MODIFIER_COLOR_POSITIVE = String.valueOf(EnumChatFormatting.GREEN.getFormattingCode());
     /** Числовой код цвета негативных модификаторов по умолчанию. Представлен строкой. */
-    public static final String DEFAULT_MODIFIER_COLOR_NEGATIVE = "red";
+    public static final String DEFAULT_MODIFIER_COLOR_NEGATIVE = String.valueOf(EnumChatFormatting.RED.getFormattingCode());
     public static final boolean DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN = false;
 
     private static final String CATEGORY_CHAT = "client chat";
 
-    private static final String TEXT_COLOR_NORMAL_KEY = "textColorNormal";
     private static final String MODIFIER_COLOR_POSITIVE_KEY = "modifierColorPositive";
     private static final String MODIFIER_COLOR_NEGATIVE_KEY = "modifierColorNegative";
     private static final String IGNORE_DOWNTIME_IN_COOLDOWN_KEY = "ignoreDowntimeInCooldown";
@@ -35,49 +39,77 @@ public class Config {
     /** Инферфейс управления конфигурацией */
     private Configuration configuration;
 
-    public String textColorNormal;
     public EnumChatFormatting modifierColorPositive;
     public EnumChatFormatting modifierColorNegative;
-
     public boolean ignoreDowntimeInCooldown;
 
     private static Config config;
 
-    private Config(File configFile) {
+    private Config() {
+        File configFile = new File(Loader.instance().getConfigDir(), MODNAME+".cfg");
         configuration = new Configuration(configFile);
-        load();
-        save();
     }
 
-    public static Config getConfig(File configFile) {
+    public static Config getConfig() { // TODO: ну стоит ли так усложнять? Все равно на это похуй всем
         if (config == null) {
-            config = new Config(configFile);
+            config = new Config();
+            config.syncConfig(true);
         }
 
         return config;
     }
 
-    public void save() {
-        // CATEGORY_GENERAL
-        configuration.getBoolean(IGNORE_DOWNTIME_IN_COOLDOWN_KEY, CATEGORY_GENERAL, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN, "Стоит ли кулдаунам игнорировать время, которое сервер провел в выключенном состоянии");
+    /**
+     * Synchronizes the local fields with the values in the Configuration object.
+     */
+    public void syncConfig(boolean load)
+    {
+        // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
+        // Property order lists are defined per-ConfigCategory.
+        List<String> propOrder = new ArrayList<String>();
 
-        // CHAT_CLIENT
-        configuration.getString(TEXT_COLOR_NORMAL_KEY, CATEGORY_CHAT, "f", "test comment");
-        configuration.getString(MODIFIER_COLOR_POSITIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительный модификаторов броска");//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
-        configuration.getString(MODIFIER_COLOR_NEGATIVE_KEY, CATEGORY_CHAT, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска");
+        if (!configuration.isChild)
+        {
+            if (load)
+            {
+                configuration.load();
+            }
+            // TODO: Что это?
+//            Property enableGlobalCfg = configuration.get(Configuration.CATEGORY_GENERAL, "enableGlobalConfig", false).setShowInGui(false);
+//            if (enableGlobalCfg.getBoolean(false))
+//            {
+//                Configuration.enableGlobalConfig();
+//            }
+        }
 
-        configuration.save();
-    }
+        Property prop;
 
-    public void load() {
-        configuration.load();
-        ignoreDowntimeInCooldown = configuration.get(CATEGORY_GENERAL, IGNORE_DOWNTIME_IN_COOLDOWN_KEY, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN, "test comment").getBoolean();
+        prop = configuration.get(CATEGORY_GENERAL, IGNORE_DOWNTIME_IN_COOLDOWN_KEY, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN);
+        ignoreDowntimeInCooldown = prop.getBoolean();
+        propOrder.add(prop.getName());
 
-        textColorNormal = configuration.get(CATEGORY_CHAT, TEXT_COLOR_NORMAL_KEY, "f").getString();
-        modifierColorPositive = EnumChatFormatting.getValueByName(configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE).getString());//new Property(MODIFIER_COLOR_POSITIVE_KEY, 2, Type.CHAR_TYPE);
-        modifierColorNegative = EnumChatFormatting.getValueByName(configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE).getString());
+        prop = configuration.get(Config.CATEGORY_CHAT, Config.MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительных модификаторов броска", Property.Type.COLOR);
+        prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
+        // TODO: Локализация тултипа
+        // Language keys are a good idea to implement if you are using config GUIs. This allows you to use a .lang file that will hold the
+        // "pretty" version of the property name as well as allow others to provide their own localizations.
+        // This language key is also used to get the tooltip for a property. The tooltip language key is langKey + ".tooltip".
+        // If no tooltip language key is defined in your .lang file, the tooltip will default to the property comment field.
+//        prop.setLanguageKey("forge.configgui.disableVersionCheck");
+        modifierColorPositive = EnumChatFormatting.getValueByName(prop.getString());
+        propOrder.add(prop.getName());
 
+        prop = configuration.get(Config.CATEGORY_CHAT, Config.MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска", Property.Type.COLOR);
+        prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
+        modifierColorNegative = EnumChatFormatting.getValueByName(prop.getString());
+        propOrder.add(prop.getName());
 
+        configuration.setCategoryPropertyOrder(Config.CATEGORY_CHAT, propOrder);
+
+        if (configuration.hasChanged())
+        {
+            configuration.save();
+        }
     }
 
     public static class GuiFactory implements IModGuiFactory {
@@ -106,8 +138,10 @@ public class Config {
     public static class TestModConfigGUI extends GuiConfig {
         public TestModConfigGUI(GuiScreen parent) {
             super(parent,
-                    new ConfigElement(RSStats.config.configuration.getCategory(CATEGORY_GENERAL)).getChildElements(),
-                    "TestMod", false, false, GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()));
+                    new ConfigElement(RSStats.config.configuration.getCategory(CATEGORY_CHAT)).getChildElements(), // TODO: добавить категорию чата
+                    RSStats.MODID, false, false, GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()));
+
+            // TODO: Сменить пример текста на свой в ChatColorEntry
         }
     }
 }
