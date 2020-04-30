@@ -100,7 +100,7 @@ public class CooldownManager {
             long endTimestamp = nbtCooldowns.getLong(id);
             CooldownData cooldownData = new CooldownData(endTimestamp);
 
-            if (!player.getEntityPlayer().worldObj.isRemote && !RSStats.proxy.ignoreDowntimeInCooldown) {
+            if (!player.getEntityPlayer().worldObj.isRemote && !RSStats.config.ignoreDowntimeInCooldown) {
                 long downtimeTicks = millisToTicks(player.offlineTime);
                 if (cooldownData.mergeDowntime(downtimeTicks)) continue; // TODO: event для завершившихся кулдаунов?
             }
