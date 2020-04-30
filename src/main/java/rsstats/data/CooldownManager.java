@@ -125,6 +125,8 @@ public class CooldownManager {
      * @param player Игрок, на клиент которого нужно послать пакет
      */
     public void sync(ExtendedPlayer player) {
+        if (cooldowns.isEmpty()) return;
+
         NBTTagCompound compound = new NBTTagCompound();
         for (Map.Entry<PerkItem, CooldownData> e : cooldowns.entrySet())
             appendToSyncNBT(compound, e.getKey(), e.getValue());
