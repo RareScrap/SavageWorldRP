@@ -22,3 +22,8 @@ stat_not_found=Stat/skill "%1$s" not found in player "%2$s"
 
 lang.and=and
 lang.or=or
+
+rsstats.configgui.modifierColorPositive=Color of positive roll modifiers
+rsstats.configgui.modifierColorPositive.tooltip=Sets the color of the text for displaying such modifiers as:\n(+2: Intelligence Spell)\n(+4: Diamond Sharpening)\n etc.
+rsstats.configgui.modifierColorNegative=Color of negative roll modifiers
+rsstats.configgui.modifierColorNegative.tooltip=Sets the color of the text for displaying such modifiers as:\n(-2: Missing Skill)\n(-5: Extreme Darkness)\n etc.

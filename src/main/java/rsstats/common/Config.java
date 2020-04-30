@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
+import static rsstats.common.RSStats.MODID;
 import static rsstats.common.RSStats.MODNAME;
 
 // TODO: Дочитай туториал в MinecraftByExample
@@ -88,19 +89,15 @@ public class Config {
         ignoreDowntimeInCooldown = prop.getBoolean();
         propOrder.add(prop.getName());
 
-        prop = configuration.get(Config.CATEGORY_CHAT, Config.MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительных модификаторов броска", Property.Type.COLOR);
+        prop = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительных модификаторов броска", Property.Type.COLOR);
         prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
-        // TODO: Локализация тултипа
-        // Language keys are a good idea to implement if you are using config GUIs. This allows you to use a .lang file that will hold the
-        // "pretty" version of the property name as well as allow others to provide their own localizations.
-        // This language key is also used to get the tooltip for a property. The tooltip language key is langKey + ".tooltip".
-        // If no tooltip language key is defined in your .lang file, the tooltip will default to the property comment field.
-//        prop.setLanguageKey("forge.configgui.disableVersionCheck");
+        setLanguageKey(prop, MODIFIER_COLOR_POSITIVE_KEY);
         modifierColorPositive = EnumChatFormatting.getValueByName(prop.getString());
         propOrder.add(prop.getName());
 
-        prop = configuration.get(Config.CATEGORY_CHAT, Config.MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска", Property.Type.COLOR);
+        prop = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска", Property.Type.COLOR);
         prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
+        setLanguageKey(prop, MODIFIER_COLOR_NEGATIVE_KEY);
         modifierColorNegative = EnumChatFormatting.getValueByName(prop.getString());
         propOrder.add(prop.getName());
 
@@ -110,6 +107,10 @@ public class Config {
         {
             configuration.save();
         }
+    }
+
+    private static void setLanguageKey(Property property, String propertyKey) {
+        property.setLanguageKey(MODID + ".configgui." + propertyKey);
     }
 
     public static class GuiFactory implements IModGuiFactory {
