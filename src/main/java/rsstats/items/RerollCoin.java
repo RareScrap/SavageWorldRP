@@ -12,9 +12,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import rsstats.common.RSStats;
-import rsstats.utils.DescriptionCutter;
+import rsstats.utils.LangUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RerollCoin extends Item{
@@ -80,9 +79,7 @@ public class RerollCoin extends Item{
      */
     @Override
     public void addInformation(ItemStack p_77624_1_, EntityPlayer p_77624_2_, List list, boolean p_77624_4_) {
-        String[] strs = DescriptionCutter.cut(4, StatCollector.translateToLocal(MESSAGE_LOCALE_KEY + ".lore"));
-        list.addAll(Arrays.asList(strs));
-        super.addInformation(p_77624_1_, p_77624_2_, list, p_77624_4_);
+        list.addAll(LangUtils.translateToLocal(MESSAGE_LOCALE_KEY + ".lore"));
     }
 
 }

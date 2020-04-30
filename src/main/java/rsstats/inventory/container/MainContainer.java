@@ -345,7 +345,7 @@ public class MainContainer extends TabContainer {
                 return super.slotClick(slotId, clickedButton, mode, playerIn);
             } else if (player.otherTabsInventory.getCurrentTab().equals(OtherItems.perksTabItem.getUnlocalizedName())) {
                 PerkItem perkItem = (PerkItem) slot.getStack().getItem();
-                if (perkItem.canActivate()) perkItem.activate(player.getEntityPlayer());
+                if (perkItem.canActivate() && !player.cooldownManager.isCooldown(perkItem)) perkItem.activate(player);
                 return null;
             }
         }

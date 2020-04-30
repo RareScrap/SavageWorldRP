@@ -5,6 +5,9 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -13,7 +16,6 @@ import rsstats.common.CommonProxy;
 import rsstats.common.RSStats;
 import rsstats.common.network.PacketSyncGUI;
 import rsstats.inventory.container.UpgradeContainer;
-import rsstats.utils.DescriptionCutter;
 
 import java.util.List;
 
@@ -136,14 +138,13 @@ public class UpgradeGUI extends GuiContainer implements ICrafting {
                 }
             }
 
-            // Форматируем вид текста
-            String formatCode;
-            if (value > 0) {
-                formatCode = "\u00A7" + String.valueOf(2); // Символ §
-            } else {
-                formatCode = "\u00A7" + String.valueOf(4);
-            }
-            String formattedDescription = DescriptionCutter.formatEveryWord(descriptionTextField.getText(), formatCode);
+            // TODO: Что за прикол сохранять форматирование на клиенте? Зачем?
+            ChatComponentText c = new ChatComponentText(descriptionTextField.getText());
+            // Используем ChatComponent для форматирования описания
+            ChatStyle style = new ChatStyle().setColor(value > 0 ? EnumChatFormatting.DARK_GREEN : EnumChatFormatting.DARK_RED);
+            c.setChatStyle(style);
+
+            String formattedDescription = style.getFormattingCode();
 
             this.upgradeContainer.updateFields(formattedDescription, value); // Обновим описание модификатора в контейнере клиента (кажется)
             CommonProxy.INSTANCE.sendToServer(new PacketSyncGUI(descriptionTextField.getText(), value)); // Отошлем ввод игрока серверу, чтоб тот мог сгенерить предмет

@@ -12,41 +12,26 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import rsstats.common.RSStats;
 
-public class UpgradeStationTESR extends TileEntitySpecialRenderer
-{
-    IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation(RSStats.MODID, "obj/upgrade_station.obj"));
-    ResourceLocation texture = new ResourceLocation(RSStats.MODID, "textures/t.png");
+public class UpgradeStationTESR extends TileEntitySpecialRenderer {
+    private IModelCustom model = AdvancedModelLoader.loadModel(new ResourceLocation(RSStats.MODID, "obj/upgrade_station.obj"));
+    private ResourceLocation texture = new ResourceLocation(RSStats.MODID, "textures/blocks/upgrade_station.png");
 
     @Override
     public void renderTileEntityAt(TileEntity entity, double x, double y, double z, float p_147500_8_) {
-
         bindTexture(texture);
-
         GL11.glPushMatrix();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glTranslatef((float) x + 0.5F, (float) y + 0.0F, (float) z + 0.5F);
-        //GL11.glScalef(0.09375F, 0.09375F, 0.09375F);
-
-        // Поворачиваем блок в нужном направлении (направление хранится в метадате блока, которая выставляется когда игрок ставит блок)
-        int dir = entity.blockMetadata;
-        if (dir == 0)
-        {
-            GL11.glRotatef(-180F, 0.0F, 1.0F, 0.0F);
+        GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F); // Позиционируем в центре блока
+        int dir = entity.getBlockMetadata(); // Достаем направление блока из метадаты
+        switch (dir) { // Преобразуем в угол поворота (прямо как в вальнильном коде)
+            case 2: dir = 180; break;
+            case 3: dir = 0; break;
+            case 4: dir = -90; break; // TODO: Тут должно быть 90
+            case 5: dir = 90; break; // TODO: а тут -90, прямо как в ванильном коде. Но почему тогда 2 из 4 направлений рисуются не туда?
         }
-
-        if (dir % 2 != 0)
-        {
-            GL11.glRotatef(dir * (/*-*/90F), 0.0F, 1.0F, 0.0F);
-        }
-
-        if (dir % 2 == 0)
-        {
-            GL11.glRotatef(dir * (-180F), 0.0F, 1.0F, 0.0F);
-        }
-
-        // Рендерим блок
-        model.renderAll();
+        GL11.glRotatef(dir, 0.0F, 1.0F, 0.0F); // Поворачиваем модель
+        model.renderAll(); // Рендерим блок
         GL11.glPopMatrix();
     }
 
@@ -92,6 +77,7 @@ public class UpgradeStationTESR extends TileEntitySpecialRenderer
             }
 
             if (type == ItemRenderType.INVENTORY) {
+                GL11.glDisable(GL11.GL_BLEND); // Предотвращает прозрачные полигоны в слотах креативной вкладки
                 GL11.glTranslatef(0.0F, -0.5F, 0.0F); // Чутка опустим предмет вниз, чтобы он нормально отображался в слоте инвентаря
                 //GL11.glScalef(1.3F, 1.3F, 1.3F);
             } else {

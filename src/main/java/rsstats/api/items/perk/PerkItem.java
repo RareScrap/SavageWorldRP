@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static rsstats.utils.Utils.formatCooldownTime;
+
 public class PerkItem extends Item {
 
     public PerkItem() {
@@ -32,9 +34,12 @@ public class PerkItem extends Item {
 
     /**
      * Вызывается, если игрок активирует данный перк
-     * @param entityPlayer Игрок, акивирующий перк
+     * @param player Игрок, акивирующий перк
      */
-    public void activate(EntityPlayer entityPlayer) {}
+    public void activate(ExtendedPlayer player) {
+        int cooldown = getCooldown(player);
+        if (cooldown > 0) player.cooldownManager.setCooldown(this, cooldown);
+    }
 
     /**
      * Определяет, является ли перк акивируемым
@@ -48,6 +53,33 @@ public class PerkItem extends Item {
         return player.rank.moreOrEqual(ExtendedPlayer.Rank.NOVICE);
     }
 
+    /**
+     * Вычисляет кулдаун этого перка для указанного игрока.
+     * Обратите внимание, что этот метод расчитывает время для
+     * полного восстановления перка. Для получения оставшегося времени
+     * кулдауна см. {@link rsstats.data.CooldownManager#getCooldown(PerkItem)}
+     * @param player Игрок, для которого расчитывается кулдаун
+     * @return Время полного восстановления перка в тиках
+     * @see rsstats.data.CooldownManager#getCooldown(PerkItem)
+     */
+    public int getCooldown(ExtendedPlayer player) {
+        return 0;
+    }
+
+    /**
+     * Проверят, имеет ли перк кулдаун.
+     * Обратите внимание что если вам нужно проверить наличии кулдауна,
+     * чтобы потом его использовать, то лучше реализуйте эту проверку через
+     * {@link #getCooldown(ExtendedPlayer)}, чтобы избежать повторного
+     * вызова getCooldown(ExtendedPlayer), который потенциально может
+     * снижать произвоительность.
+     * @param player Игрок, для перка которого производится проверка
+     * @return True, если время восстановления > 0. Иначе - false.
+     */
+    public boolean hasCooldown(ExtendedPlayer player) {
+        return getCooldown(player) > 0;
+    }
+
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
         // Требования к перку добавляются в потомках
@@ -58,7 +90,15 @@ public class PerkItem extends Item {
         } else {
             list.addAll(LangUtils.translateToLocal(getUnlocalizedName() + ".description_short"));
             list.add( StatCollector.translateToLocal("item.StatItem.moreInfo") );
-            if (canActivate()) list.add( EnumChatFormatting.GOLD + StatCollector.translateToLocal("item.PerkItem.canActivate") );
+
+            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(player);
+            if (!hasCooldown(extendedPlayer) ) return;
+            long cooldown = extendedPlayer.cooldownManager.getCooldown(this);
+            if (cooldown > 0) {
+                list.add(EnumChatFormatting.GOLD +
+                        StatCollector.translateToLocalFormatted("item.PerkItem.cooldown", formatCooldownTime(cooldown)));
+            } else if (canActivate())
+                list.add( EnumChatFormatting.GOLD + StatCollector.translateToLocal("item.PerkItem.canActivate") );
         }
     }
 

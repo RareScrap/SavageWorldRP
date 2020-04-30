@@ -14,7 +14,7 @@ import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import rsstats.blocks.UpgradeStationBlock;
 import rsstats.client.gui.SSPPage;
-import rsstats.common.command.AddLevel;
+import rsstats.common.command.AddExp;
 import rsstats.common.command.Card;
 import rsstats.common.command.OpenWindow;
 import rsstats.common.command.ParamsPlayer;
@@ -30,7 +30,7 @@ import java.io.File;
  * "страниц" меню, которые затем помещаются на хост-мод (этот мод)
  * @author rares
  */
-@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0];required-after:configurableweight@[0.5.1]")
+@Mod(modid = RSStats.MODID, version = RSStats.VERSION, dependencies = "required-after:weightapi@[0.5.0];required-after:configurableweight@[0.5.1]", guiFactory = "rsstats.common.Config$GuiFactory")
 public class RSStats {
     /** ID мода */
     public static final String MODID = "rsstats";
@@ -88,8 +88,7 @@ public class RSStats {
         MinecraftForge.EVENT_BUS.register(modEventHandler);
         FMLCommonHandler.instance().bus().register(modEventHandler);
 
-        // Обрабатываем конфиг
-        config = Config.getConfig(new File(Loader.instance().getConfigDir(), MODNAME+".cfg"));
+        config = Config.getConfig(); // Обрабатываем конфиг
 
         proxy.preInit(event); // Преинициализация в общем прокси
     }
@@ -116,7 +115,7 @@ public class RSStats {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         // register server commands
-        event.registerServerCommand(new AddLevel());
+        event.registerServerCommand(new AddExp());
         //event.registerServerCommand(new OpenInventory());
         event.registerServerCommand(new ParamsPlayer());
         event.registerServerCommand(new Card());

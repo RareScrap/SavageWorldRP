@@ -2,6 +2,7 @@ package rsstats.items.perks;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,14 +12,13 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.PerkItems;
 import rsstats.items.StatItems;
-import rsstats.api.items.perk.PerkItem;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class BreathOfCourage extends PerkItem {
         increasePotionsStorage();
     }
     public static final BreathOfCouragePotion potion = new BreathOfCouragePotion(24, false, 12345678);
-    public static final ResourceLocation potionIcon = new ResourceLocation(RSStats.MODID,"textures/breath_of_courage_potion_icon5.png");
+    private static final ResourceLocation potionIcon = new ResourceLocation(RSStats.MODID,"textures/gui/container/potion_icons.png");
 
     public BreathOfCourage() {
         setUnlocalizedName("BreathOfCouragePerkItem");
@@ -83,7 +83,7 @@ public class BreathOfCourage extends PerkItem {
     }
 
     static class DrunkEffect extends PotionEffect {
-        boolean flag = false;
+        boolean isApplied = false;
 
         public DrunkEffect(int potionId, int duration) {
             super(potionId, duration);
@@ -93,26 +93,16 @@ public class BreathOfCourage extends PerkItem {
         public boolean onUpdate(EntityLivingBase entityLivingBase) {
             if (getDuration() > 0)
             {
-                if (!flag)
+                if (!isApplied)
                 {
                     this.performEffect(entityLivingBase);
-                    flag = true;
+                    isApplied = true;
                 }
 
-                this.deincrementDuration(); // TODO: Заюзать трансформеры
+                this.deincrementDuration();
             }
 
             return this.getDuration() > 0;
-        }
-
-        public void deincrementDuration() {
-            try {
-                Method deincrementDuration = this.getClass().getSuperclass().getDeclaredMethod("deincrementDuration");
-                deincrementDuration.setAccessible(true);
-                deincrementDuration.invoke(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
@@ -120,7 +110,6 @@ public class BreathOfCourage extends PerkItem {
             if (entityLivingBase instanceof EntityPlayer && !entityLivingBase.worldObj.isRemote) {
                 ExtendedPlayer player = ExtendedPlayer.get((EntityPlayer) entityLivingBase);
                 ItemStack endurance = player.getStat(StatItems.enduranceStatItem);
-                System.out.println("Поднимает стату с " + endurance.getItemDamage() + " до " + (endurance.getItemDamage() < endurance.getMaxDamage() ? endurance.getItemDamage()+1 : endurance.getMaxDamage()));
                 endurance.setItemDamage(endurance.getItemDamage() < endurance.getMaxDamage() ? endurance.getItemDamage()+1 : endurance.getMaxDamage());
             }
         }
@@ -132,13 +121,22 @@ public class BreathOfCourage extends PerkItem {
         protected BreathOfCouragePotion(int id, boolean isBadEffect, int liquidColor) {
             super(id, isBadEffect, liquidColor);
             setPotionName("potion.breathOfCourage");
-            setIconIndex(0, 0);
+            setIconIndex(0, 0); // позиция по длине и высоте в текстуре с иконками
+        }
+
+        // https://forum.mcmodding.ru/threads/kak-programno-sdvinut-teksturu.23852/#post-176186
+        @Override
+        public boolean hasStatusIcon() {
+            return false; // Предотвращаем ванильный рендер.
+            // Очень надеюсь что сторонние моды догадаются что это единственный нормальный способ сделать это
+            // и не будут юзать этот метод для проверки наличия у зелья иконки. Вместо этого им следует производить
+            // вычисление супер-метода самостоятельно
         }
 
         @Override
-        public boolean hasStatusIcon() {
-            Minecraft.getMinecraft().renderEngine.bindTexture(potionIcon);
-            return true;
+        public void renderInventoryEffect(int x, int y, PotionEffect effect, Minecraft mc) {
+            mc.renderEngine.bindTexture(potionIcon);
+            Gui.func_146110_a(x + 6, y + 7, 0, 0, 18, 18, 18, 18);
         }
 
         // Срабатывает при удалении/истечении действия зелья

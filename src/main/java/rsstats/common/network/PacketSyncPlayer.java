@@ -19,6 +19,9 @@ import static rsstats.data.ExtendedPlayer.Rank;
 public class PacketSyncPlayer implements IMessage {
     private static int BUFFER_INT_SIZE = 1;
 
+    private long offlineTime;
+    private long lastTimePlayed;
+
     private int step; // TODO: Зачем синхронить эти вещи, если они могут высчитаться на клиенте сами?
     private int protection;
     private int persistence;
@@ -30,6 +33,8 @@ public class PacketSyncPlayer implements IMessage {
     public PacketSyncPlayer() {}
 
     public PacketSyncPlayer(ExtendedPlayer player) {
+        lastTimePlayed = player.lastTimePlayed;
+        offlineTime = player.offlineTime;
         this.step = player.step;
         this.protection = player.protection;
         this.persistence = player.persistence;
@@ -39,6 +44,8 @@ public class PacketSyncPlayer implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        lastTimePlayed = buf.readLong();
+        offlineTime = buf.readLong();
         step = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         protection = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
         persistence = ByteBufUtils.readVarInt(buf, BUFFER_INT_SIZE);
@@ -48,6 +55,8 @@ public class PacketSyncPlayer implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeLong(lastTimePlayed);
+        buf.writeLong(offlineTime);
         ByteBufUtils.writeVarInt(buf, step, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, protection, BUFFER_INT_SIZE);
         ByteBufUtils.writeVarInt(buf, persistence, BUFFER_INT_SIZE);
@@ -60,6 +69,8 @@ public class PacketSyncPlayer implements IMessage {
         @SideOnly(Side.CLIENT) // Для использования клиенских классов при регистрации пакета на серве
         public IMessage onMessage(PacketSyncPlayer m, MessageContext ctx) {
             ExtendedPlayer player = ExtendedPlayer.get(Minecraft.getMinecraft().thePlayer);
+            player.lastTimePlayed = m.lastTimePlayed;
+            player.offlineTime = m.offlineTime;
             player.step = m.step;
             player.protection = m.protection;
             player.persistence = m.persistence;

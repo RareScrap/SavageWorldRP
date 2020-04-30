@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -73,6 +74,11 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     private final EntityPlayer entityPlayer;
 
+    /** Последнее время отключения игрока от сервера в миллисекундах  */
+    public long lastTimePlayed;
+    /** Время в миллисекундах, проведенное игроком в офлайне с момента последнего захода на сервер */
+    public long offlineTime;
+
     /** Основной параметр игрока - Шаг */
     public int step = 6;
     /** Основной параметр игрока - Защита */
@@ -110,6 +116,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     /** Менеджер прокачки, содержащий правила развития персонажа */
     public LevelupManager levelupManager; // Server thread only
+    public CooldownManager cooldownManager = new CooldownManager(this);
     /** Хранилище модификаторов броска игрока */
     public ModifierManager modifierManager = new ModifierManager();
 
@@ -159,12 +166,15 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         properties.setInteger("rank", rank.toInt());
         properties.setInteger("tiredness", tiredness);
         properties.setInteger("tirednessLimit", tirednessLimit);
+        properties.setLong("LastPlayed", MinecraftServer.getSystemTimeMillis());
 
         this.statsInventory.writeToNBT(properties);
         this.skillsInventory.writeToNBT(properties);
         this.wearableInventory.writeToNBT(properties);
         this.otherTabsHost.writeToNBT(properties);
         this.otherTabsInventory.writeToNBT(properties);
+
+        this.cooldownManager.saveNBTData(properties);
     }
 
     // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
@@ -174,6 +184,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         rank = Rank.fromInt(properties.getInteger("rank"));
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
+        lastTimePlayed = properties.getLong("LastPlayed");
+        offlineTime = lastTimePlayed == 0 ? 0 : MinecraftServer.getSystemTimeMillis() - lastTimePlayed;
 
         /* Нет нужды очищать инвентари перед применением сохранения, т.к.
          * readFromNBT() перезаписывает ВСЕ слоты инвентаря */
@@ -182,6 +194,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         this.wearableInventory.readFromNBT(properties);
         this.otherTabsHost.readFromNBT(properties);
         this.otherTabsInventory.readFromNBT(properties);
+
+        this.cooldownManager.loadNBTData(properties);
 
         /* Т.к. ванильный инвентарь переписывать нежелательно, начальная инициализация модификатором от брони
          * реализована здесь */
@@ -296,6 +310,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public void sync() {
         if(!entityPlayer.worldObj.isRemote) {
             CommonProxy.INSTANCE.sendTo(new PacketSyncPlayer(this), (EntityPlayerMP)entityPlayer);
+            cooldownManager.sync(this);
         }
     }
 

@@ -200,6 +200,7 @@ public class UpgradeContainer extends Container {
             }
             NBTTagList lore = display.getTagList("Lore", Constants.NBT.TAG_STRING);
 
+            // TODO: ЭТО ПРОСТО ПОЛНЫЙ ПИЗДЕЦ! Если передать тем другому игроку - у того не применится конфиг. Что за ебанина?!
             // И добавляем к тултипу текстовое представление модификатора
             String valueStr = value > 0 ?
                     ("\u00A7" + Config.DEFAULT_MODIFIER_COLOR_POSITIVE + "+" + value) :

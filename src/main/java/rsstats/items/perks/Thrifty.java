@@ -6,10 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.PerkItems;
-import rsstats.api.items.perk.PerkItem;
 
 import java.util.List;
 
@@ -41,13 +41,19 @@ public class Thrifty extends PerkItem {
     }
 
     @Override
-    public void activate(EntityPlayer entityPlayer) {
-        if (entityPlayer.worldObj.isRemote) return;
+    public int getCooldown(ExtendedPlayer player) {
+        return 288000;
+    }
+
+    @Override
+    public void activate(ExtendedPlayer player) {
+        if (player.getEntityPlayer().worldObj.isRemote) return;
 
         ChatStyle style = new ChatStyle().setColor(EnumChatFormatting.GOLD);
         ChatComponentTranslation msg = new ChatComponentTranslation(
-                getUnlocalizedName()+".activate_msg", entityPlayer.getDisplayName());
+                getUnlocalizedName()+".activate_msg", player.getEntityPlayer().getDisplayName());
         msg.setChatStyle(style);
         FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().sendChatMsg(msg);
+        super.activate(player);
     }
 }
