@@ -166,7 +166,13 @@ item.ThriftyPerkItem.activate_msg=%1$s вспоминает, что у него 
 lang.and=и
 lang.or=или
 
+rsstats.configgui.ctgy.rsstatsGeneralConfig=Общие настройки
+rsstats.configgui.ctgy.rsstatsGeneralConfig.tooltip=Настройки, применимые для одиночной игры
+rsstats.configgui.rsstatsGeneralConfig.title=Серверные настройки одиночной игры (т.е. для интегрированного сервера)
+rsstats.configgui.rsstatsClientConfig.title=Клиентские настройки, отвечающие за отображение и визуальное поведение
 rsstats.configgui.modifierColorPositive=Цвет положительных модификаторов броска
 rsstats.configgui.modifierColorPositive.tooltip=Задает цвет текста для отображения таких модификаторов как:\n(+2: Чары интеллекта)\n(+4: Алмазная заточка)\nи т.п.
 rsstats.configgui.modifierColorNegative=Цвет отрицательных модификаторов броска
 rsstats.configgui.modifierColorNegative.tooltip=Задает цвет текста для отображения таких модификаторов как:\n(-2: Отсутствующий навык)\n(-5: Кромешная темнота)\nи т.п.
+rsstats.configgui.ignoreDowntimeInCooldown=Игнорировать время офлайна сервера
+rsstats.configgui.ignoreDowntimeInCooldown.tooltip=Определяет, будут ли способности с временем восстановления продолжать восстанавливаться (false) или "замораживать" свое состояние (true) до следующего включения сервера.

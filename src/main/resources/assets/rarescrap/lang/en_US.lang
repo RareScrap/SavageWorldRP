@@ -23,7 +23,13 @@ stat_not_found=Stat/skill "%1$s" not found in player "%2$s"
 lang.and=and
 lang.or=or
 
+rsstats.configgui.ctgy.rsstatsGeneralConfig=General settings
+rsstats.configgui.ctgy.rsstatsGeneralConfig.tooltip=Single player settings
+rsstats.configgui.rsstatsGeneralConfig.title=Integrated server settings (i.e. for single player)
+rsstats.configgui.rsstatsClientConfig.title=Client settings for UI and visual behavior
 rsstats.configgui.modifierColorPositive=Color of positive roll modifiers
 rsstats.configgui.modifierColorPositive.tooltip=Sets the color of the text for displaying such modifiers as:\n(+2: Intelligence Spell)\n(+4: Diamond Sharpening)\n etc.
 rsstats.configgui.modifierColorNegative=Color of negative roll modifiers
 rsstats.configgui.modifierColorNegative.tooltip=Sets the color of the text for displaying such modifiers as:\n(-2: Missing Skill)\n(-5: Extreme Darkness)\n etc.
+rsstats.configgui.ignoreDowntimeInCooldown=Ignore server downtime
+rsstats.configgui.ignoreDowntimeInCooldown.tooltip=Determines whether perks with a cooldown time will continue to cooldown (false) or “freeze” their state (true) until the next server is turned on.

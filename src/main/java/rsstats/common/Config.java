@@ -1,10 +1,14 @@
 package rsstats.common;
 
 import cpw.mods.fml.client.IModGuiFactory;
+import cpw.mods.fml.client.config.DummyConfigElement;
 import cpw.mods.fml.client.config.GuiConfig;
+import cpw.mods.fml.client.config.GuiConfigEntries;
+import cpw.mods.fml.client.config.IConfigElement;
 import cpw.mods.fml.common.Loader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
@@ -87,6 +91,7 @@ public class Config {
         Property prop;
 
         prop = configuration.get(CATEGORY_GENERAL, IGNORE_DOWNTIME_IN_COOLDOWN_KEY, DEFAULT_IGNORE_DOWNTIME_IN_COOLDOWN);
+        setLanguageKey(prop, IGNORE_DOWNTIME_IN_COOLDOWN_KEY);
         ignoreDowntimeInCooldown = prop.getBoolean();
         propOrder.add(prop.getName());
 
@@ -139,11 +144,39 @@ public class Config {
 
     public static class TestModConfigGUI extends GuiConfig {
         public TestModConfigGUI(GuiScreen parent) { // TODO: черный цвет под кодом "0" не отображается на кнопке
-            super(parent,
-                    new ConfigElement(RSStats.config.configuration.getCategory(CATEGORY_CHAT)).getChildElements(), // TODO: добавить категорию чата
-                    RSStats.MODID, false, false, GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()));
+            super(parent, getConfigElements(),
+                    RSStats.MODID, false, false, // TODO: Откуда брать эти флаги?
+                    GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()),
+                    I18n.format("rsstats.configgui.rsstatsClientConfig.title"));
 
             // TODO: Сменить пример текста на свой в ChatColorEntry
+        }
+
+        private static List<IConfigElement> getConfigElements()
+        {
+            List<IConfigElement> list = new ArrayList<IConfigElement>();
+            list.addAll((new ConfigElement(RSStats.config.configuration.getCategory(CATEGORY_CHAT))).getChildElements());
+            list.add(new DummyConfigElement.DummyCategoryElement("rsstatsCfg", "rsstats.configgui.ctgy.rsstatsGeneralConfig", GeneralEntry.class));
+            return list;
+        }
+
+        public static class GeneralEntry extends GuiConfigEntries.CategoryEntry {
+            public GeneralEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
+                super(owningScreen, owningEntryList, prop);
+            }
+
+            @Override
+            protected GuiScreen buildChildScreen()
+            {
+                // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
+                // GuiConfig object's entryList will also be refreshed to reflect the changes.
+                return new GuiConfig(this.owningScreen,
+                        (new ConfigElement(RSStats.config.configuration.getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
+                        this.owningScreen.modID, Configuration.CATEGORY_GENERAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
+                        this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
+                        GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()),
+                        I18n.format("rsstats.configgui.rsstatsGeneralConfig.title"));
+            }
         }
     }
 }
