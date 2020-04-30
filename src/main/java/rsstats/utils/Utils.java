@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,5 +104,17 @@ public class Utils {
 
     public static long millisToTicks(long millis) {
         return millis / 50; // 50мс = 1 тик
+    }
+
+    /**
+     * Возвращает {@link EnumChatFormatting} соответствующий коду форматирования
+     * @param code Код форматирования
+     * @return Подходящий EnumChatFormatting. Если таковой не найдет - null.
+     */
+    public static EnumChatFormatting getChatFormattingFromCode(String code) {
+        for (EnumChatFormatting value : EnumChatFormatting.values()) {
+            if (value.getFormattingCode() == code.charAt(0)) return value;
+        }
+        return null;
     }
 }

@@ -18,6 +18,7 @@ import java.util.Set;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 import static rsstats.common.RSStats.MODID;
 import static rsstats.common.RSStats.MODNAME;
+import static rsstats.utils.Utils.getChatFormattingFromCode;
 
 // TODO: Дочитай туториал в MinecraftByExample
 
@@ -92,13 +93,13 @@ public class Config {
         prop = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_POSITIVE_KEY, DEFAULT_MODIFIER_COLOR_POSITIVE, "Цвет положительных модификаторов броска", Property.Type.COLOR);
         prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
         setLanguageKey(prop, MODIFIER_COLOR_POSITIVE_KEY);
-        modifierColorPositive = EnumChatFormatting.getValueByName(prop.getString());
+        modifierColorPositive = getChatFormattingFromCode(prop.getString());
         propOrder.add(prop.getName());
 
         prop = configuration.get(CATEGORY_CHAT, MODIFIER_COLOR_NEGATIVE_KEY, DEFAULT_MODIFIER_COLOR_NEGATIVE, "Цвет отрицательных модификаторов броска", Property.Type.COLOR);
         prop.setValidValues(new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"});
         setLanguageKey(prop, MODIFIER_COLOR_NEGATIVE_KEY);
-        modifierColorNegative = EnumChatFormatting.getValueByName(prop.getString());
+        modifierColorNegative = getChatFormattingFromCode(prop.getString());
         propOrder.add(prop.getName());
 
         configuration.setCategoryPropertyOrder(Config.CATEGORY_CHAT, propOrder);
@@ -137,7 +138,7 @@ public class Config {
     }
 
     public static class TestModConfigGUI extends GuiConfig {
-        public TestModConfigGUI(GuiScreen parent) {
+        public TestModConfigGUI(GuiScreen parent) { // TODO: черный цвет под кодом "0" не отображается на кнопке
             super(parent,
                     new ConfigElement(RSStats.config.configuration.getCategory(CATEGORY_CHAT)).getChildElements(), // TODO: добавить категорию чата
                     RSStats.MODID, false, false, GuiConfig.getAbridgedConfigPath(RSStats.config.configuration.toString()));
