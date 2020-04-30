@@ -6,10 +6,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import rsstats.api.items.perk.PerkItem;
 import rsstats.common.RSStats;
 import rsstats.data.ExtendedPlayer;
 import rsstats.items.PerkItems;
-import rsstats.api.items.perk.PerkItem;
 
 import java.util.List;
 
@@ -38,6 +38,11 @@ public class Thrifty extends PerkItem {
     @Override
     public boolean canActivate() {
         return true;
+    }
+
+    @Override
+    public int getCooldown(ExtendedPlayer player) {
+        return 288000;
     }
 
     @Override

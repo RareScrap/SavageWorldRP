@@ -59,7 +59,7 @@ public class PerkItem extends Item {
      * полного восстановления перка. Для получения оставшегося времени
      * кулдауна см. {@link rsstats.data.CooldownManager#getCooldown(PerkItem)}
      * @param player Игрок, для которого расчитывается кулдаун
-     * @return Время полного восстановления перка
+     * @return Время полного восстановления перка в тиках
      * @see rsstats.data.CooldownManager#getCooldown(PerkItem)
      */
     public int getCooldown(ExtendedPlayer player) {
