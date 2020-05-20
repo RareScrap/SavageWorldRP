@@ -27,6 +27,7 @@ public class PacketSyncPlayer implements IMessage {
     private int persistence;
     private int charisma;
     private Rank rank;
+    // TODO: sync expPoints
     // Еще не определился какие значения нужны, так что синхроню то, что пока использую
 
     // for reflection newInstance

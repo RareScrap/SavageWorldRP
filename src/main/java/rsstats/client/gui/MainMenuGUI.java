@@ -148,7 +148,7 @@ public class MainMenuGUI extends AdvanceInventoryEffectRenderer
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.step", player.getParamWithModifiers(STEP)), 8, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.rank", player.rank.getTranslatedString()), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.protection", player.getParamWithModifiers(PROTECTION)), 8, textY+=10, 0x444444, false);
-        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.exp), 60, textY, 0x444444, false);
+        mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.ExpPoints", player.getExpPoints()), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.persistence", player.getParamWithModifiers(PERSISTENCE)), 8, textY+=10, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.tiredness", player.getParamWithModifiers(TIREDNESS)), 60, textY, 0x444444, false);
         mc.fontRenderer.drawString(StatCollector.translateToLocalFormatted("gui.charisma", player.getParamWithModifiers(CHARISMA)), 8, textY+=10, 0x444444, false);

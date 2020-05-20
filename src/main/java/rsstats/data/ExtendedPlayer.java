@@ -93,7 +93,8 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     /** Вторичный параметр игрока - Предел усталость */
     public int tirednessLimit = 25;
 
-    public int exp = 0;
+    /** Количество очков опыта на текущем ранге */
+    private int expPoints = 0;
     public Rank rank;
 
     // TODO: Будет апдейтиться раз в 3 тика. Скажется ли то как-нибудь на геймплее?
@@ -162,7 +163,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
 
     @Override
     public void saveNBTData(NBTTagCompound properties) {
-        properties.setInteger("exp", exp);
+        properties.setInteger("expPoints", expPoints);
         properties.setInteger("rank", rank.toInt());
         properties.setInteger("tiredness", tiredness);
         properties.setInteger("tirednessLimit", tirednessLimit);
@@ -180,7 +181,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     // TODO: Почему-то когда открывается GUI - Отображается категорий скиллов ловкости
     @Override
     public void loadNBTData(NBTTagCompound properties) {
-        exp = properties.getInteger("exp");
+        expPoints = properties.getInteger("expPoints");
         rank = Rank.fromInt(properties.getInteger("rank"));
         tiredness = properties.getInteger("tiredness");
         tirednessLimit = properties.getInteger("tirednessLimit");
@@ -371,5 +372,13 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
         }
         tab.stacks[emptyStackIndex] = new ItemStack(perkItem);
         return true;
+    }
+
+    public int getExpPoints() {
+        return expPoints;
+    }
+
+    public void changeExpPoints(int expPoints) {
+
     }
 }
