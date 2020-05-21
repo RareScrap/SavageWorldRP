@@ -87,6 +87,7 @@ public class RSStats {
         modEventHandler = new ModEventHandler();
         MinecraftForge.EVENT_BUS.register(modEventHandler);
         FMLCommonHandler.instance().bus().register(modEventHandler);
+        RulebookRegistry.registerEventHandler();
 
         config = Config.getConfig(); // Обрабатываем конфиг
 
@@ -120,6 +121,9 @@ public class RSStats {
         event.registerServerCommand(new ParamsPlayer());
         event.registerServerCommand(new Card());
         event.registerServerCommand(new OpenWindow());
+        event.registerServerCommand(new CommandGameSession());
+
+        RulebookRegistry.registerServerCommands(event);
 
         // Создаем gamerule, который будет сохранять предметы в инвентарях мода после смерти
         GameRules gameRules = MinecraftServer.getServer().worldServerForDimension(0).getGameRules();

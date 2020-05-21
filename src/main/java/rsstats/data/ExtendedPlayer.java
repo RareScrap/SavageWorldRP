@@ -13,6 +13,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.util.Constants;
+import rsstats.api.AbstractRulebook;
 import rsstats.api.i18n.IClientTranslatable;
 import rsstats.api.items.perk.IModifierDependent;
 import rsstats.api.items.perk.PerkItem;
@@ -120,6 +121,7 @@ public class ExtendedPlayer implements IExtendedEntityProperties {
     public CooldownManager cooldownManager = new CooldownManager(this);
     /** Хранилище модификаторов броска игрока */
     public ModifierManager modifierManager = new ModifierManager();
+    private AbstractRulebook rulebook = null;
 
     /*
     Тут в виде полей можно хранить дополнительную информацию о Entity: мана,

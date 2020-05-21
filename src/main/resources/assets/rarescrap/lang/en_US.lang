@@ -33,3 +33,19 @@ rsstats.configgui.modifierColorNegative=Color of negative roll modifiers
 rsstats.configgui.modifierColorNegative.tooltip=Sets the color of the text for displaying such modifiers as:\n(-2: Missing Skill)\n(-5: Extreme Darkness)\n etc.
 rsstats.configgui.ignoreDowntimeInCooldown=Ignore server downtime
 rsstats.configgui.ignoreDowntimeInCooldown.tooltip=Determines whether perks with a cooldown time will continue to cooldown (false) or “freeze” their state (true) until the next server is turned on.
+
+commands.addexp.usage=/addexp <ExpPoints> [player]
+commands.addexp.success=/addexp <ExpPoints> [player]
+commands.rulebook.usage.set=/setrulebook <RulebookName> [informPlayers?]
+commands.rulebook.usage.getAll=/getrulebooks
+commands.rulebook.usage.getActive=/getactiverulebook
+commands.rulebook.usage.clear=/clearrulebook [informPlayers?]
+commands.rulebook.failure.getAll=No rulebooks found
+commands.rulebook.failure.getActive=Weight provider not set
+commands.rulebook.failure.set=Can't find "%s" rulebook
+commands.rulebook.success.set=Weight provider has been updated
+commands.rulebook.success.getAll=Available rulebooks: %s
+commands.rulebook.success.getActive=Active rulebook: %s
+commands.rulebook.success.clear=Weight provider has been disabled
+
+log.rulebook.restore.warning=Cant restore previous rulebook "%s". Currently registered rulebook: %s.
